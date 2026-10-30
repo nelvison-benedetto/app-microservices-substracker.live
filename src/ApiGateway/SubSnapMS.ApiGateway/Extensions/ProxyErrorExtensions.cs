@@ -1,4 +1,5 @@
 ﻿using SubSnapMS.ApiGateway.Errors;
+using Yarp.ReverseProxy.Forwarder;
 
 namespace SubSnapMS.ApiGateway.Extensions;
 
@@ -14,7 +15,7 @@ public static class ProxyErrorExtensions
         {
             await next();
 
-            var error = context.GetForwarderErrorFeature();
+            var error = context.Features.Get<IForwarderErrorFeature>();
             if (error is null || context.Response.HasStarted || context.RequestAborted.IsCancellationRequested)
                 return;
 

@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
-
 	<RootNamespace>SubSnapMS.ApiGateway</RootNamespace>
 	<AssemblyName>SubSnapMS.ApiGateway</AssemblyName>
   </PropertyGroup>
@@ -14,6 +13,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.14" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\SubSnapMS.BuildingBlocks.Observability\SubSnapMS.BuildingBlocks.Observability.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
+using SubSnapMS.ApiGateway.Extensions;
+using SubSnapMS.ApiGateway.Proxy;
+using SubSnapMS.BuildingBlocks.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +18,8 @@ builder.Services.AddGatewayForwardedHeaders();
 builder.Services.AddGatewayRateLimiting(builder.Configuration);
 
 
-builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
-//yarp legge routes e clusters dalla sezione 'ReverseProxy'
+builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy")).AddConfigFilter<ClusterDefaultsConfigFilter>();
+//yarp legge routes e clusters dalla sezione 'ReverseProxy', il filtro aggiunge ad ogni cluster health checks e timeout default
 
 var app = builder.Build();
 
