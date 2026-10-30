@@ -7,8 +7,7 @@ namespace SubSnapMS.Contracts.Subscriptions;
 
 /// <summary>
 /// Nuovo abbonamento. Contiene lo stato completo, così i read model non devono richiamare Subscriptions.
-/// Consumer tipici: Analytics (dashboard), Search (indicizzazione), Graph (relazione User→Service),
-/// Notification (promemoria di rinnovo).
+/// Consumer tipici: Analytics, Search, Graph, Notification.
 /// </summary>
 [IntegrationEvent(Exchanges.Subscriptions, "subscription.created.v1")]
 public sealed record SubscriptionCreated : IntegrationEvent
@@ -30,7 +29,9 @@ public sealed record SubscriptionCreated : IntegrationEvent
     /// <summary>Uno dei valori di <see cref="BillingCycles"/>.</summary>
     public required string BillingCycle { get; init; }
 
-    public DateOnly? NextBillingDate { get; init; }
+    public required DateOnly StartDate { get; init; }
+
+    public DateOnly? EndDate { get; init; }
 
     public required DateTimeOffset CreatedOnUtc { get; init; }
 }

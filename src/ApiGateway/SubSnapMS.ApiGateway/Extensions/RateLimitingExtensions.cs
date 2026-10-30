@@ -1,32 +1,14 @@
-﻿using SubSnapMS.ApiGateway.Errors;
+﻿using SubSnapMS.ApiGateway.Configuration;
+using SubSnapMS.ApiGateway.Errors;
 using System.Globalization;
 using System.Threading.RateLimiting;
 
 namespace SubSnapMS.ApiGateway.Extensions;
 
 
-public sealed class GatewayRateLimitingOptions
-{
-    public const string SectionName = "RateLimiting";
-
-    public bool Enabled { get; set; } = true;
-
-    /// <summary>Limite generale per IP, su tutte le richieste.</summary>
-    public FixedWindowSettings Global { get; set; } = new() { PermitLimit = 300, WindowSeconds = 60 };
-
-    /// <summary>Limite stretto per IP su login e registrazione (anti brute force).</summary>
-    public FixedWindowSettings Auth { get; set; } = new() { PermitLimit = 10, WindowSeconds = 60 };
-}
-
-public sealed class FixedWindowSettings
-{
-    public int PermitLimit { get; set; }
-    public int WindowSeconds { get; set; }
-}
-
 public static class RateLimitingExtensions
 {
-    /// <summary>Nome della policy usata nelle route YARP ("RateLimiterPolicy": "auth").</summary>
+    /// <summary>Nome della policy da usare nelle route YARP: "RateLimiterPolicy": "auth".</summary>
     public const string AuthPolicy = "auth";
 
     private const string Unlimited = "unlimited";
@@ -40,7 +22,7 @@ public static class RateLimitingExtensions
         {
             limiter.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-            limiter.OnRejected = async (context, cancellationToken) =>
+            limiter.OnRejected = (context, _) =>
             {
                 if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
                 {
@@ -48,24 +30,22 @@ public static class RateLimitingExtensions
                         ((int)Math.Ceiling(retryAfter.TotalSeconds)).ToString(CultureInfo.InvariantCulture);
                 }
 
-                await context.HttpContext.Response.WriteAsJsonAsync(
-                    GatewayErrorResponse.Create(StatusCodes.Status429TooManyRequests, "Too many requests. Please try again later."),
-                    cancellationToken);
+                return new ValueTask(GatewayErrorWriter.WriteAsync(context.HttpContext, StatusCodes.Status429TooManyRequests));
             };
 
-            // Limite globale: tutte le richieste, partizionate per IP (health check esclusi)
+            // Globale: per utente se autenticato (il JWT è già stato validato), altrimenti per IP. Health check esclusi.
             limiter.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
             {
                 if (!options.Enabled || httpContext.Request.Path.StartsWithSegments("/health"))
                     return RateLimitPartition.GetNoLimiter(Unlimited);
 
-                return RateLimitPartition.GetFixedWindowLimiter(ClientKey(httpContext), _ => ToLimiterOptions(options.Global));
+                return RateLimitPartition.GetFixedWindowLimiter(UserOrIpKey(httpContext), _ => ToLimiterOptions(options.Global));
             });
 
-            // Policy "auth": applicata solo alle route YARP che la dichiarano
+            // "auth": sempre per IP (su login e registrazione l'utente non è ancora autenticato)
             limiter.AddPolicy(AuthPolicy, httpContext =>
                 options.Enabled
-                    ? RateLimitPartition.GetFixedWindowLimiter(ClientKey(httpContext), _ => ToLimiterOptions(options.Auth))
+                    ? RateLimitPartition.GetFixedWindowLimiter(IpKey(httpContext), _ => ToLimiterOptions(options.Auth))
                     : RateLimitPartition.GetNoLimiter(Unlimited));
         });
 
@@ -80,9 +60,15 @@ public static class RateLimitingExtensions
         AutoReplenishment = true
     };
 
+    private static string UserOrIpKey(HttpContext httpContext)
+    {
+        var userId = httpContext.User.FindFirst("sub")?.Value;
+        return userId is not null ? $"user:{userId}" : IpKey(httpContext);
+    }
+
     // Dopo UseForwardedHeaders, RemoteIpAddress è l'IP reale del client
-    private static string ClientKey(HttpContext httpContext) =>
-        httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    private static string IpKey(HttpContext httpContext) =>
+        $"ip:{httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown"}";
 }
 
 

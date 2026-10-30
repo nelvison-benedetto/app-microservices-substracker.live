@@ -6,10 +6,8 @@ using System.Text;
 namespace SubSnapMS.Contracts.Subscriptions;
 
 /// <summary>
-/// Abbonamento modificato. Porta lo stato COMPLETO dopo la modifica (non solo i campi cambiati):
-/// il consumer fa un upsert e non deve ricostruire nulla.
-/// Version cresce a ogni modifica: un consumer che riceve una versione ≤ a quella che ha già la ignora
-/// (protegge dagli eventi arrivati fuori ordine).
+/// Abbonamento modificato: stato COMPLETO dopo la modifica (il consumer fa un upsert).
+/// Version cresce a ogni modifica: un consumer ignora le versioni ≤ a quella che ha già (eventi fuori ordine).
 /// </summary>
 [IntegrationEvent(Exchanges.Subscriptions, "subscription.updated.v1")]
 public sealed record SubscriptionUpdated : IntegrationEvent
@@ -30,7 +28,9 @@ public sealed record SubscriptionUpdated : IntegrationEvent
 
     public required string BillingCycle { get; init; }
 
-    public DateOnly? NextBillingDate { get; init; }
+    public required DateOnly StartDate { get; init; }
+
+    public DateOnly? EndDate { get; init; }
 
     public required DateTimeOffset UpdatedOnUtc { get; init; }
 }

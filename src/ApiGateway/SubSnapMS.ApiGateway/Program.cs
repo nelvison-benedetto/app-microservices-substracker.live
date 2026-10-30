@@ -8,13 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 //traefix(better than nginx x docker containers, auto rileva e non devi fare settaggi a mano) (che lo aggiungi sul server, che sta prima del gateway) decifra tls, e aggiunge X-Forwarded-For / X-Forwarded-Proto
 
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
-//non rileva 'server:Kestrel' nelle risposte
+//x non rileva 'server:Kestrel' nelle risposte
 
 //lib OpenTelemetry (trace, metriche, log), Sentry, health check
 builder.AddObservability(serviceName: "api-gateway");
 
 
 builder.Services.AddGatewayForwardedHeaders();
+builder.Services.AddGatewayCors(builder.Configuration);
+builder.Services.AddGatewayAuthentication(builder.Configuration);
 builder.Services.AddGatewayRateLimiting(builder.Configuration);
 
 
@@ -25,10 +27,15 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();  //UseForwardedHeaders  legge gli header di traefik
 //visto che uso traefik davanti, ora nginx dice al mio gateway che la req originale dal web usava https e da anche l'ip address.
+app.UseGatewayErrorHandling();    // 2. eccezioni e risposte d'errore senza body → envelope ApiResult
+app.UseSecurityHeaders();         // 3. header di sicurezza su ogni risposta
 app.UseObservability();  //Header X-Correlation-Id (= TraceId) + endpoint /health/live e /health/ready
 
-app.UseRouting();  //routing esplicito
-app.UseRateLimiter();  //
+app.UseRouting();                 // 5. sceglie la route (serve a CORS, rate limiter e authorization)
+app.UseGatewayCors();             // 6. attivo solo se Cors:AllowedOrigins non è vuoto
+app.UseAuthentication();          // 7. valida il JWT
+app.UseRateLimiter();             // 8. dopo l'autenticazione: partiziona per utente
+app.UseAuthorization();           // 9. FallbackPolicy: tutto richiede JWT tranne le route "anonymous"
 
 
 app.MapReverseProxy(proxy =>

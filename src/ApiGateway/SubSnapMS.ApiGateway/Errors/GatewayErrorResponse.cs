@@ -1,8 +1,9 @@
 ﻿namespace SubSnapMS.ApiGateway.Errors;
 
+
 /// <summary>
 /// Stessa forma di ApiResult dei servizi: { success, data, error: { statusCode, message } }.
-/// Così il frontend gestisce gli errori del gateway come quelli di qualsiasi servizio.
+/// Il frontend gestisce gli errori del gateway come quelli di qualsiasi servizio.
 /// </summary>
 public sealed record GatewayErrorResponse(bool Success, object? Data, GatewayError Error)
 {

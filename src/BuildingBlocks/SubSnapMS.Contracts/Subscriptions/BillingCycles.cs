@@ -14,5 +14,6 @@ public static class BillingCycles
     public const string Weekly = "weekly";
     public const string Monthly = "monthly";
     public const string Quarterly = "quarterly";
+    public const string Biannual = "biannual";
     public const string Yearly = "yearly";
 }
