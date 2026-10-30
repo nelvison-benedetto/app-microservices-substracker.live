@@ -34,6 +34,16 @@ public sealed class ObservabilityOptions
     /// </summary>
     public double TraceSamplingRatio { get; set; } = 1.0;
 
+    /// <summary>
+    /// ActivitySource esterne da tracciare, oltre a quelle "SubSnapMS.*".
+    /// Esempi: "Npgsql" (query Postgres), "MongoDB.Driver", "Elastic.Clients.Elasticsearch.ElasticsearchClient".
+    /// </summary>
+    public List<string> AdditionalSources { get; set; } = [];
+
+    /// <summary>Meter esterni da raccogliere, oltre a quelli "SubSnapMS.*". Esempio: "Npgsql".</summary>
+    public List<string> AdditionalMeters { get; set; } = [];
+
+
     private static string ResolveEntryAssemblyVersion()
     {
         var assembly = Assembly.GetEntryAssembly();

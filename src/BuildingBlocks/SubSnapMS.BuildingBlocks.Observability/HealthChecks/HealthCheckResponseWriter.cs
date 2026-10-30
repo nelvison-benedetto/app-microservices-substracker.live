@@ -10,6 +10,7 @@ namespace SubSnapMS.BuildingBlocks.Observability.HealthChecks;
 /// <summary>
 /// Risposta JSON leggibile al posto del semplice "Healthy".
 /// Non include messaggi di eccezione: un health check non deve rivelare dettagli interni.
+/// Status code (deciso da ASP.NET Core): 200 se Healthy/Degraded, 503 se Unhealthy.
 /// </summary>
 internal static class HealthCheckResponseWriter
 {
@@ -18,6 +19,7 @@ internal static class HealthCheckResponseWriter
     internal static Task WriteAsync(HttpContext context, HealthReport report)
     {
         context.Response.ContentType = "application/json; charset=utf-8";
+        context.Response.Headers.CacheControl = "no-store";
 
         var payload = new
         {

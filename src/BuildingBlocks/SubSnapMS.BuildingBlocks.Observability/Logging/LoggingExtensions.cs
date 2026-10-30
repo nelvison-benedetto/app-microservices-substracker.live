@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,7 +19,8 @@ internal static class LoggingExtensions
                 ActivityTrackingOptions.SpanId |
                 ActivityTrackingOptions.ParentId);
 
-        // Fuori dallo sviluppo: console in JSON, una riga per log, leggibile da qualsiasi aggregatore
+        // Fuori dallo sviluppo: console in JSON, una riga per log, leggibile da qualsiasi aggregatore.
+        // In sviluppo resta la console colorata di default, più leggibile a occhio.
         if (!builder.Environment.IsDevelopment())
         {
             builder.Logging.AddJsonConsole(console =>

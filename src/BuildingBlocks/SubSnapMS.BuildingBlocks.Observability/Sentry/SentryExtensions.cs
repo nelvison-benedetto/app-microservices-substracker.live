@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,11 +10,11 @@ internal static class SentryExtensions
 {
     internal static WebApplicationBuilder AddSentryIfConfigured(this WebApplicationBuilder builder, ObservabilityOptions options)
     {
-        // DSN vuoto = Sentry spento (come nel monolite in locale)
+        // DSN vuoto = Sentry spento (in locale)
         if (string.IsNullOrWhiteSpace(builder.Configuration["Sentry:Dsn"]))
             return builder;
 
-        // Il resto delle opzioni Sentry si può impostare nella sezione "Sentry" della configurazione
+        // Le altre opzioni Sentry (es. MinimumEventLevel) si impostano nella sezione "Sentry" della configurazione
         builder.WebHost.UseSentry(sentry =>
         {
             sentry.Environment = builder.Environment.EnvironmentName;
