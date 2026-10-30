@@ -5,13 +5,15 @@ using System.Text;
 namespace SubSnapMS.Contracts.Abstractions;
 
 /// <summary>
-/// Base di ogni integration event scambiato tra servizi.
-/// Solo dati: nessuna logica, nessuna dipendenza.
+/// Identità stabile di un evento sul broker, indipendente dal nome della classe C#.
+/// Esempio: [IntegrationEvent(Exchanges.Subscriptions, "subscription.created.v1")]
 /// </summary>
-public abstract record IntegrationEvent
+[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+public sealed class IntegrationEventAttribute(string exchange, string name) : Attribute
 {
-    /// <summary>Id univoco del messaggio. Usato anche dall'Inbox per l'idempotenza.</summary>
-    public Guid EventId { get; init; } = Guid.CreateVersion7();
+    /// <summary>Exchange del servizio che pubblica: "&lt;servizio&gt;.events".</summary>
+    public string Exchange { get; } = exchange;
 
-    public DateTimeOffset OccurredOnUtc { get; init; } = DateTimeOffset.UtcNow;
+    /// <summary>Nome versionato dell'evento, usato anche come routing key: "&lt;entità&gt;.&lt;azione&gt;.v&lt;N&gt;".</summary>
+    public string Name { get; } = name;
 }

@@ -19,7 +19,7 @@ internal sealed class EfCoreOutbox<TContext>(TContext dbContext) : IIntegrationE
 
         var eventType = integrationEvent.GetType();
         var metadata = EventMetadata.For(eventType);
-        var current = Activity.Current;   // la trace della richiesta HTTP che sta generando l'evento
+        var current = Activity.Current;   // la trace della richiesta che sta generando l'evento
 
         dbContext.Set<OutboxMessage>().Add(OutboxMessage.Create(
             integrationEvent.EventId,

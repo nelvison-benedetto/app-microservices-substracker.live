@@ -54,8 +54,15 @@ internal sealed class RabbitMqConsumerService(
             }
         }
 
-        // I messaggi arrivano sul channel tramite l'evento ReceivedAsync: qui si resta solo in attesa dello stop
-        await Task.Delay(Timeout.Infinite, stoppingToken);
+        // I messaggi arrivano tramite l'evento ReceivedAsync: qui si resta solo in attesa dello stop
+        try
+        {
+            await Task.Delay(Timeout.Infinite, stoppingToken);
+        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
+            // shutdown normale
+        }
     }
 
     private async Task StartConsumingAsync(CancellationToken stoppingToken)
@@ -90,7 +97,8 @@ internal sealed class RabbitMqConsumerService(
             },
             cancellationToken: stoppingToken);
 
-        // Un binding per ogni evento a cui il servizio è iscritto
+        // Un binding per ogni evento a cui il servizio è iscritto.
+        // L'exchange viene dichiarato anche qui: così l'ordine di avvio tra producer e consumer non conta.
         foreach (var registration in registry.Registrations)
         {
             await channel.ExchangeDeclareAsync(registration.Exchange, ExchangeType.Topic, durable: true, autoDelete: false, cancellationToken: stoppingToken);
@@ -110,6 +118,7 @@ internal sealed class RabbitMqConsumerService(
 
     private async Task OnMessageAsync(IChannel channel, BasicDeliverEventArgs delivery, CancellationToken stoppingToken)
     {
+        var startTimestamp = Stopwatch.GetTimestamp();
         var properties = delivery.BasicProperties;
         var eventName = properties.Type ?? MessageHeaders.GetString(properties.Headers, MessageHeaders.EventName);
 
@@ -118,9 +127,11 @@ internal sealed class RabbitMqConsumerService(
             // Non dovrebbe succedere (la coda riceve solo gli eventi legati), ma non deve bloccare la coda
             logger.LogWarning("Received message {MessageId} with unknown event '{EventName}': discarded", properties.MessageId, eventName);
             await channel.BasicAckAsync(delivery.DeliveryTag, multiple: false, CancellationToken.None);
+            MessagingDiagnostics.RecordProcessed(eventName ?? "unknown", MessagingDiagnostics.OutcomeDiscarded, startTimestamp);
             return;
         }
 
+        // Il body è valido solo durante questo handler: va deserializzato subito
         IntegrationEvent? integrationEvent;
         try
         {
@@ -128,15 +139,17 @@ internal sealed class RabbitMqConsumerService(
         }
         catch (JsonException exception)
         {
-            // Payload illeggibile: riprovare non serve, va direttamente in DLQ
+            // Payload illeggibile (o campo "required" mancante): riprovare non serve, va direttamente in DLQ
             logger.LogError(exception, "Cannot deserialize {EventName} {MessageId}: moved to {Dlq}", eventName, properties.MessageId, settings.DeadLetterQueue);
             await channel.BasicNackAsync(delivery.DeliveryTag, multiple: false, requeue: false, CancellationToken.None);
+            MessagingDiagnostics.RecordProcessed(eventName, MessagingDiagnostics.OutcomeDeadLettered, startTimestamp);
             return;
         }
 
         if (integrationEvent is null)
         {
             await channel.BasicNackAsync(delivery.DeliveryTag, multiple: false, requeue: false, CancellationToken.None);
+            MessagingDiagnostics.RecordProcessed(eventName, MessagingDiagnostics.OutcomeDeadLettered, startTimestamp);
             return;
         }
 
@@ -158,6 +171,7 @@ internal sealed class RabbitMqConsumerService(
         {
             await dispatcher.DispatchAsync(registration, integrationEvent, context, stoppingToken);
             await channel.BasicAckAsync(delivery.DeliveryTag, multiple: false, CancellationToken.None);
+            MessagingDiagnostics.RecordProcessed(eventName, MessagingDiagnostics.OutcomeSuccess, startTimestamp);
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {
@@ -169,6 +183,7 @@ internal sealed class RabbitMqConsumerService(
             MessagingDiagnostics.RecordError(activity, exception);
             logger.LogError(exception, "{EventName} {MessageId} failed after all retries: moved to {Dlq}", eventName, messageId, settings.DeadLetterQueue);
             await channel.BasicNackAsync(delivery.DeliveryTag, multiple: false, requeue: false, CancellationToken.None);
+            MessagingDiagnostics.RecordProcessed(eventName, MessagingDiagnostics.OutcomeDeadLettered, startTimestamp);
         }
     }
 

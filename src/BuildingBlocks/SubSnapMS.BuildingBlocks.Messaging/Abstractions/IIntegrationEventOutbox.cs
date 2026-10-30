@@ -7,7 +7,7 @@ namespace SubSnapMS.BuildingBlocks.Messaging.Abstractions;
 
 /// <summary>
 /// Accoda un evento nell'Outbox del DbContext corrente. NON salva: l'evento viene scritto
-/// dal prossimo SaveChanges (nel tuo caso il TransactionBehavior), nella stessa transazione dei dati.
+/// dal prossimo SaveChanges (il TransactionBehavior), nella stessa transazione dei dati.
 /// </summary>
 public interface IIntegrationEventOutbox
 {

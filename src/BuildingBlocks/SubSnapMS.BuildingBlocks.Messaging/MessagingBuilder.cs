@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SubSnapMS.BuildingBlocks.Messaging.Abstractions;
 using SubSnapMS.BuildingBlocks.Messaging.Consuming;
 using SubSnapMS.BuildingBlocks.Messaging.Inbox;
+using SubSnapMS.BuildingBlocks.Messaging.Outbox;
 using SubSnapMS.Contracts.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -34,7 +36,7 @@ public sealed class MessagingBuilder
 
     /// <summary>
     /// Outbox transazionale sul DbContext del servizio: IIntegrationEventOutbox.Add() salva l'evento
-    /// insieme ai dati, e OutboxProcessor lo pubblica su RabbitMQ.
+    /// insieme ai dati (stesso SaveChanges), e OutboxProcessor lo pubblica su RabbitMQ.
     /// </summary>
     public MessagingBuilder AddOutbox<TContext>() where TContext : DbContext
     {
@@ -44,8 +46,8 @@ public sealed class MessagingBuilder
     }
 
     /// <summary>
-    /// Inbox sul DbContext del servizio: ogni handler processa ogni messaggio una sola volta,
-    /// e il record "processato" viene salvato nella stessa transazione delle modifiche dell'handler.
+    /// Inbox sul DbContext del servizio: ogni handler processa ogni messaggio una sola volta.
+    /// Handler e record Inbox girano nella stessa transazione del database.
     /// </summary>
     public MessagingBuilder AddInbox<TContext>() where TContext : DbContext
     {

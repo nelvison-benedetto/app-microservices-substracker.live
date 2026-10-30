@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using SubSnapMS.BuildingBlocks.Messaging.Abstractions;
 using SubSnapMS.BuildingBlocks.Messaging.Configuration;
 using SubSnapMS.BuildingBlocks.Messaging.Consuming;
@@ -17,9 +19,9 @@ public static class MessagingExtensions
     private const string ReadyTag = "ready";
 
     /// <summary>
-    /// Registra RabbitMQ (publisher + consumer), e opzionalmente Outbox e Inbox su EF Core.
+    /// Registra RabbitMQ (publisher + consumer) e, tramite il builder, Outbox e Inbox su EF Core.
     /// </summary>
-    /// <param name="serviceName">Nome del servizio: determina i nomi di coda e DLQ ("subscriptions.queue").</param>
+    /// <param name="serviceName">Nome del servizio: determina coda e DLQ ("subscriptions.queue", "subscriptions.queue.dlq").</param>
     public static IServiceCollection AddMessaging(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -43,7 +45,7 @@ public static class MessagingExtensions
         services.AddSingleton<IEventPublisher>(sp => sp.GetRequiredService<RabbitMqEventPublisher>());
         services.AddSingleton<IMessagePublisher>(sp => sp.GetRequiredService<RabbitMqEventPublisher>());
 
-        // Default: nessuna Inbox (handler idempotenti per costruzione). AddInbox<T>() lo sostituisce.
+        // Default: nessuna Inbox (handler idempotenti per costruzione). AddInbox<T>() la sostituisce.
         services.TryAddScoped<IInboxStore, NullInboxStore>();
 
         if (registry.HasConsumers)
@@ -52,7 +54,12 @@ public static class MessagingExtensions
             services.AddHostedService<RabbitMqConsumerService>();
         }
 
-        services.AddHealthChecks().AddCheck<RabbitMqHealthCheck>("rabbitmq", tags: [ReadyTag]);
+        // Degraded e non Unhealthy: con l'Outbox gli eventi aspettano nel DB, quindi un RabbitMQ giù
+        // non deve togliere il servizio dal traffico (es. il login deve continuare a funzionare).
+        services.AddHealthChecks().AddCheck<RabbitMqHealthCheck>(
+            "rabbitmq",
+            failureStatus: HealthStatus.Degraded,
+            tags: [ReadyTag]);
 
         return services;
     }

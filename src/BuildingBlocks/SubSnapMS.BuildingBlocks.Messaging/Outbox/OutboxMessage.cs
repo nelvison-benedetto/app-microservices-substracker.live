@@ -30,14 +30,14 @@ public sealed class OutboxMessage
             EventName = eventName,
             Exchange = exchange,
             Payload = payload,
-            OccurredOnUtc = occurredOnUtc,
+            OccurredOnUtc = occurredOnUtc.ToUniversalTime(),   // Npgsql accetta solo offset 0 su timestamptz
             TraceParent = traceParent,
             TraceState = traceState
         };
 
     internal void MarkProcessed(DateTimeOffset processedOnUtc)
     {
-        ProcessedOnUtc = processedOnUtc;
+        ProcessedOnUtc = processedOnUtc.ToUniversalTime();
         LastError = null;
     }
 

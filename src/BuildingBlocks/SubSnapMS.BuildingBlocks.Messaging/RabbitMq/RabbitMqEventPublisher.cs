@@ -104,6 +104,7 @@ internal sealed class RabbitMqEventPublisher(
                 throw;
             }
 
+            MessagingDiagnostics.PublishedMessages.Add(1, new KeyValuePair<string, object?>("messaging.event.name", message.EventName));
             logger.LogDebug("Published {EventName} {MessageId} to {Exchange}", message.EventName, message.MessageId, message.Exchange);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)

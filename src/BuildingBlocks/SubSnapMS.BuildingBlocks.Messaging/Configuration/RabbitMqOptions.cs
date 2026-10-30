@@ -9,6 +9,12 @@ public sealed class RabbitMqOptions
 {
     public const string SectionName = "Messaging:RabbitMq";
 
+    /// <summary>
+    /// Alternativa ai campi singoli: amqp://user:password@host:5672/vhost.
+    /// Se valorizzato, ha la precedenza su Host, Port, Username, Password e VirtualHost.
+    /// </summary>
+    public Uri? Uri { get; set; }
+
     public string Host { get; set; } = "localhost";
     public int Port { get; set; } = 5672;
     public string Username { get; set; } = "guest";

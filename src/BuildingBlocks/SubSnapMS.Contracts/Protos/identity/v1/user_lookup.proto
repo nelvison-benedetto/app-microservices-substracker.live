@@ -4,7 +4,7 @@ package subsnapms.identity.v1;
 
 option csharp_namespace = "SubSnapMS.Contracts.Grpc.Identity.V1";
 
-// Chiamate sincrone interne verso Identity. Solo sulla rete Docker "backend", mai esposte da Traefik.
+// Chiamate sincrone interne verso Identity. Solo sulla rete Docker "backend", mai esposte da Traefik o dal gateway.
 service UserLookup {
   // Esiste l'utente? È attivo? (es. Media prima di emettere un presigned URL di upload)
   rpc GetUserStatus (GetUserStatusRequest) returns (GetUserStatusResponse);

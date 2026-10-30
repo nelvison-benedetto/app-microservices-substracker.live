@@ -5,9 +5,8 @@ using System.Text;
 namespace SubSnapMS.Contracts.Subscriptions;
 
 /// <summary>
-/// Valori ammessi per BillingCycle negli eventi. Stringhe e non enum:
-/// un consumer vecchio che riceve un valore nuovo non va in errore di deserializzazione,
-/// può semplicemente ignorarlo o trattarlo come sconosciuto.
+/// Codici neutri (non tradotti) del ciclo di fatturazione: la UI li traduce con next-intl.
+/// Stringhe e non enum: un consumer vecchio non va in errore se ne arriva uno nuovo.
 /// </summary>
 public static class BillingCycles
 {
@@ -16,4 +15,9 @@ public static class BillingCycles
     public const string Quarterly = "quarterly";
     public const string Biannual = "biannual";
     public const string Yearly = "yearly";
+
+    public static readonly IReadOnlySet<string> All =
+        new HashSet<string>(StringComparer.Ordinal) { Weekly, Monthly, Quarterly, Biannual, Yearly };
+
+    public static bool IsKnown(string? value) => value is not null && All.Contains(value);
 }

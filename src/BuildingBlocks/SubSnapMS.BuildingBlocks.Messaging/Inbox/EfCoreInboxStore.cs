@@ -7,21 +7,41 @@ namespace SubSnapMS.BuildingBlocks.Messaging.Inbox;
 
 /// <summary>
 /// Inbox sullo stesso DbContext dell'handler (scoped: stessa istanza).
-/// MarkProcessedAsync fa UN SaveChanges: modifiche dell'handler + record Inbox in una transazione.
-/// Se due istanze processano lo stesso messaggio insieme, la chiave primaria fa fallire la seconda
-/// e le sue modifiche vengono annullate; al retry, HasBeenProcessedAsync restituisce true.
+/// Tutto in UNA transazione: controllo duplicato → handler (SaveChanges, ExecuteDelete, Outbox...) → record Inbox → commit.
+/// Se due istanze processano lo stesso messaggio insieme, la chiave primaria fa fallire la seconda,
+/// la sua transazione viene annullata e al retry il messaggio risulta già processato.
 /// </summary>
 internal sealed class EfCoreInboxStore<TContext>(TContext dbContext) : IInboxStore
     where TContext : DbContext
 {
-    public Task<bool> HasBeenProcessedAsync(Guid messageId, string handlerName, CancellationToken cancellationToken) =>
-        dbContext.Set<InboxMessage>()
-            .AsNoTracking()
-            .AnyAsync(m => m.MessageId == messageId && m.HandlerName == handlerName, cancellationToken);
-
-    public async Task MarkProcessedAsync(Guid messageId, string handlerName, CancellationToken cancellationToken)
+    public Task<bool> ExecuteOnceAsync(
+        Guid messageId,
+        string handlerName,
+        Func<CancellationToken, Task> handle,
+        CancellationToken cancellationToken)
     {
-        dbContext.Set<InboxMessage>().Add(new InboxMessage(messageId, handlerName, DateTimeOffset.UtcNow));
-        await dbContext.SaveChangesAsync(cancellationToken);
+        // Necessario se il DbContext usa EnableRetryOnFailure: la transazione esplicita va nella execution strategy
+        var strategy = dbContext.Database.CreateExecutionStrategy();
+
+        return strategy.ExecuteAsync(async token =>
+        {
+            dbContext.ChangeTracker.Clear();   // un eventuale tentativo precedente non lascia modifiche pendenti
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(token);
+
+            var alreadyProcessed = await dbContext.Set<InboxMessage>()
+                .AsNoTracking()
+                .AnyAsync(m => m.MessageId == messageId && m.HandlerName == handlerName, token);
+
+            if (alreadyProcessed)
+                return false;
+
+            await handle(token);
+
+            dbContext.Set<InboxMessage>().Add(new InboxMessage(messageId, handlerName, DateTimeOffset.UtcNow));
+            await dbContext.SaveChangesAsync(token);   // salva anche le modifiche lasciate dall'handler
+            await transaction.CommitAsync(token);
+
+            return true;
+        }, cancellationToken);
     }
 }

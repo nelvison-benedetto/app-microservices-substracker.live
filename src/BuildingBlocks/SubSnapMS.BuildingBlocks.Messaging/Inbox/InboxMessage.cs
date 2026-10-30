@@ -13,7 +13,7 @@ public sealed class InboxMessage
     {
         MessageId = messageId;
         HandlerName = handlerName;
-        ProcessedOnUtc = processedOnUtc;
+        ProcessedOnUtc = processedOnUtc.ToUniversalTime();
     }
 
     public Guid MessageId { get; private set; }

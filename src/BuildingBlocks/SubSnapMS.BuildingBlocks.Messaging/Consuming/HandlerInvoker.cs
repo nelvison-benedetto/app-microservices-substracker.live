@@ -15,7 +15,7 @@ internal abstract class HandlerInvoker
 {
     public abstract Type HandlerType { get; }
 
-    /// <summary>Chiave dell'Inbox: stabile finché non rinomini la classe.</summary>
+    /// <summary>Chiave dell'Inbox: stabile finché non rinomini o sposti la classe dell'handler.</summary>
     public string HandlerName => HandlerType.FullName ?? HandlerType.Name;
 
     public abstract Task InvokeAsync(IServiceProvider services, IntegrationEvent integrationEvent, MessageContext context, CancellationToken cancellationToken);

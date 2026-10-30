@@ -6,8 +6,8 @@ using System.Text;
 namespace SubSnapMS.Contracts.Subscriptions;
 
 /// <summary>
-/// Abbonamento modificato: stato COMPLETO dopo la modifica (il consumer fa un upsert).
-/// Version cresce a ogni modifica: un consumer ignora le versioni ≤ a quella che ha già (eventi fuori ordine).
+/// Abbonamento modificato: stato COMPLETO dopo la modifica (il consumer fa un upsert, non ricostruisce nulla).
+/// Un consumer ignora un evento con Version ≤ a quella che ha già: protegge dagli eventi arrivati fuori ordine.
 /// </summary>
 [IntegrationEvent(Exchanges.Subscriptions, "subscription.updated.v1")]
 public sealed record SubscriptionUpdated : IntegrationEvent

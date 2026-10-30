@@ -7,7 +7,7 @@ namespace SubSnapMS.Contracts.Identity;
 
 /// <summary>
 /// Fine della saga: tutti i servizi hanno confermato e Identity ha cancellato definitivamente l'utente.
-/// Utile per audit e per eventuali pulizie finali (es. Notification rimuove la copia dell'email).
+/// Utile per audit e per le pulizie finali (es. Notification rimuove la copia dell'email).
 /// </summary>
 [IntegrationEvent(Exchanges.Identity, "user.deletion-completed.v1")]
 public sealed record UserDeletionCompleted : IntegrationEvent

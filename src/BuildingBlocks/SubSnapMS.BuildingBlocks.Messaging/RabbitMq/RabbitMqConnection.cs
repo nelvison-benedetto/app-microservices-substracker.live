@@ -23,7 +23,7 @@ internal sealed class RabbitMqConnection(
     public async Task<IConnection> GetConnectionAsync(CancellationToken cancellationToken)
     {
         // Con l'automatic recovery l'oggetto connessione resta lo stesso anche dopo una caduta di rete:
-        // RabbitMQ.Client la ricollega da solo (insieme a exchange, code e consumer).
+        // RabbitMQ.Client la ricollega da solo (insieme a exchange, code, binding e consumer).
         if (_connection is not null) return _connection;
 
         await _lock.WaitAsync(cancellationToken);
@@ -34,11 +34,6 @@ internal sealed class RabbitMqConnection(
             var rabbit = options.Value;
             var factory = new ConnectionFactory
             {
-                HostName = rabbit.Host,
-                Port = rabbit.Port,
-                UserName = rabbit.Username,
-                Password = rabbit.Password,
-                VirtualHost = rabbit.VirtualHost,
                 ClientProvidedName = $"{settings.ServiceName}@{Environment.MachineName}", // visibile nella management UI
                 AutomaticRecoveryEnabled = true,
                 TopologyRecoveryEnabled = true,
@@ -47,8 +42,21 @@ internal sealed class RabbitMqConnection(
                 ConsumerDispatchConcurrency = 1   // un messaggio alla volta per channel: ordine preservato
             };
 
+            if (rabbit.Uri is not null)
+            {
+                factory.Uri = rabbit.Uri;
+            }
+            else
+            {
+                factory.HostName = rabbit.Host;
+                factory.Port = rabbit.Port;
+                factory.UserName = rabbit.Username;
+                factory.Password = rabbit.Password;
+                factory.VirtualHost = rabbit.VirtualHost;
+            }
+
             _connection = await factory.CreateConnectionAsync(cancellationToken);
-            logger.LogInformation("Connected to RabbitMQ at {Host}:{Port}{VirtualHost}", rabbit.Host, rabbit.Port, rabbit.VirtualHost);
+            logger.LogInformation("Connected to RabbitMQ at {Host}:{Port}{VirtualHost}", factory.HostName, factory.Port, factory.VirtualHost);
 
             return _connection;
         }

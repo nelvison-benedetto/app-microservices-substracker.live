@@ -11,7 +11,7 @@ public sealed class InboxOptions
 
     /// <summary>
     /// Per quanto ricordare un messaggio già processato. Deve superare di molto il tempo
-    /// in cui un duplicato può ancora arrivare (retry outbox, riconsegne).
+    /// in cui un duplicato può ancora arrivare (retry dell'outbox, riconsegne, replay dalla DLQ).
     /// </summary>
     public TimeSpan Retention { get; set; } = TimeSpan.FromDays(30);
 

@@ -12,10 +12,10 @@ using System.Text;
 namespace SubSnapMS.BuildingBlocks.Messaging.Consuming;
 
 /// <summary>
-/// Esegue tutti gli handler di un evento. Per ognuno: scope DI nuovo, controllo Inbox, handler,
-/// registrazione nell'Inbox (stessa transazione), retry con backoff esponenziale.
+/// Esegue tutti gli handler di un evento. Per ognuno: scope DI nuovo, esecuzione "una volta sola"
+/// tramite l'Inbox (handler + record Inbox nella stessa transazione), retry con backoff esponenziale.
 /// Se un handler fallisce dopo tutti i retry, l'eccezione risale e il messaggio va in DLQ.
-/// Grazie all'Inbox, alla riconsegna gli handler già riusciti vengono saltati.
+/// Alla riconsegna (es. replay dalla DLQ) gli handler già riusciti vengono saltati dall'Inbox.
 /// </summary>
 internal sealed class MessageDispatcher(
     IServiceScopeFactory scopeFactory,
@@ -36,19 +36,20 @@ internal sealed class MessageDispatcher(
         {
             try
             {
+                // Scope nuovo a ogni tentativo: DbContext pulito, nessuno stato residuo del tentativo fallito
                 await using var scope = scopeFactory.CreateAsyncScope();
                 var inbox = scope.ServiceProvider.GetRequiredService<IInboxStore>();
+                var attemptContext = context with { Attempt = attempt };
 
-                if (await inbox.HasBeenProcessedAsync(context.MessageId, handler.HandlerName, cancellationToken))
-                {
+                var executed = await inbox.ExecuteOnceAsync(
+                    context.MessageId,
+                    handler.HandlerName,
+                    token => handler.InvokeAsync(scope.ServiceProvider, integrationEvent, attemptContext, token),
+                    cancellationToken);
+
+                if (!executed)
                     logger.LogDebug("{Handler} already processed {MessageId}: skipped", handler.HandlerName, context.MessageId);
-                    return;
-                }
 
-                await handler.InvokeAsync(scope.ServiceProvider, integrationEvent, context with { Attempt = attempt }, cancellationToken);
-
-                // Con l'Inbox EF: salva le modifiche dell'handler + il record Inbox in un unico SaveChanges
-                await inbox.MarkProcessedAsync(context.MessageId, handler.HandlerName, cancellationToken);
                 return;
             }
             catch (Exception exception) when (attempt <= maxRetries && !cancellationToken.IsCancellationRequested)

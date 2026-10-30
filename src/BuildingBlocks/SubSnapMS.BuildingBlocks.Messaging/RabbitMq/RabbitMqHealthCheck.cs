@@ -5,7 +5,10 @@ using System.Text;
 
 namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
 
-/// <summary>Health check "ready": il servizio non deve ricevere traffico se RabbitMQ è irraggiungibile.</summary>
+/// <summary>
+/// Health check "ready". In caso di problema restituisce lo stato di fallimento della registrazione
+/// (Degraded): il servizio resta nel traffico, l'Outbox trattiene gli eventi, il problema è visibile.
+/// </summary>
 internal sealed class RabbitMqHealthCheck(RabbitMqConnection connection) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
@@ -16,11 +19,11 @@ internal sealed class RabbitMqHealthCheck(RabbitMqConnection connection) : IHeal
 
             return rabbitConnection.IsOpen
                 ? HealthCheckResult.Healthy("RabbitMQ connection is open.")
-                : HealthCheckResult.Unhealthy("RabbitMQ connection is recovering.");
+                : new HealthCheckResult(context.Registration.FailureStatus, "RabbitMQ connection is recovering.");
         }
         catch (Exception exception)
         {
-            return HealthCheckResult.Unhealthy("RabbitMQ is unreachable.", exception);
+            return new HealthCheckResult(context.Registration.FailureStatus, "RabbitMQ is unreachable.", exception);
         }
     }
 }

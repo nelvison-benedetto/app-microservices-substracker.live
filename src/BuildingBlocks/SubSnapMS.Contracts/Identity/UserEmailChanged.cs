@@ -14,5 +14,8 @@ public sealed record UserEmailChanged : IntegrationEvent
 {
     public required Guid UserId { get; init; }
 
+    /// <summary>Nuova email normalizzata (lowercase).</summary>
     public required string NewEmail { get; init; }
+
+    public required DateTimeOffset ChangedOnUtc { get; init; }
 }

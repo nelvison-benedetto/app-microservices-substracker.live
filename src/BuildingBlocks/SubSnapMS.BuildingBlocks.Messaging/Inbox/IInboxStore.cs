@@ -4,11 +4,16 @@ using System.Text;
 
 namespace SubSnapMS.BuildingBlocks.Messaging.Inbox;
 
-/// <summary>Registro dei messaggi già processati, per handler.</summary>
+/// <summary>Garantisce che ogni handler processi ogni messaggio una sola volta.</summary>
 public interface IInboxStore
 {
-    Task<bool> HasBeenProcessedAsync(Guid messageId, string handlerName, CancellationToken cancellationToken);
-
-    /// <summary>Registra il messaggio come processato. Nell'implementazione EF salva anche le modifiche dell'handler.</summary>
-    Task MarkProcessedAsync(Guid messageId, string handlerName, CancellationToken cancellationToken);
+    /// <summary>
+    /// Esegue <paramref name="handle"/> solo se (messageId, handlerName) non è già stato processato,
+    /// e registra l'esecuzione. Restituisce false se il messaggio era già stato processato (handler non eseguito).
+    /// </summary>
+    Task<bool> ExecuteOnceAsync(
+        Guid messageId,
+        string handlerName,
+        Func<CancellationToken, Task> handle,
+        CancellationToken cancellationToken);
 }

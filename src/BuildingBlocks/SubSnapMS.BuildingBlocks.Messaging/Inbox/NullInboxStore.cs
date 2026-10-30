@@ -10,9 +10,13 @@ namespace SubSnapMS.BuildingBlocks.Messaging.Inbox;
 /// </summary>
 internal sealed class NullInboxStore : IInboxStore
 {
-    public Task<bool> HasBeenProcessedAsync(Guid messageId, string handlerName, CancellationToken cancellationToken) =>
-        Task.FromResult(false);
-
-    public Task MarkProcessedAsync(Guid messageId, string handlerName, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
+    public async Task<bool> ExecuteOnceAsync(
+        Guid messageId,
+        string handlerName,
+        Func<CancellationToken, Task> handle,
+        CancellationToken cancellationToken)
+    {
+        await handle(cancellationToken);
+        return true;
+    }
 }

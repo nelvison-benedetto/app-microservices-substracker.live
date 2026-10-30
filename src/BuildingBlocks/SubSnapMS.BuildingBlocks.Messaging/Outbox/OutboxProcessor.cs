@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SubSnapMS.BuildingBlocks.Messaging.Configuration;
+using SubSnapMS.BuildingBlocks.Messaging.Diagnostics;
 using SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace SubSnapMS.BuildingBlocks.Messaging.Outbox;
 /// <summary>
 /// Pubblica su RabbitMQ i messaggi dell'Outbox. Con più repliche del servizio,
 /// FOR UPDATE SKIP LOCKED fa sì che ogni riga venga presa da una sola replica.
-/// Garanzia: at-least-once (se il commit fallisce dopo la publish, il messaggio verrà ripubblicato).
+/// Garanzia: at-least-once (se il commit fallisce dopo la publish, il messaggio verrà ripubblicato;
+/// l'Inbox dei consumer scarta il duplicato).
 /// </summary>
 internal sealed class OutboxProcessor<TContext>(
     IServiceScopeFactory scopeFactory,
@@ -103,6 +105,7 @@ internal sealed class OutboxProcessor<TContext>(
                 {
                     failed++;
                     message.MarkFailed(exception);
+                    MessagingDiagnostics.OutboxPublishFailures.Add(1, new KeyValuePair<string, object?>("messaging.event.name", message.EventName));
 
                     if (message.Attempts >= settings.MaxAttempts)
                         logger.LogError(exception, "Outbox message {MessageId} ({EventName}) reached {MaxAttempts} attempts and will not be retried", message.Id, message.EventName, settings.MaxAttempts);

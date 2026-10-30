@@ -7,7 +7,8 @@ namespace SubSnapMS.Contracts.Subscriptions;
 
 /// <summary>
 /// Nuovo abbonamento. Contiene lo stato completo, così i read model non devono richiamare Subscriptions.
-/// Consumer tipici: Analytics, Search, Graph, Notification.
+/// Consumer tipici: Analytics (dashboard), Search (indicizzazione), Graph (relazione User→Service),
+/// Notification (promemoria di rinnovo).
 /// </summary>
 [IntegrationEvent(Exchanges.Subscriptions, "subscription.created.v1")]
 public sealed record SubscriptionCreated : IntegrationEvent
@@ -15,6 +16,9 @@ public sealed record SubscriptionCreated : IntegrationEvent
     public required Guid SubscriptionId { get; init; }
 
     public required Guid UserId { get; init; }
+
+    /// <summary>Versione dello stato: 1 alla creazione, poi cresce a ogni SubscriptionUpdated.</summary>
+    public required long Version { get; init; }
 
     /// <summary>Nome del servizio, es. "Netflix".</summary>
     public required string Name { get; init; }
