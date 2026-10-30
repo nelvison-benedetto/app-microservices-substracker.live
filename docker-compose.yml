@@ -1,0 +1,25 @@
+services:
+  api-gateway:
+    image: subsnap-api-gateway
+    build:
+      context: .
+      dockerfile: src/ApiGateway/SubSnap.ApiGateway/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Sentry__Dsn: ${SENTRY_DSN}
+    networks: [edge, backend]          # unico container su entrambe le reti
+    # niente "ports:" → non raggiungibile dall'host, solo via Traefik o rete interna
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=edge
+      - traefik.http.routers.api.rule=Host(`api.substracker.live`)
+      - traefik.http.routers.api.entrypoints=websecure
+      - traefik.http.routers.api.tls.certresolver=letsencrypt
+      - traefik.http.services.api.loadbalancer.server.port=8080
+
+networks:
+  edge:
+  backend:
+    internal: true
+
+

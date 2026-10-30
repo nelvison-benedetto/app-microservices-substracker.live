@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<RootNamespace>SubSnapMS.Contracts</RootNamespace>
+	<AssemblyName>SubSnapMS.Contracts</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <!-- tipi dei messaggi protobuf generati -->
+    <PackageReference Include="Google.Protobuf" Version="3.36.2" />
+	  <!-- classi base di client e server gRPC generati (ClientBase, ServerCallContext) -->
+    <PackageReference Include="Grpc.Core.Api" Version="2.85.0" />
+	  <!-- compilatore protoc: serve solo in fase di build, non finisce nei servizi -->
+    <PackageReference Include="Grpc.Tools" Version="2.85.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+	<!-- Both = genera sia il client (per chi chiama) sia la base del server (per chi implementa) -->
+	<Protobuf Include="Protos\**\*.proto" ProtoRoot="Protos" GrpcServices="Both" />
+  </ItemGroup>
+
+</Project>

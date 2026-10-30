@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package subsnapms.identity.v1;
+
+option csharp_namespace = "SubSnapMS.Contracts.Grpc.Identity.V1";
+
+// Chiamate sincrone interne verso Identity. Solo sulla rete Docker "backend", mai esposte da Traefik.
+service UserLookup {
+  // Esiste l'utente? È attivo? (es. Media prima di emettere un presigned URL di upload)
+  rpc GetUserStatus (GetUserStatusRequest) returns (GetUserStatusResponse);
+}
+
+message GetUserStatusRequest {
+  // UUID dell'utente in formato stringa ("3f2504e0-4f89-11d3-9a0c-0305e82c3301")
+  string user_id = 1;
+}
+
+message GetUserStatusResponse {
+  bool exists = 1;
+  bool is_active = 2;
+  // true durante la saga di cancellazione: l'utente esiste ancora ma non deve creare nuovi dati
+  bool pending_deletion = 3;
+}

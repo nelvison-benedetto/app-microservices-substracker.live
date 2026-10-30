@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".gitignore" />
+    <File Path="CLAUDE.md" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/ApiGateway/">
+    <Project Path="src/ApiGateway/SubSnapMS.ApiGateway/SubSnapMS.ApiGateway.csproj" Id="0be07a52-8519-443e-a94b-83ecd7922e0e" />
+  </Folder>
+  <Folder Name="/src/AppHost/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Messaging/SubSnapMS.BuildingBlocks.Messaging.csproj" Id="48e19433-8808-4f87-9279-19dc54bc94dd" />
+    <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Observability/SubSnapMS.BuildingBlocks.Observability.csproj" Id="aa8de560-3bac-48d7-8b7c-6c0f38c7cd61" />
+    <Project Path="src/BuildingBlocks/SubSnapMS.Contracts/SubSnapMS.Contracts.csproj" Id="46e80b3e-02af-4106-8c47-09b23b21cb70" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/tests/" />
+</Solution>
