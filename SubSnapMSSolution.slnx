@@ -11,20 +11,42 @@
   </Folder>
   <Folder Name="/src/AppHost/" />
   <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Application/SubSnapMS.BuildingBlocks.Application.csproj" Id="bb12e4fe-cdab-42da-8c1f-2a5d3f89371b" />
     <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Domain/SubSnapMS.BuildingBlocks.Domain.csproj" Id="c5f5a38c-90e3-49d2-af41-2e28f04b4c4b" />
     <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Messaging/SubSnapMS.BuildingBlocks.Messaging.csproj" Id="48e19433-8808-4f87-9279-19dc54bc94dd" />
     <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Observability/SubSnapMS.BuildingBlocks.Observability.csproj" Id="aa8de560-3bac-48d7-8b7c-6c0f38c7cd61" />
+    <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Persistence/SubSnapMS.BuildingBlocks.Persistence.csproj" Id="34051df1-3bf9-407a-acaf-8d2b6a9ff21c" />
+    <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Web/SubSnapMS.BuildingBlocks.Web.csproj" Id="3184dc67-0eeb-4f00-b385-7d34cc981b32" />
     <Project Path="src/BuildingBlocks/SubSnapMS.Contracts/SubSnapMS.Contracts.csproj" Id="46e80b3e-02af-4106-8c47-09b23b21cb70" />
   </Folder>
   <Folder Name="/src/Services/" />
-  <Folder Name="/src/Services/Analytics/" />
-  <Folder Name="/src/Services/Graph/" />
-  <Folder Name="/src/Services/Identity/">
-    <Project Path="src/Services/Identity/SubSnapMS.Identity.Core/SubSnapMS.Identity.Core.csproj" Id="f63c3b0a-d2d7-4844-b3be-79e25552c0b4" />
+  <Folder Name="/src/Services/Analytics/">
+    <Project Path="src/Services/Analytics/SubSnapMS.Analytics.API/SubSnapMS.Analytics.API.csproj" Id="f1159e8f-5d48-4614-8ec4-ed41588395ac" />
   </Folder>
-  <Folder Name="/src/Services/Media/" />
-  <Folder Name="/src/Services/Notification/" />
-  <Folder Name="/src/Services/Search/" />
-  <Folder Name="/src/Services/Subscriptions/" />
+  <Folder Name="/src/Services/Graph/">
+    <Project Path="src/Services/Graph/SubSnapMS.Graph.API/SubSnapMS.Graph.API.csproj" Id="47924c1f-40f5-4c01-a7d8-5873ef7f0fdb" />
+  </Folder>
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/SubSnapMS.Identity.API/SubSnapMS.Identity.API.csproj" Id="f3b81117-cb93-45f2-8a9b-d27d6c5e7d0e" />
+    <Project Path="src/Services/Identity/SubSnapMS.Identity.Application/SubSnapMS.Identity.Application.csproj" Id="6e7e19c0-835a-4bed-a3a3-3d20eeb31b29" />
+    <Project Path="src/Services/Identity/SubSnapMS.Identity.Core/SubSnapMS.Identity.Core.csproj" Id="f63c3b0a-d2d7-4844-b3be-79e25552c0b4" />
+    <Project Path="src/Services/Identity/SubSnapMS.Identity.Infrastructure/SubSnapMS.Identity.Infrastructure.csproj" Id="ff555ff8-a8d2-4ca7-affd-464c3e79177e" />
+  </Folder>
+  <Folder Name="/src/Services/Media/">
+    <Project Path="src/Services/Media/SubSnapMS.Media.API/SubSnapMS.Media.API.csproj" Id="ba022e1d-507b-4bb7-a322-4a19009cfdd4" />
+    <Project Path="src/Services/Media/SubSnapMS.Media.Core/SubSnapMS.Media.Core.csproj" Id="00915bd8-7438-4132-9a8a-e0b4e81e6d45" />
+  </Folder>
+  <Folder Name="/src/Services/Notification/">
+    <Project Path="src/Services/Notification/SubSnapMS.Notification.API/SubSnapMS.Notification.API.csproj" Id="87f3f5dd-5264-4c24-bdaa-3fac6e2ae847" />
+  </Folder>
+  <Folder Name="/src/Services/Search/">
+    <Project Path="src/Services/Search/SubSnapMS.Search.API/SubSnapMS.Search.API.csproj" Id="d6aed095-02fd-4aa4-a58d-2a01fd1ba4e2" />
+  </Folder>
+  <Folder Name="/src/Services/Subscriptions/">
+    <Project Path="src/Services/Subscriptions/SubSnapMS.Subscriptions.API/SubSnapMS.Subscriptions.API.csproj" Id="974c135f-3611-4ef9-b8de-19ce989565a0" />
+    <Project Path="src/Services/Subscriptions/SubSnapMS.Subscriptions.Application/SubSnapMS.Subscriptions.Application.csproj" Id="3d73449e-441f-4980-af58-ae4e97cdfb67" />
+    <Project Path="src/Services/Subscriptions/SubSnapMS.Subscriptions.Core/SubSnapMS.Subscriptions.Core.csproj" Id="d3961192-0988-4c76-9807-ee87a574fffa" />
+    <Project Path="src/Services/Subscriptions/SubSnapMS.Subscriptions.Infrastructure/SubSnapMS.Subscriptions.Infrastructure.csproj" Id="fd6e56e2-e212-42af-a4b3-f8260106bde1" />
+  </Folder>
   <Folder Name="/tests/" />
 </Solution>

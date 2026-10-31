@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.14" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.23.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\SubSnapMS.BuildingBlocks.Messaging\SubSnapMS.BuildingBlocks.Messaging.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\SubSnapMS.BuildingBlocks.Persistence\SubSnapMS.BuildingBlocks.Persistence.csproj" />
+    <ProjectReference Include="..\SubSnapMS.Identity.Application\SubSnapMS.Identity.Application.csproj" />
+    <ProjectReference Include="..\SubSnapMS.Identity.Core\SubSnapMS.Identity.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -4,18 +4,15 @@ public enum RefreshTokenRotationStatus
 {
     Rotated = 1,
 
-    /// <summary>Token sconosciuto o revocato per un motivo diverso dalla rotazione.</summary>
+    /// <summary>Token sconosciuto o sessione chiusa (logout, cambio password, account cancellato).</summary>
     Invalid = 2,
 
     Expired = 3,
 
-    /// <summary>Token già ruotato riusato: la famiglia è stata revocata (va salvato!).</summary>
+    /// <summary>Token già ruotato riusato fuori tolleranza: la famiglia è stata revocata (va salvato!).</summary>
     ReuseDetected = 4,
 
-    /// <summary>Token ruotato da pochi secondi: refresh parallelo dello stesso client, nessuna revoca.</summary>
-    ConcurrentRefresh = 5,
-
-    UserNotActive = 6
+    UserNotActive = 5
 }
 
 /// <summary>Esito della rotazione. NewToken è valorizzato solo se Status = Rotated.</summary>
