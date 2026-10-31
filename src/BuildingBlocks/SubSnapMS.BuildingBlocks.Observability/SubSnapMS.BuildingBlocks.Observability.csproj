@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	
-  <ItemGroup>   <!--da accesso ai tipi di ASP.NET Core (middleware, WebApplication, health check) a una class library-->
+  <ItemGroup>
 	 <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 	
