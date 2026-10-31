@@ -11,10 +11,20 @@
   </Folder>
   <Folder Name="/src/AppHost/" />
   <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Domain/SubSnapMS.BuildingBlocks.Domain.csproj" Id="c5f5a38c-90e3-49d2-af41-2e28f04b4c4b" />
     <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Messaging/SubSnapMS.BuildingBlocks.Messaging.csproj" Id="48e19433-8808-4f87-9279-19dc54bc94dd" />
     <Project Path="src/BuildingBlocks/SubSnapMS.BuildingBlocks.Observability/SubSnapMS.BuildingBlocks.Observability.csproj" Id="aa8de560-3bac-48d7-8b7c-6c0f38c7cd61" />
     <Project Path="src/BuildingBlocks/SubSnapMS.Contracts/SubSnapMS.Contracts.csproj" Id="46e80b3e-02af-4106-8c47-09b23b21cb70" />
   </Folder>
   <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Analytics/" />
+  <Folder Name="/src/Services/Graph/" />
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/SubSnapMS.Identity.Core/SubSnapMS.Identity.Core.csproj" Id="f63c3b0a-d2d7-4844-b3be-79e25552c0b4" />
+  </Folder>
+  <Folder Name="/src/Services/Media/" />
+  <Folder Name="/src/Services/Notification/" />
+  <Folder Name="/src/Services/Search/" />
+  <Folder Name="/src/Services/Subscriptions/" />
   <Folder Name="/tests/" />
 </Solution>
