@@ -15,4 +15,10 @@
     <PackageReference Include="StackExchange.Redis" Version="3.4.29" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\SubSnapMS.BuildingBlocks.Messaging\SubSnapMS.BuildingBlocks.Messaging.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\SubSnapMS.BuildingBlocks.Observability\SubSnapMS.BuildingBlocks.Observability.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\SubSnapMS.Contracts\SubSnapMS.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>
