@@ -14,5 +14,9 @@
     <PackageReference Include="FluentValidation" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.14" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\SubSnapMS.BuildingBlocks.Domain\SubSnapMS.BuildingBlocks.Domain.csproj" />
+  </ItemGroup>
 
 </Project>
