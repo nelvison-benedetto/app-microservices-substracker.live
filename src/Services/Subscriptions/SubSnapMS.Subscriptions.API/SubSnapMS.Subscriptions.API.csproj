@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..\..</DockerfileContext>
+	<RootNamespace>SubSnapMS.Subscriptions.API</RootNamespace>
+	<AssemblyName>SubSnapMS.Subscriptions.API</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
