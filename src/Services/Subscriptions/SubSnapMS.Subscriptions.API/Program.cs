@@ -48,6 +48,9 @@ var app = builder.Build();
 if (await app.ApplyMigrationsAsync<SubscriptionsDbContext>(args))
     return;
 
+if (await SubSnapMS.Subscriptions.API.Backfill.RepublishEventsCommand.RunIfRequestedAsync(app, args))
+    return;
+
 app.UseWebDefaults();      // forwarded headers, eccezioni, status code pages
 app.UseObservability();    // X-Correlation-Id, /health/live, /health/ready
 app.UseWebSecurity();      // JWT + authorization (FallbackPolicy: tutto protetto)

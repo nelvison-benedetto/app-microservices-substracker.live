@@ -1,29 +1,25 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Build context: root della soluzione (SubSnapMS/)
+#   docker build -f src/Services/Notification/SubSnapMS.Notification.API/Dockerfile -t subsnapms-notification .
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-
-
-# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+COPY ["global.json", "Directory.Build.props", "Directory.Packages.props", "./"]
+COPY ["src/BuildingBlocks/SubSnapMS.Contracts/SubSnapMS.Contracts.csproj", "src/BuildingBlocks/SubSnapMS.Contracts/"]
+COPY ["src/BuildingBlocks/SubSnapMS.BuildingBlocks.Messaging/SubSnapMS.BuildingBlocks.Messaging.csproj", "src/BuildingBlocks/SubSnapMS.BuildingBlocks.Messaging/"]
+COPY ["src/BuildingBlocks/SubSnapMS.BuildingBlocks.Observability/SubSnapMS.BuildingBlocks.Observability.csproj", "src/BuildingBlocks/SubSnapMS.BuildingBlocks.Observability/"]
 COPY ["src/Services/Notification/SubSnapMS.Notification.API/SubSnapMS.Notification.API.csproj", "src/Services/Notification/SubSnapMS.Notification.API/"]
-RUN dotnet restore "./src/Services/Notification/SubSnapMS.Notification.API/SubSnapMS.Notification.API.csproj"
-COPY . .
-WORKDIR "/src/src/Services/Notification/SubSnapMS.Notification.API"
-RUN dotnet build "./SubSnapMS.Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet restore "src/Services/Notification/SubSnapMS.Notification.API/SubSnapMS.Notification.API.csproj"
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./SubSnapMS.Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY ["src/BuildingBlocks/", "src/BuildingBlocks/"]
+COPY ["src/Services/Notification/", "src/Services/Notification/"]
+RUN dotnet publish "src/Services/Notification/SubSnapMS.Notification.API/SubSnapMS.Notification.API.csproj" \
+    -c $BUILD_CONFIGURATION -o /app/publish --no-restore /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+EXPOSE 8080
+USER $APP_UID
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "SubSnapMS.Notification.API.dll"]
