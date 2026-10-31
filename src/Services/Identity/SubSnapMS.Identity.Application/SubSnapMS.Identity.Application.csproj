@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<RootNamespace>SubSnapMS.Identity.Application</RootNamespace>
+	<AssemblyName>SubSnapMS.Identity.Application</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
