@@ -6,19 +6,19 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace SubSnapMS.BuildingBlocks.Observability.OpenTelemetry;
 
+//configura OpenTelemetry libs per tracce, metriche e logs
 internal static class OpenTelemetryExtensions
 {
     // Variabile d'ambiente standard di OpenTelemetry (es. http://localhost:4317 o http://otel-collector:4317)
-    private const string OtlpEndpointKey = "OTEL_EXPORTER_OTLP_ENDPOINT";
+    private const string OtlpEndpointKey = "OTEL_EXPORTER_OTLP_ENDPOINT";  //nome standart della var, la trovi in launchsettings.json e in docker-compose.override.yml
 
     internal static WebApplicationBuilder AddOpenTelemetryPipeline(this WebApplicationBuilder builder, ObservabilityOptions options)
     {
+
         var platformPattern = ObservabilityOptions.SourcePrefix + ".*";
 
         var otel = builder.Services.AddOpenTelemetry()
