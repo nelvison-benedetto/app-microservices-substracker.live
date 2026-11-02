@@ -1,4 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using SubSnapMS.BuildingBlocks.Observability.HealthChecks;
+using SubSnapMS.BuildingBlocks.Observability.Logging;
+using SubSnapMS.BuildingBlocks.Observability.OpenTelemetry;
+using SubSnapMS.BuildingBlocks.Observability.Sentry;
 using SubSnapMS.BuildingBlocks.Observability.Correlation;
 using System;
 using System.Collections.Generic;

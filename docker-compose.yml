@@ -3,7 +3,7 @@ services:
     image: subsnap-api-gateway
     build:
       context: .
-      dockerfile: src/ApiGateway/SubSnap.ApiGateway/Dockerfile
+      dockerfile: src/ApiGateway/SubSnapMS.ApiGateway/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       Sentry__Dsn: ${SENTRY_DSN}

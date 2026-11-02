@@ -27,7 +27,7 @@ internal sealed class SmtpEmailSender(IOptions<EmailOptions> options) : IEmailSe
         await client.ConnectAsync(settings.Smtp.Host, settings.Smtp.Port, settings.Smtp.Security, cancellationToken);
 
         if (!string.IsNullOrEmpty(settings.Smtp.Username))
-            await client.AuthenticateAsync(settings.Smtp.Username, settings.Smtp.Password, cancellationToken);
+            await client.AuthenticateAsync(settings.Smtp.Username, settings.Smtp.Password ?? string.Empty, cancellationToken);
 
         await client.SendAsync(mime, cancellationToken);
         await client.DisconnectAsync(quit: true, cancellationToken);

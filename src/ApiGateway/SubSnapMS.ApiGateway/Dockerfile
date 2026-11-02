@@ -5,7 +5,6 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["global.json", "Directory.Build.props", "Directory.Packages.props", "./"]
 COPY ["src/BuildingBlocks/SubSnapMS.BuildingBlocks.Observability/SubSnapMS.BuildingBlocks.Observability.csproj", "src/BuildingBlocks/SubSnapMS.BuildingBlocks.Observability/"]
 COPY ["src/ApiGateway/SubSnapMS.ApiGateway/SubSnapMS.ApiGateway.csproj", "src/ApiGateway/SubSnapMS.ApiGateway/"]
 RUN dotnet restore "src/ApiGateway/SubSnapMS.ApiGateway/SubSnapMS.ApiGateway.csproj"

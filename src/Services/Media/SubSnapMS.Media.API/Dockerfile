@@ -6,7 +6,6 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["global.json", "Directory.Build.props", "Directory.Packages.props", "./"]
 COPY ["src/BuildingBlocks/SubSnapMS.Contracts/SubSnapMS.Contracts.csproj", "src/BuildingBlocks/SubSnapMS.Contracts/"]
 COPY ["src/BuildingBlocks/SubSnapMS.BuildingBlocks.Domain/SubSnapMS.BuildingBlocks.Domain.csproj", "src/BuildingBlocks/SubSnapMS.BuildingBlocks.Domain/"]
 COPY ["src/BuildingBlocks/SubSnapMS.BuildingBlocks.Application/SubSnapMS.BuildingBlocks.Application.csproj", "src/BuildingBlocks/SubSnapMS.BuildingBlocks.Application/"]

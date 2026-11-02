@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 

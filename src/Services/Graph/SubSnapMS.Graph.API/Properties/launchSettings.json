@@ -8,7 +8,7 @@
         "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5269"
+      "applicationUrl": "http://localhost:5106"
     },
 
 

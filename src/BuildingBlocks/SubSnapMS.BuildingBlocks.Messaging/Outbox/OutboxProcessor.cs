@@ -152,12 +152,12 @@ internal sealed class OutboxProcessor<TContext>(
         var table = schema is null ? $"\"{tableName}\"" : $"\"{schema}\".\"{tableName}\"";
 
         // {0} = MaxAttempts, {1} = BatchSize → diventano parametri SQL, niente injection
-        return $"""
-                SELECT * FROM {table}
-                WHERE {OutboxMessageConfiguration.ProcessedOnUtcColumn} IS NULL
-                  AND {OutboxMessageConfiguration.AttemptsColumn} < {{0}}
-                ORDER BY {OutboxMessageConfiguration.OccurredOnUtcColumn}
-                LIMIT {{1}}
+        return $$"""
+                SELECT * FROM {{table}}
+                WHERE "{{OutboxMessageConfiguration.ProcessedOnUtcColumn}}" IS NULL
+                  AND "{{OutboxMessageConfiguration.AttemptsColumn}}" < {0}
+                ORDER BY "{{OutboxMessageConfiguration.OccurredOnUtcColumn}}"
+                LIMIT {1}
                 FOR UPDATE SKIP LOCKED
                 """;
     }

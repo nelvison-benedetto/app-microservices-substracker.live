@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- IHost, configurazione e logging: i consumer sono tutti servizi ASP.NET Core -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.14" />
   </ItemGroup>
 
   <ItemGroup>

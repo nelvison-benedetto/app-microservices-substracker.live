@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace SubSnapMS.Contracts.Abstractions;
 
 /// <summary>
-/// Identità stabile di un evento sul broker, indipendente dal nome della classe C#.
-/// Esempio: [IntegrationEvent(Exchanges.Subscriptions, "subscription.created.v1")]
+/// Base di ogni evento che attraversa i servizi via RabbitMQ.
+/// Ogni evento concreto deve avere l'attributo [IntegrationEvent(exchange, name)].
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-public sealed class IntegrationEventAttribute(string exchange, string name) : Attribute
+public abstract record IntegrationEvent
 {
-    /// <summary>Exchange del servizio che pubblica: "&lt;servizio&gt;.events".</summary>
-    public string Exchange { get; } = exchange;
+    /// <summary>Identificativo univoco dell'evento (MessageId sul broker, chiave di deduplica nell'Inbox).</summary>
+    public Guid EventId { get; init; } = Guid.CreateVersion7();
 
-    /// <summary>Nome versionato dell'evento, usato anche come routing key: "&lt;entità&gt;.&lt;azione&gt;.v&lt;N&gt;".</summary>
-    public string Name { get; } = name;
+    /// <summary>Istante in cui il fatto è avvenuto (UTC).</summary>
+    public DateTimeOffset OccurredOnUtc { get; init; } = DateTimeOffset.UtcNow;
 }

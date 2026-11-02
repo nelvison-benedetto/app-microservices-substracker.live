@@ -4,7 +4,6 @@ using SubSnapMS.Graph.API.Configuration;
 using SubSnapMS.Graph.API.Features.GetOverlaps;
 using SubSnapMS.Graph.API.Features.GetServiceRecommendations;
 using SubSnapMS.Graph.API.Neo4j;
-using System.Runtime.Intrinsics.Arm;
 using static SubSnapMS.Graph.API.Recommendations.CypherFragments;
 
 namespace SubSnapMS.Graph.API.Recommendations;
@@ -25,18 +24,18 @@ public sealed class RecommendationService(
     /// che io non ho. Score = somma delle sovrapposizioni (chi ha più servizi in comune con me pesa di più).
     /// Solo servizi con almeno $minUsers utenti distinti (privacy).
     /// </summary>
-    private static readonly string SimilarUsersQuery = $"""
-        MATCH (me:User {{id: $userId}})-[:HAS]->(ms:Subscription)-[:OF]->(mine:Service)
-        WHERE {Active("ms")}
+    private static readonly string SimilarUsersQuery = $$"""
+        MATCH (me:User {id: $userId})-[:HAS]->(ms:Subscription)-[:OF]->(mine:Service)
+        WHERE {{Active("ms")}}
         WITH me, collect(DISTINCT mine) AS myServices
         UNWIND myServices AS shared
         MATCH (shared)<-[:OF]-(os:Subscription)<-[:HAS]-(other:User)
-        WHERE other <> me AND {Active("os")}
+        WHERE other <> me AND {{Active("os")}}
         WITH me, myServices, other, count(DISTINCT shared) AS overlap
         MATCH (other)-[:HAS]->(rs:Subscription)-[:OF]->(rec:Service)
-        WHERE {Active("rs")} AND NOT rec IN myServices
+        WHERE {{Active("rs")}} AND NOT rec IN myServices
         WITH rec, count(DISTINCT other) AS users, sum(overlap) AS score,
-             [c IN collect(rs.category) WHERE c IS NOT NULL][..{MaxCategorySamples}] AS categories
+             [c IN collect(rs.category) WHERE c IS NOT NULL][..{{MaxCategorySamples}}] AS categories
         WHERE users >= $minUsers
         RETURN rec.key AS key, rec.name AS name, users, score, categories
         ORDER BY score DESC, users DESC, name
@@ -44,23 +43,23 @@ public sealed class RecommendationService(
         """;
 
     /// <summary>Fallback (utente nuovo o senza sovrapposizioni): i servizi più diffusi che non ha.</summary>
-    private static readonly string PopularQuery = $"""
+    private static readonly string PopularQuery = $$"""
         MATCH (svc:Service)<-[:OF]-(s:Subscription)<-[:HAS]-(u:User)
-        WHERE {Active("s")}
-          AND NOT EXISTS {{MATCH(:User {{id: $userId}}) - [:HAS]->(mine: Subscription) - [:OF]->(svc)
-            WHERE {Active("mine")}
-          }}
+        WHERE {{Active("s")}}
+          AND NOT EXISTS { MATCH (:User {id: $userId})-[:HAS]->(mine:Subscription)-[:OF]->(svc)
+            WHERE {{Active("mine")}}
+          }
         WITH svc, count(DISTINCT u) AS users,
-             [c IN collect(s.category) WHERE c IS NOT NULL][..{MaxCategorySamples}] AS categories
+             [c IN collect(s.category) WHERE c IS NOT NULL][..{{MaxCategorySamples}}] AS categories
         WHERE users >= $minUsers
         RETURN svc.key AS key, svc.name AS name, users, users AS score, categories
         ORDER BY users DESC, name
         LIMIT $limit
         """;
 
-    private static readonly string MyActiveSubscriptionsQuery = $"""
-        MATCH (:User {{id: $userId}})-[:HAS]->(s:Subscription)
-        WHERE {Active("s")}
+    private static readonly string MyActiveSubscriptionsQuery = $$"""
+        MATCH (:User {id: $userId})-[:HAS]->(s:Subscription)
+        WHERE {{Active("s")}}
         RETURN s.id AS id, s.name AS name, s.category AS category, s.serviceKey AS serviceKey,
                s.monthlyAmount AS monthlyAmount, s.currency AS currency
         """;

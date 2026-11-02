@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using SubSnapMS.ApiGateway.Configuration;
+using SubSnapMS.ApiGateway.Errors;
 
 namespace SubSnapMS.ApiGateway.Extensions;
 
