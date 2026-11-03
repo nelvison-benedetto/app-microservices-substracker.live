@@ -4,53 +4,40 @@ using SubSnapMS.BuildingBlocks.Application.Persistence;
 using SubSnapMS.BuildingBlocks.Domain;
 using SubSnapMS.BuildingBlocks.Persistence.Converters;
 using SubSnapMS.BuildingBlocks.Persistence.Exceptions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SubSnapMS.BuildingBlocks.Persistence;
 
-/// <summary>
-/// Base del DbContext di ogni servizio. È anche l'IUnitOfWork della richiesta.
-/// A ogni SaveChangesAsync: esegue i domain event (stessa transazione), salva, traduce gli errori.
-/// </summary>
+//Base del DbContext di ogni servizio. È anche l'IUnitOfWork della richiesta.
+//A ogni SaveChangesAsync: esegue i domain event (stessa transazione), salva, traduce gli errori.
 public abstract class ServiceDbContext : DbContext, IUnitOfWork
 {
     /// <summary>Limite di sicurezza: handler che generano eventi all'infinito indicano un bug.</summary>
-    private const int MaxDomainEventRounds = 10;
+    private const int MaxDomainEventRounds = 10;  //limiti di giri dei domain event (se dopo 10 giri ci sono ancora eventi, c'è un loop infinito e si segnala un errore)
 
-    private readonly IDomainEventDispatcher? _domainEventDispatcher;
+    private readonly IDomainEventDispatcher? _domainEventDispatcher;  //dispatcher, il componente di BuildingBlocks.Application che, dato un evento, trova ed esegue i suoi handler (IDomainEventHandler<T>)
 
-    /// <param name="domainEventDispatcher">
-    /// Null solo negli scenari senza domain event (es. strumenti di design-time).
-    /// Se ci sono eventi da gestire e il dispatcher manca, il salvataggio fallisce invece di perderli.
-    /// </param>
     protected ServiceDbContext(DbContextOptions options, IDomainEventDispatcher? domainEventDispatcher)
         : base(options)
     {
         _domainEventDispatcher = domainEventDispatcher;
     }
 
-    // ── Modello ───────────────────────────────────────────────────────────────────
-
-    /// <summary>Configurazione del modello del servizio (ApplyConfigurationsFromAssembly, Outbox, Inbox...).</summary>
     protected abstract void ConfigureModel(ModelBuilder modelBuilder);
 
-    /// <summary>
-    /// Sigillato: la base esegue SEMPRE la configurazione del servizio e poi le proprie regole,
-    /// che devono vedere tutte le entità già registrate.
-    /// </summary>
     protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureModel(modelBuilder);
         IgnoreDomainEvents(modelBuilder);
-    }
+    }  //ricorda in EF il modello (tabelle, colonne, chiavi) si configura sovrascrivendo OnModelCreating, qu applichi anche sealed ovveride (quindi sigillato al 100%).
 
-    /// <summary>
-    /// Convenzioni valide per ogni servizio. Se il servizio fa override, deve chiamare base.ConfigureConventions.
-    /// </summary>
+
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        // Ogni DateTimeOffset (anche nullable) viene salvato e letto in UTC
-        configurationBuilder.Properties<DateTimeOffset>().HaveConversion<UtcDateTimeOffsetConverter>();
-    }
+        configurationBuilder.Properties<DateTimeOffset>().HaveConversion<UtcDateTimeOffsetConverter>();  //ur converter x UTC, lo applichi ad ogni DateTimeOffset di ogni entity
+    }  //convenzioni, sono regole generali che vuoi (ovviemante poi le tue config specifiche le possono sovrascrivere)
+
 
     private static void IgnoreDomainEvents(ModelBuilder modelBuilder)
     {
@@ -61,14 +48,12 @@ public abstract class ServiceDbContext : DbContext, IUnitOfWork
 
         foreach (var aggregateType in aggregateTypes)
             modelBuilder.Entity(aggregateType).Ignore(nameof(IAggregateRoot.DomainEvents));
-    }
+    }  //ogni aggregate ha la proprietà pubblica DomainEvents, EF per convenzione, prova a mappare le proprietà pubbliche, ma questa è una collezione di interfacce, dunque non mappabile su una colonna. Bisognerebbe ricordarsi builder.Ignore(x => x.DomainEvents) in ogni configurazione di aggregate. Qui lo si fa una volta per tutti!
 
-    // ── Salvataggio ───────────────────────────────────────────────────────────────
 
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         await DispatchDomainEventsAsync(cancellationToken);
-
         try
         {
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
@@ -81,20 +66,15 @@ public abstract class ServiceDbContext : DbContext, IUnitOfWork
         {
             throw translated;
         }
-    }
+    }  //ogni SaveChangesAsync: prima esegue i domain event (stessa transazione), poi salva, poi traduce gli errori del db in eccezioni di dominio (es. indice univoco violato → 409). Se non sa tradurre, rilancia l'eccezione originale.
 
-    /// <summary>
-    /// Il salvataggio sincrono salterebbe i domain event (il dispatch è asincrono): non è supportato.
-    /// </summary>
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess) =>
         throw new NotSupportedException(
             $"{GetType().Name}: use SaveChangesAsync. Synchronous saves would skip domain event handlers.");
+    //dispatch dei domain event è asincrono (gli handler restituiscono Task). Un SaveChanges() sincrono non potrebbe eseguirli senza bloccare il thread, quindi li salterebbe: abbonamento salvato senza evento nell’Outbox, cioè un’incoerenza silenziosa. Meglio un errore esplicito appena qualcuno lo usa. Anche qui si sovrascrive l’overload con bool
 
-    /// <summary>
-    /// Traduce un errore del database in un'eccezione di dominio (es. indice univoco violato → 409).
-    /// Restituisce null per rilanciare l'errore originale. Il servizio fa override perché il
-    /// riconoscimento dipende dal provider (Postgres: SqlState 23505 + nome del vincolo).
-    /// </summary>
+
     protected virtual Exception? TranslateSaveException(DbUpdateException exception) => null;
 
     private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken)
@@ -128,4 +108,23 @@ public abstract class ServiceDbContext : DbContext, IUnitOfWork
             $"{GetType().Name}: domain events are still being raised after {MaxDomainEventRounds} rounds. " +
             "A domain event handler is probably raising events in a loop.");
     }
+    //traduce un errore del database in un'eccezione di dominio (es. indice univoco violato → 409).
+    //restituisce null per rilanciare l'errore originale. Il servizio fa override perché il riconoscimento dipende dal provider (Postgres: SqlState 23505 + nome del vincolo).
+
+
 }
+
+//handler MediatR(es.ConfirmUploadHandler) modifica gli aggregate
+//        │
+//TransactionBehavior → unitOfWork.SaveChangesAsync() (unitOfWork = questo DbContext)
+//        │
+//ServiceDbContext.SaveChangesAsync
+//  ├─ DispatchDomainEventsAsync
+//  │    giro 1: MediaFile ha[Uploaded], il vecchio avatar ha[Deleted]
+//  │            → svuota → handler → outbox.Add(media.uploaded.v1), outbox.Add(media.deleted.v1)
+//  │    giro 2: nessun aggregate con eventi → return
+//  │
+//  ├─ base.SaveChangesAsync  → UPDATE media_files, DELETE vecchio avatar, INSERT 2 outbox_messages
+//  │                           (una transazione)
+//  │
+//  └─ errori: concorrenza → 409 · violazione tradotta dal servizio → errore di dominio · altro → invariato

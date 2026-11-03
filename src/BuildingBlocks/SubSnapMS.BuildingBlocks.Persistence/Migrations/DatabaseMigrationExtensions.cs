@@ -6,12 +6,12 @@ using Microsoft.Extensions.Logging;
 
 namespace SubSnapMS.BuildingBlocks.Persistence.Migrations;
 
-/// <summary>
-/// Strategia di migrazione della piattaforma:
-///  - PRODUZIONE: un container dedicato avviato con "--migrate" applica le migrations e termina,
-///    PRIMA che partano le repliche del servizio (che non migrano mai, per evitare corse tra repliche);
-///  - SVILUPPO: "Database:MigrateOnStartup": true → il servizio migra all'avvio e poi parte normalmente.
-/// </summary>
+//Strategia di migrazione della piattaforma:
+//- PRODUZIONE: un container dedicato avviato con "--migrate" applica le migrations e termina, PRIMA che partano le repliche del servizio (che non migrano mai, per evitare corse tra repliche);
+//- SVILUPPO: "Database:MigrateOnStartup": true → il servizio migra all'avvio e poi parte normalmente.
+
+
+//deploy → container "subscriptions --migrate" (applica, termina con codice 0) → solo se è andato bene: partono le repliche di subscriptions
 public static class DatabaseMigrationExtensions
 {
     public const string MigrateArgument = "--migrate";
