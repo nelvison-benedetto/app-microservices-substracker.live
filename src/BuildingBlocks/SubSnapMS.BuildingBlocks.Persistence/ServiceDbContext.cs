@@ -128,3 +128,4 @@ public abstract class ServiceDbContext : DbContext, IUnitOfWork
 //  │                           (una transazione)
 //  │
 //  └─ errori: concorrenza → 409 · violazione tradotta dal servizio → errore di dominio · altro → invariato
+

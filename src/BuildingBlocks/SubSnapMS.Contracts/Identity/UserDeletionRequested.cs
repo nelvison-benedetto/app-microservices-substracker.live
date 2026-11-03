@@ -16,5 +16,5 @@ public sealed record UserDeletionRequested : IntegrationEvent
 {
     public required Guid UserId { get; init; }
 
-    public required DateTimeOffset RequestedOnUtc { get; init; }
+    public required DateTimeOffset RequestedOnUtc { get; init; }  //quando l'utente ha fatto la richiesta di canc
 }

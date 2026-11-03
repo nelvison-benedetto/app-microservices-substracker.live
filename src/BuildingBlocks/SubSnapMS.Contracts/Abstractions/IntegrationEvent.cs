@@ -1,14 +1,12 @@
 namespace SubSnapMS.Contracts.Abstractions;
 
-/// <summary>
-/// Base di ogni evento che attraversa i servizi via RabbitMQ.
-/// Ogni evento concreto deve avere l'attributo [IntegrationEvent(exchange, name)].
-/// </summary>
+//base di ogni evento che attraversa i servizi via RabbitMQ.
+//ogni evento concreto deve avere l'attributo [IntegrationEvent(exchange, name)].
 public abstract record IntegrationEvent
 {
-    /// <summary>Identificativo univoco dell'evento (MessageId sul broker, chiave di deduplica nell'Inbox).</summary>
     public Guid EventId { get; init; } = Guid.CreateVersion7();
+    //identificativo univoco dell'evento (MessageId sul broker, chiave di deduplica nell'Inbox).
 
-    /// <summary>Istante in cui il fatto è avvenuto (UTC).</summary>
     public DateTimeOffset OccurredOnUtc { get; init; } = DateTimeOffset.UtcNow;
+    //istante in cui il fatto è avvenuto (UTC), è solo un metadato tecnico 
 }

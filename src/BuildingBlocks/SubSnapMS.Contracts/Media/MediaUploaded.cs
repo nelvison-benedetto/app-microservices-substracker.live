@@ -1,14 +1,10 @@
 ﻿using SubSnapMS.Contracts.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SubSnapMS.Contracts.Media;
 
-/// <summary>
-/// Upload confermato: il file è già su R2 e i metadati sono salvati in Media.
-/// Esempi di consumer: generazione miniature, Identity se un giorno tenesse l'URL dell'avatar nel profilo.
-/// </summary>
+//upload confermato: il file è già su R2 e i metadati sono salvati in Media.
+//e.g. consumer: generazione miniature, Identity se un giorno tenesse l'URL dell'avatar nel profilo.
+
 [IntegrationEvent(Exchanges.Media, "media.uploaded.v1")]
 public sealed record MediaUploaded : IntegrationEvent
 {
@@ -16,17 +12,14 @@ public sealed record MediaUploaded : IntegrationEvent
 
     public required Guid UserId { get; init; }
 
-    /// <summary>Chiave dell'oggetto su R2, es. "avatars/{guid}-foto.png".</summary>
-    public required string ObjectKey { get; init; }
+    public required string ObjectKey { get; init; }  //key dell'obj su R2 e.g."avatars/{guid}-foto.png"
 
-    /// <summary>URL pubblico sul CDN, es. "https://cdn.substracker.live/avatars/...".</summary>
-    public required string PublicUrl { get; init; }
+    public required string PublicUrl { get; init; }  //url pubblico sul CDN
 
     public required string ContentType { get; init; }
 
     public required long SizeBytes { get; init; }
 
-    /// <summary>Uno dei valori di <see cref="MediaPurposes"/>.</summary>
     public required string Purpose { get; init; }
 
     public required DateTimeOffset UploadedOnUtc { get; init; }

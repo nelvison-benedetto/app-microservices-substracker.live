@@ -1,14 +1,10 @@
 ﻿using SubSnapMS.Contracts.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SubSnapMS.Contracts.Subscriptions;
 
-/// <summary>
-/// Abbonamento modificato: stato COMPLETO dopo la modifica (il consumer fa un upsert, non ricostruisce nulla).
-/// Un consumer ignora un evento con Version ≤ a quella che ha già: protegge dagli eventi arrivati fuori ordine.
-/// </summary>
+//abbonamento modificato: stato COMPLETO dopo la modifica (il consumer fa un upsert, non ricostruisce nulla).
+//un consumer ignora un evento con Version ≤ a quella che ha già: protegge dagli eventi arrivati fuori ordine.
+
 [IntegrationEvent(Exchanges.Subscriptions, "subscription.updated.v1")]
 public sealed record SubscriptionUpdated : IntegrationEvent
 {
@@ -34,3 +30,4 @@ public sealed record SubscriptionUpdated : IntegrationEvent
 
     public required DateTimeOffset UpdatedOnUtc { get; init; }
 }
+

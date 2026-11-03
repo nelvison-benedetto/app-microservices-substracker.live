@@ -1,15 +1,10 @@
 ﻿using SubSnapMS.Contracts.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SubSnapMS.Contracts.Subscriptions;
 
-/// <summary>
-/// Nuovo abbonamento. Contiene lo stato completo, così i read model non devono richiamare Subscriptions.
-/// Consumer tipici: Analytics (dashboard), Search (indicizzazione), Graph (relazione User→Service),
-/// Notification (promemoria di rinnovo).
-/// </summary>
+//nuovo abbonamento. Contiene lo stato completo, così i read model non devono richiamare Subscriptions.
+//consumers: Analytics (dashboard), Search (indicizzazione), Graph (relazione User→Service), Notification (promemoria di rinnovo).
+
 [IntegrationEvent(Exchanges.Subscriptions, "subscription.created.v1")]
 public sealed record SubscriptionCreated : IntegrationEvent
 {
@@ -17,20 +12,17 @@ public sealed record SubscriptionCreated : IntegrationEvent
 
     public required Guid UserId { get; init; }
 
-    /// <summary>Versione dello stato: 1 alla creazione, poi cresce a ogni SubscriptionUpdated.</summary>
-    public required long Version { get; init; }
 
-    /// <summary>Nome del servizio, es. "Netflix".</summary>
-    public required string Name { get; init; }
+    public required long Version { get; init; }  //version dello stato, 1 alla creazione, poi cresce a ogni SubscriptionUpdated
+
+    public required string Name { get; init; }  //e.g. "Netflix", "Spotify", "Amazon Prime Video"
 
     public string? Category { get; init; }
 
     public required decimal Amount { get; init; }
 
-    /// <summary>Codice ISO 4217, es. "EUR".</summary>
-    public required string Currency { get; init; }
+    public required string Currency { get; init; }  ///coice ISO 4217 e.g. "EUR", "USD", "GBP"
 
-    /// <summary>Uno dei valori di <see cref="BillingCycles"/>.</summary>
     public required string BillingCycle { get; init; }
 
     public required DateOnly StartDate { get; init; }
@@ -38,4 +30,6 @@ public sealed record SubscriptionCreated : IntegrationEvent
     public DateOnly? EndDate { get; init; }
 
     public required DateTimeOffset CreatedOnUtc { get; init; }
+
+
 }
