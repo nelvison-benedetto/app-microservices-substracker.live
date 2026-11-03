@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Domain;
 
-namespace SubSnapMS.BuildingBlocks.Domain;
+//ROOT di un aggregate: unico punto d'accesso per modificare l'aggregate e i suoi figli, confine di consistenza e di transazione. Ha un proprio repository, i figli no. (e.g. Subscription è root, HistorySubscription è un children e non ha repository e per essere modificato devi passare dalla root)
+//gli aggregate si referenziano tra loro solo per Id.
 
-/// <summary>
-/// Radice di un aggregate: unico punto d'accesso per modificare l'aggregate e i suoi figli,
-/// confine di consistenza e di transazione. Ha un proprio repository; i figli no.
-/// Gli aggregate si referenziano tra loro solo per Id.
-/// </summary>
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : notnull
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<IDomainEvent> _domainEvents = [];  //lista degli eventi registrati e non ancora gestiti
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();  //espone gli events in sola lettura
 
-    /// <summary>Registra un fatto avvenuto. Viene gestito al salvataggio, nella stessa transazione.</summary>
-    protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);  //registra un event. Viene gestito al salvataggio, nella stessa transazione.
 
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    public void ClearDomainEvents() => _domainEvents.Clear();  //svuota la lista 
+
 }
+
+

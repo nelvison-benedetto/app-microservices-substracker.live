@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Domain;
 
-namespace SubSnapMS.BuildingBlocks.Domain;
+//Entità con identità: 2 entità sono uguali se hanno stesso tipo e stesso Id.
+//L'Id è generato nel dominio alla creazione, quindi è stabile anche prima del salvataggio.
 
-/// <summary>
-/// Entità con identità: due entità sono uguali se hanno stesso tipo e stesso Id.
-/// L'Id è generato nel dominio alla creazione, quindi è stabile anche prima del salvataggio.
-/// </summary>
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
-    where TId : notnull
+    where TId : notnull   //Entity<TId> è la base di tutto ciò che nel dominio ha un’identità: gli aggregate root (User, Subscription, MediaFile) e i loro figli (RefreshToken, SubscriptionHistoryEntry)
 {
     public TId Id { get; protected set; } = default!;
 
@@ -25,4 +20,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     public static bool operator ==(Entity<TId>? left, Entity<TId>? right) => Equals(left, right);
 
     public static bool operator !=(Entity<TId>? left, Entity<TId>? right) => !Equals(left, right);
+
+
 }
+
