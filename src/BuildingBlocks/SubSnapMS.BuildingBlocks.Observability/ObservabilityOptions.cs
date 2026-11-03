@@ -5,50 +5,31 @@ using System.Text;
 
 namespace SubSnapMS.BuildingBlocks.Observability;
 
-/// <summary>
-/// Impostazioni di osservabilità. Si possono sovrascrivere dalla sezione "Observability"
-/// della configurazione (appsettings / variabili d'ambiente Observability__*).
-/// </summary>
+//impostazioni di osservabilità. Si possono sovrascrivere dalla sezione "Observability" della configurazione (appsettings / variabili d'ambiente Observability__*).
 public sealed class ObservabilityOptions
 {
-    public const string SectionName = "Observability";
+    public const string SectionName = "Observability";  
 
-    /// <summary>
-    /// Prefisso comune di ActivitySource e Meter della piattaforma.
-    /// Un servizio che crea new ActivitySource("SubSnapMS.Messaging") viene tracciato in automatico.
-    /// </summary>
-    public const string SourcePrefix = "SubSnapMS";
+    public const string SourcePrefix = "SubSnapMS";  
 
     /// <summary>Nome con cui il servizio appare in trace, metriche e log (es. "api-gateway").</summary>
-    public string ServiceName { get; set; } = "unknown-service";
+    public string ServiceName { get; set; } = "unknown-service";  //default, il nome con cui il servizio appare in trace, metriche e log (es. "api-gateway"). verra sempre sivrascritto questo default.
 
-    /// <summary>Versione del servizio. Default: InformationalVersion dell'assembly d'avvio.</summary>
-    public string ServiceVersion { get; set; } = ResolveEntryAssemblyVersion();
+    public string ServiceVersion { get; set; } = ResolveEntryAssemblyVersion();  //versione del servizio. dei default prende il InformationalVersion dell'assembly d'avvio.
 
-    /// <summary>Header di risposta che riporta il TraceId al client.</summary>
-    public string CorrelationHeaderName { get; set; } = "X-Correlation-Id";
+    public string CorrelationHeaderName { get; set; } = "X-Correlation-Id";  //nome dell'header usato dal CorrelationIdMiddleware. com standart comunemente si chiama proprio 'X-Correlation-Id'
 
-    /// <summary>
-    /// Percentuale di trace registrate (1.0 = tutte, 0.2 = 20%).
-    /// Se la richiesta arriva già con una trace (traceparent), si rispetta la decisione del chiamante.
-    /// </summary>
-    public double TraceSamplingRatio { get; set; } = 1.0;
+    public double TraceSamplingRatio { get; set; } = 1.0;  //% di trace registrate (1.0 = tutte, 0.2 = 20%). Se la richiesta arriva già con una trace (traceparent) (quindi this req non è root), allora si rispetta la decisione del chiamante (quindi si mantiene quella del padre).
 
-    /// <summary>
-    /// ActivitySource esterne da tracciare, oltre a quelle "SubSnapMS.*".
-    /// Esempi: "Npgsql" (query Postgres), "MongoDB.Driver", "Elastic.Clients.Elasticsearch.ElasticsearchClient".
-    /// </summary>
-    public List<string> AdditionalSources { get; set; } = [];
+    public List<string> AdditionalSources { get; set; } = [];  //ActivitySource esterne da tracciare, oltre a quelle "SubSnapMS.*", e.g. "Npgsql" (query Postgres), "MongoDB.Driver", "Elastic.Clients.Elasticsearch.ElasticsearchClient"
 
-    /// <summary>Meter esterni da raccogliere, oltre a quelli "SubSnapMS.*". Esempio: "Npgsql".</summary>
-    public List<string> AdditionalMeters { get; set; } = [];
-
+    public List<string> AdditionalMeters { get; set; } = [];  //meter esterni da raccogliere, oltre a quelli "SubSnapMS.*". Esempio: "Npgsql".
 
     private static string ResolveEntryAssemblyVersion()
     {
-        var assembly = Assembly.GetEntryAssembly();
-        return assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-               ?? assembly?.GetName().Version?.ToString()
-               ?? "1.0.0";
+        var assembly = Assembly.GetEntryAssembly();  //l'assembly d'avvio (es. l'api-gateway) e non quello della libreria di building blocks (SubSnapMS.BuildingBlocks.Observability.dll)
+        return assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion  //prendo l'InformationalVersion se presente (la versione da 'umani' testuale e.g. 1.4.0-beta)
+               ?? assembly?.GetName().Version?.ToString()  //se non c'è l'InformationalVersion, prendo la Version da AssemblyName
+               ?? "1.0.0";  //ultimate fallback 
     }
 }
