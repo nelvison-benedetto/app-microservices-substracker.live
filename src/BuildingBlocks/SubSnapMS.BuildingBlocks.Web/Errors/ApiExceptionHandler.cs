@@ -8,28 +8,26 @@ using SubSnapMS.BuildingBlocks.Web.Responses;
 
 namespace SubSnapMS.BuildingBlocks.Web.Errors;
 
-/// <summary>
-/// Traduce ogni eccezione nell'envelope ApiResult con lo status code giusto.
-/// Errori attesi (4xx): log Information, nessuno stack trace. Errori inattesi (5xx): log Error → Sentry.
-/// Il messaggio di un 500 è sempre generico: i dettagli interni non arrivano mai al client.
-/// </summary>
-internal sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExceptionHandler
+//here ogni eccezione non gestita di un servizio diventa una risposta HTTP. decide tre cose: quale status code restituire (400, 404, 409, 500…), cosa scrivere nei log e cosa far vedere al client
+//Errori attesi (4xx): log Information, nessuno stack trace. Errori inattesi (5xx): log Error → Sentry.
+
+internal sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExceptionHandler  //IExceptionHandler è di .net per gestire le eccezzioni in modo centralizzato
 {
-    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)   //ValueTask<bool> è richiesta dall'interface IExceptionHandler, ed true=“l’ho gestita io, la risposta è scritta” false="non me ne occupo io"
     {
-        // Il client ha chiuso la connessione: non c'è nessuno a cui rispondere
+
         if (exception is OperationCanceledException && httpContext.RequestAborted.IsCancellationRequested)
         {
             logger.LogDebug("Request {Method} {Path} cancelled by the client", httpContext.Request.Method, httpContext.Request.Path);
             return true;
-        }
+        }  //se client ha chiuso la connessione, non c'è nessuno a cui rispondere
 
-        var error = Map(exception);
+        var error = Map(exception);  //vedi sotto
 
         if (error.StatusCode >= StatusCodes.Status500InternalServerError)
         {
             logger.LogError(exception, "Unhandled exception on {Method} {Path}", httpContext.Request.Method, httpContext.Request.Path);
-        }
+        }  //error 500x è grave e lo segniamo come LogError(quindi verrà letto anche da Sentry)
         else
         {
             logger.LogInformation("{Method} {Path} → {StatusCode} {ErrorCode}: {Message}",
@@ -44,7 +42,6 @@ internal sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) :
     {
         ValidationException validation => FromValidation(validation),
 
-        // Dalla categoria più specifica alla più generica (sono tutte DomainException)
         NotFoundException e => new ApiError(StatusCodes.Status404NotFound, e.Message, e.Code),
         ConflictException e => new ApiError(StatusCodes.Status409Conflict, e.Message, e.Code),
         UnauthorizedException e => new ApiError(StatusCodes.Status401Unauthorized, e.Message, e.Code),
@@ -55,7 +52,7 @@ internal sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) :
         BadHttpRequestException e => new ApiError(e.StatusCode, ApiErrorMessages.For(e.StatusCode), ApiErrorMessages.CodeFor(e.StatusCode)),
 
         _ => new ApiError(StatusCodes.Status500InternalServerError, ApiErrorMessages.For(500), ApiErrorMessages.CodeFor(500))
-    };
+    };  //dal ramo più specifico alla più generico (sono tutte DomainException)
 
     private static ApiError FromValidation(ValidationException exception)
     {
@@ -65,12 +62,14 @@ internal sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) :
                 group => group.Key,
                 group => group.Select(failure => failure.ErrorMessage).Distinct().ToArray());
 
-        // Il primo messaggio come messaggio principale: il frontend attuale mostra error.message
+        //il primo messaggio come messaggio principale: il frontend attuale mostra error.message
         var message = exception.Errors.FirstOrDefault()?.ErrorMessage ?? "One or more validation errors occurred.";
 
         return new ApiError(StatusCodes.Status400BadRequest, message, "validation_failed", errors);
-    }
+    }  //x gli errori di validazione
+
 
     private static string ToCamelCase(string propertyName) =>
-        string.IsNullOrEmpty(propertyName) ? "request" : JsonNamingPolicy.CamelCase.ConvertName(propertyName);
+        string.IsNullOrEmpty(propertyName) ? "request" : JsonNamingPolicy.CamelCase.ConvertName(propertyName);  //è la stessa regola che System.Text.Json usa per serializzare le proprietà, cosi le keys in errors corrispondono con i nomi dei campi json della req! 
+
 }
