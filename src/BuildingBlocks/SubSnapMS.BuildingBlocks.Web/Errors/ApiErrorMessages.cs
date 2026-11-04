@@ -2,7 +2,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace SubSnapMS.BuildingBlocks.Web.Errors;
 
-/// <summary>Messaggi e codici standard per gli errori senza un'eccezione specifica (status code pages, 500).</summary>
+//Messaggi e codici standard per gli errori senza un'eccezione specifica (status code pages, 500)
+/*hai sia For() che CodeFor() xk ogni tuo error json ha 2 campi 
+new ApiError(
+  statusCode,
+  ApiErrorMessages.For(statusCode),      //→ "message": "Authentication required."
+  ApiErrorMessages.CodeFor(statusCode))  //→ "code":    "unauthorized"
+*/
 internal static class ApiErrorMessages
 {
     public static string For(int statusCode) => statusCode switch
@@ -19,7 +25,7 @@ internal static class ApiErrorMessages
         StatusCodes.Status503ServiceUnavailable => "Service temporarily unavailable.",
         >= 500 => "An unexpected error occurred.",
         _ => "The request could not be processed."
-    };
+    };  //valuta statusCode e return il value del PRIMO ramo che corrisponde, quindi l'ordine here è importante.
 
     public static string CodeFor(int statusCode) => statusCode switch
     {
@@ -36,4 +42,6 @@ internal static class ApiErrorMessages
         >= 500 => "internal_error",
         _ => "error"
     };
+
+
 }

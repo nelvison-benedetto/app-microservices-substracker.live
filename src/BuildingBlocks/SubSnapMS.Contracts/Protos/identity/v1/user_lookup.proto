@@ -1,18 +1,20 @@
-syntax = "proto3";
 
-package subsnapms.identity.v1;
+//con gRPC sarebbe anche disponibile lo streaming (ma io non lo uso).
+
+syntax = "proto3";  //version del linguaggio Protocol Buffers. proto3 è quella attuale
+
+package subsnapms.identity.v1;  //namespace del package, usata da protoc per generare i file C# e TS. Deve essere univoca tra tutti i microservizi.
 
 option csharp_namespace = "SubSnapMS.Contracts.Grpc.Identity.V1";
 
-// Chiamate sincrone interne verso Identity. Solo sulla rete Docker "backend", mai esposte da Traefik o dal gateway.
-service UserLookup {
-  // Esiste l'utente? È attivo? (es. Media prima di emettere un presigned URL di upload)
-  rpc GetUserStatus (GetUserStatusRequest) returns (GetUserStatusResponse);
+//chiamate sync verso Identity. Solo sulla rete Docker "backend", mai esposte da Traefik o dal gateway
+
+service UserLookup {  //gruppo di operazioni
+  rpc GetUserStatus (GetUserStatusRequest) returns (GetUserStatusResponse);  //operazione, riceve un mex e return un mex. 
 }
 
-message GetUserStatusRequest {
-  // UUID dell'utente in formato stringa ("3f2504e0-4f89-11d3-9a0c-0305e82c3301")
-  string user_id = 1;
+message GetUserStatusRequest {  //message è un struttura dati, simile ad un record C#
+  string user_id = 1;  //ProtocolBuffers non ha un tipo UUID, quindi l'id viaggia come str con (-), convenzione famosa. 1 è il numero del campo.
 }
 
 message GetUserStatusResponse {
@@ -20,4 +22,12 @@ message GetUserStatusResponse {
   bool is_active = 2;
   // true durante la saga di cancellazione: l'utente esiste ancora ma non deve creare nuovi dati
   bool pending_deletion = 3;
-}
+}  //3 risposte separate x 3 situazioni differenti:
+/*
+utente normale:   exists=true, is_active=true, pending_deletetion=false
+utente in cancellazione (Saga in corso): exists=true, is_active=false, pending_deletetion=true
+utente sospeso o disattivato: exists=true, is_active=false, pending_deletetion=false
+utente inesistente (o già cancellato): exists=false, is_active=false, pending_deletetion=false
+
+quindi pending_deletion è legato alla Saga, xk durante la cancellazione l'utente esiste ancora in identity ed il suo access token JWT resta valido per 10min(tempo in cui scade definitivamente), in questi 10min potrebbe e.g.Media chiamarlo.
+*/

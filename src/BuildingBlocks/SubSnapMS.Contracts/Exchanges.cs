@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.Contracts;
 
-namespace SubSnapMS.Contracts;
+//nomi degli exchange di RabbitMQ, cioè i 'punti di smistamento', su cui i services pubblicano gli events.
+//Produttore ──► EXCHANGE ──(binding: regola)──► CODA ──► Consumer.  
+//Exchange riceve i mexs e decide in quali code copiarli, Coda è dove aspettano i mexs di essere letti, Binding è la regola che collega una coda ad uno exchange, Routing Key è l'etichetta del mex usata dai binding (il nome dell'evento, e.g.subscription.created.v1)
 
-/// <summary>
-/// Exchange RabbitMQ della piattaforma: uno per servizio produttore ("&lt;servizio&gt;.events").
-/// Fa eccezione UserDeletion: è il canale delle risposte della saga di cancellazione account,
-/// su cui pubblicano più servizi e che ascolta solo l'orchestratore in Identity.
-/// </summary>
+//un Exchange per ogni service produttore
 public static class Exchanges
 {
     public const string Identity = "identity.events";
     public const string Subscriptions = "subscriptions.events";
     public const string Media = "media.events";
-    public const string UserDeletion = "user-deletion.events";
+    public const string UserDeletion = "user-deletion.events";  //x la risposta dell Saga di cancellazione account
 }
