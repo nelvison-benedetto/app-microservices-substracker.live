@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace SubSnapMS.BuildingBlocks.Web.Responses;
 
-//risposte di successo per gli endpoint Minimal API, già nell'envelope.
+//risposte di successo (200,201,204,202) per gli endpoint Minimal API. 
 //!gli errori NON passano da qui: si lanciano eccezioni e li formatta ApiExceptionHandler.
 
 public static class ApiResponses

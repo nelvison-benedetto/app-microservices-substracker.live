@@ -1,6 +1,6 @@
 namespace SubSnapMS.BuildingBlocks.Web.Responses;
 
-//Envelope uniforme di ogni risposta di ogni servizio: { success, data, error }, questa struttura è anche stata utilizzata nel tuo monolith SubSnap.
+//Envelope uniforme di ogni risposta di ogni servizio, { success, data, error }
 
 public sealed record ApiResult<T>(bool Success, T? Data, ApiError? Error)
 {
