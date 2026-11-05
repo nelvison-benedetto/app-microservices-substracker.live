@@ -9,13 +9,9 @@ namespace SubSnapMS.BuildingBlocks.Application;
 
 public static class ApplicationBuildingBlocksExtensions
 {
-    /// <summary>
-    /// Registra MediatR (handler dell'assembly + pipeline Tracing → Validation → Transaction),
-    /// i validator FluentValidation, gli handler dei domain event e TimeProvider.
-    /// IUnitOfWork NON è registrato qui: lo registra l'Infrastructure del servizio (il suo DbContext).
-    /// </summary>
-    /// <param name="applicationAssembly">L'assembly .Application del servizio (handler, validator, domain event handler).</param>
-    /// <param name="mediatRLicenseKey">Chiave della Community License di MediatR (senza: solo un warning nei log).</param>
+    //accende il livello Application di un service: registra MediatR (handler dell'assembly + pipeline Tracing → Validation → Transaction), i validator FluentValidation, gli handler dei domain event e TimeProvider.
+    //IUnitOfWork NON è registrato qui: lo registra l'Infrastructure del servizio (il suo DbContext).
+
     public static IServiceCollection AddApplicationBuildingBlocks(
         this IServiceCollection services,
         Assembly applicationAssembly,
