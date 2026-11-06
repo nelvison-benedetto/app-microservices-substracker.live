@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Messaging.Inbox;
 
-namespace SubSnapMS.BuildingBlocks.Messaging.Inbox;
-
-/// <summary>Garantisce che ogni handler processi ogni messaggio una sola volta.</summary>
+//Garantisce che ogni handler processi ogni messaggio una sola volta
 public interface IInboxStore
 {
-    /// <summary>
-    /// Esegue <paramref name="handle"/> solo se (messageId, handlerName) non è già stato processato,
-    /// e registra l'esecuzione. Restituisce false se il messaggio era già stato processato (handler non eseguito).
-    /// </summary>
+    //Esegue   solo se (messageId, handlerName) non è già stato processato, e registra l'esecuzione. Restituisce false se il messaggio era già stato processato (handler non eseguito).
     Task<bool> ExecuteOnceAsync(
         Guid messageId,
         string handlerName,
