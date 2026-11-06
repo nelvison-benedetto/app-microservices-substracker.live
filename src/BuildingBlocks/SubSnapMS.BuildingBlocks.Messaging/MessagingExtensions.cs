@@ -7,9 +7,6 @@ using SubSnapMS.BuildingBlocks.Messaging.Configuration;
 using SubSnapMS.BuildingBlocks.Messaging.Consuming;
 using SubSnapMS.BuildingBlocks.Messaging.Inbox;
 using SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SubSnapMS.BuildingBlocks.Messaging;
 

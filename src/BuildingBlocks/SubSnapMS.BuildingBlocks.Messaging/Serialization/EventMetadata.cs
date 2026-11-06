@@ -1,18 +1,18 @@
 ﻿using SubSnapMS.Contracts.Abstractions;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace SubSnapMS.BuildingBlocks.Messaging.Serialization;
 
-/// <summary>Exchange e nome di un evento, letti (una volta, poi in cache) da [IntegrationEvent].</summary>
+//è il collegamento tra Contracts e rabbitmq, usato sia da chi pubblica che da chi consuma.
+//EventMetadata traduce un tipo C# di integration event nella sua identità sul broker: su quale exchange va e con quale nome viaggia. Legge l’attributo [IntegrationEvent(exchange, name)] con la reflection una volta sola per tipo, e poi TIENE IL RISULTATO IN CACHE.
+//Exchange e nome di un evento, letti (una volta, poi in cache) da [IntegrationEvent]
+
 internal sealed record EventMetadata(string Exchange, string Name)
 {
-    private static readonly ConcurrentDictionary<Type, EventMetadata> Cache = new();
+    private static readonly ConcurrentDictionary<Type, EventMetadata> Cache = new();  //
 
-    public static EventMetadata For(Type eventType) => Cache.GetOrAdd(eventType, Resolve);
+    public static EventMetadata For(Type eventType) => Cache.GetOrAdd(eventType, Resolve);  //public, se la cache ha gia il tipo allora return i metadati salvati, altrimenti chiama Resolve(eventType) dunque salva il risultato e return it.
 
     private static EventMetadata Resolve(Type eventType)
     {
@@ -25,4 +25,6 @@ internal sealed record EventMetadata(string Exchange, string Name)
 
         return new EventMetadata(attribute.Exchange, attribute.Name);
     }
+
+
 }

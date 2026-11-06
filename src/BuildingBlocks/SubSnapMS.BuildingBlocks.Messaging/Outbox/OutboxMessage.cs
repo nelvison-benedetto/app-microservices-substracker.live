@@ -5,7 +5,7 @@ public sealed class OutboxMessage
 {
     private const int MaxErrorLength = 2000;
 
-    private OutboxMessage() { }   //per EF Core
+    private OutboxMessage() { }   //x EF Core
 
     public Guid Id { get; private set; }                       //key della row, MessageId su rabbitmq, key dell'Inbox del consumer
     public string EventName { get; private set; } = default!;  //routing key della pubblicazione e.g.subscription.created.v1
@@ -15,8 +15,9 @@ public sealed class OutboxMessage
     public string? TraceState { get; private set; }  //span di publish continua quella trace
     public DateTimeOffset OccurredOnUtc { get; private set; }  //ordine di pubblicazione, timestamp del mex
     public DateTimeOffset? ProcessedOnUtc { get; private set; }  //"da pubblicare?" e pulizia dopo 7 giorni
-    public int Attempts { get; private set; }
-    public string? LastError { get; private set; }
+    public int Attempts { get; private set; }  //limite MaxAttempts
+    public string? LastError { get; private set; }   //diagnosi a mano
+
 
     internal static OutboxMessage Create(
         Guid id, string eventName, string exchange, string payload,
