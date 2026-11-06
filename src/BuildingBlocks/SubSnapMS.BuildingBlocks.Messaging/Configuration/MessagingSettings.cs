@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Messaging.Configuration;
 
-namespace SubSnapMS.BuildingBlocks.Messaging.Configuration;
+//Nomi della topologia RabbitMQ derivati dal nome del servizio
 
-/// <summary>Nomi della topologia RabbitMQ derivati dal nome del servizio.</summary>
 internal sealed record MessagingSettings(string ServiceName)
 {
-    /// <summary>Coda del servizio, legata agli exchange degli eventi a cui è iscritto.</summary>
-    public string QueueName => $"{ServiceName}.queue";
+    public string QueueName => $"{ServiceName}.queue";  //Queue del servizio, legata agli exchange degli eventi a cui è iscritto.
 
     public string DeadLetterExchange => $"{ServiceName}.dlx";
 

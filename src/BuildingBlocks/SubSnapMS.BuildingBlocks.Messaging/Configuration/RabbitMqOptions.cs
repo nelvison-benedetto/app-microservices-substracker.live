@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Messaging.Configuration;
 
-namespace SubSnapMS.BuildingBlocks.Messaging.Configuration;
+/*e.g. il service (ms) si collega a raabitmq con 
+amqp://subsnap:password@rabbitmq:5672/subsnapms
+       │       │        │        │    └ virtual host (è come un server isolato dentro server rabbitmq, di solito 1 per ogni ur platform)
+       │       │        │        └ porta AMQP
+       │       │        └ host
+       │       └ password
+       └ utente
+oppure anche "Messaging": { "RabbitMq": { "Host": "rabbitmq", "Username": "subsnap" } }
+*/
 
-/// <summary>Sezione "Messaging:RabbitMq" (variabili d'ambiente: Messaging__RabbitMq__Host, ...).</summary>
 public sealed class RabbitMqOptions
 {
     public const string SectionName = "Messaging:RabbitMq";
 
-    /// <summary>
-    /// Alternativa ai campi singoli: amqp://user:password@host:5672/vhost.
-    /// Se valorizzato, ha la precedenza su Host, Port, Username, Password e VirtualHost.
-    /// </summary>
+    //Alternativa ai campi singoli: amqp://user:password@host:5672/vhost.
+    //Se valorizzato, ha la precedenza su Host, Port, Username, Password e VirtualHost.
     public Uri? Uri { get; set; }
 
     public string Host { get; set; } = "localhost";
@@ -21,12 +24,14 @@ public sealed class RabbitMqOptions
     public string Password { get; set; } = "guest";
     public string VirtualHost { get; set; } = "/";
 
-    /// <summary>Messaggi che RabbitMQ consegna in anticipo al consumer (buffer).</summary>
-    public ushort PrefetchCount { get; set; } = 16;
 
-    /// <summary>Retry di un handler dopo il primo tentativo fallito. Poi il messaggio va in DLQ.</summary>
-    public int MaxRetryAttempts { get; set; } = 3;
+    
+    public ushort PrefetchCount { get; set; } = 16;  //quando un consumer legga da una queue, rabbitmq non gli manda 1 mex alla volta aspettando la res, invece gli manda mex in anticipo fino ad un max (here 16).
 
-    /// <summary>Backoff esponenziale: base, base×2, base×4, ...</summary>
-    public TimeSpan RetryBaseDelay { get; set; } = TimeSpan.FromSeconds(1);
+
+    //se un handler lancia un'exception, il mex non va subito eliminato, ma invece il MessageDispatcher ritenta max X volte (here 3) con attese crescenti (backoff esponenziale). se proprio KO allora il mex va in DLQ.
+    public int MaxRetryAttempts { get; set; } = 3;  //3 tentativi, dopo il primo di base.
+    public TimeSpan RetryBaseDelay { get; set; } = TimeSpan.FromSeconds(1);  //1sec è la prima attesa, poi backoff esponenziale (base, base×2, base×4)
 }
+
+

@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Messaging.Configuration;
 
-namespace SubSnapMS.BuildingBlocks.Messaging.Configuration;
+//Sezione "Messaging:Outbox"
 
-/// <summary>Sezione "Messaging:Outbox".</summary>
 public sealed class OutboxOptions
 {
     public const string SectionName = "Messaging:Outbox";
 
-    /// <summary>Ogni quanto il processore cerca messaggi da pubblicare.</summary>
-    public TimeSpan PollingInterval { get; set; } = TimeSpan.FromSeconds(2);
+    public TimeSpan PollingInterval { get; set; } = TimeSpan.FromSeconds(2);  //ogni quanto il processore cerca messaggi da pubblicare
 
     public int BatchSize { get; set; } = 50;
 
-    /// <summary>Dopo questi tentativi falliti il messaggio resta nella tabella e va controllato a mano.</summary>
-    public int MaxAttempts { get; set; } = 10;
+    public int MaxAttempts { get; set; } = 10;  //dopo questi tentativi falliti il messaggio resta nella tabella e va controllato a mano
 
-    /// <summary>Per quanto tenere i messaggi già pubblicati prima di cancellarli.</summary>
-    public TimeSpan Retention { get; set; } = TimeSpan.FromDays(7);
+    public TimeSpan Retention { get; set; } = TimeSpan.FromDays(7);  //per quanto tenere i messaggi già pubblicati prima di cancellarli
 
     public TimeSpan CleanupInterval { get; set; } = TimeSpan.FromHours(1);
 }
+
