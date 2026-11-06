@@ -1,16 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SubSnapMS.BuildingBlocks.Messaging.Inbox;
 
-/// <summary>
-/// Inbox sullo stesso DbContext dell'handler (scoped: stessa istanza).
-/// Tutto in UNA transazione: controllo duplicato → handler (SaveChanges, ExecuteDelete, Outbox...) → record Inbox → commit.
-/// Se due istanze processano lo stesso messaggio insieme, la chiave primaria fa fallire la seconda,
-/// la sua transazione viene annullata e al retry il messaggio risulta già processato.
-/// </summary>
+//Inbox sullo stesso DbContext dell'handler (scoped: stessa istanza).
+//Tutto in UNA transazione: controllo duplicato → handler (SaveChanges, ExecuteDelete, Outbox...) → record Inbox → commit.
+//Se due istanze processano lo stesso messaggio insieme, la chiave primaria fa fallire la seconda, la sua transazione viene annullata e al retry il messaggio risulta già processato.
+
+
 internal sealed class EfCoreInboxStore<TContext>(TContext dbContext) : IInboxStore
     where TContext : DbContext
 {
