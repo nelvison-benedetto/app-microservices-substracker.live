@@ -10,13 +10,14 @@ using System.Text.Json;
 
 namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
 
-internal sealed class RabbitMqEventPublisher(
+
+internal sealed class RabbitMqEventPublisher(  //unico componente che pubblica davvero on rabbitmq
     RabbitMqConnection connection,
     MessagingSettings settings,
-    ILogger<RabbitMqEventPublisher> logger) : IEventPublisher, IMessagePublisher, IAsyncDisposable
+    ILogger<RabbitMqEventPublisher> logger) : IEventPublisher, IMessagePublisher, IAsyncDisposable  //3 interfaces. IEventPublisher (x pubblica x per i servizi), IMessagePublisher (interna, x Outbox) e IAsyncDisposable (per chiudere il channel allo spegnimento)
 {
-    // Un channel non è thread-safe: le publish passano una alla volta
-    private readonly SemaphoreSlim _lock = new(1, 1);
+    //un channel non è thread-safe: le publish passano una alla volta
+    private readonly SemaphoreSlim _lock = new(1, 1);  //lock, max 1 posto.
     private readonly HashSet<string> _declaredExchanges = new(StringComparer.Ordinal);
     private IChannel? _channel;
 
@@ -162,4 +163,6 @@ internal sealed class RabbitMqEventPublisher(
         await ResetChannelAsync();
         _lock.Dispose();
     }
+
+
 }
