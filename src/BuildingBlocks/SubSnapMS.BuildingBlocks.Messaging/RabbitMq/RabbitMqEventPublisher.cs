@@ -5,10 +5,7 @@ using SubSnapMS.BuildingBlocks.Messaging.Configuration;
 using SubSnapMS.BuildingBlocks.Messaging.Diagnostics;
 using SubSnapMS.BuildingBlocks.Messaging.Serialization;
 using SubSnapMS.Contracts.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Text.Json;
 
 namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;

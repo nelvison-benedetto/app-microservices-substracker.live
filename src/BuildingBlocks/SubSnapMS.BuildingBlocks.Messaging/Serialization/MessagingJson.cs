@@ -2,9 +2,9 @@
 
 namespace SubSnapMS.BuildingBlocks.Messaging.Serialization;
 
-//Serializzazione degli eventi: camelCase, uguale per tutti i servizi
+//serializzazione degli eventi: camelCase, uguale per tutti i servizi
 
 internal static class MessagingJson
 {
-    public static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+    public static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);  //
 }

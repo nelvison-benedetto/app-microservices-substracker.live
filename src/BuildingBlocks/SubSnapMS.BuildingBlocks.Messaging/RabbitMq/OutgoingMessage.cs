@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
 
-namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
 
-/// <summary>Messaggio già serializzato, pronto per il broker (dall'Outbox o da una publish diretta).</summary>
+//è il pacchetto standard che arriva al punto finale di invio verso RabbitMQ, contiene tutto ciò che serve per pubblicare (è gia serializzato) e niente di più
 internal sealed record OutgoingMessage(
     Guid MessageId,
     string Exchange,
@@ -13,3 +10,4 @@ internal sealed record OutgoingMessage(
     DateTimeOffset OccurredOnUtc,
     string? TraceParent,
     string? TraceState);
+

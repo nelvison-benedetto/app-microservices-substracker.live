@@ -8,22 +8,22 @@ namespace SubSnapMS.BuildingBlocks.Messaging.Serialization;
 //EventMetadata traduce un tipo C# di integration event nella sua identità sul broker: su quale exchange va e con quale nome viaggia. Legge l’attributo [IntegrationEvent(exchange, name)] con la reflection una volta sola per tipo, e poi TIENE IL RISULTATO IN CACHE.
 //Exchange e nome di un evento, letti (una volta, poi in cache) da [IntegrationEvent]
 
-internal sealed record EventMetadata(string Exchange, string Name)
+internal sealed record EventMetadata(string Exchange, string Name)  //piccolo contenitore immutabile
 {
-    private static readonly ConcurrentDictionary<Type, EventMetadata> Cache = new();  //
+    private static readonly ConcurrentDictionary<Type, EventMetadata> Cache = new();  //cache
 
     public static EventMetadata For(Type eventType) => Cache.GetOrAdd(eventType, Resolve);  //public, se la cache ha gia il tipo allora return i metadati salvati, altrimenti chiama Resolve(eventType) dunque salva il risultato e return it.
 
     private static EventMetadata Resolve(Type eventType)
     {
-        var attribute = eventType.GetCustomAttribute<IntegrationEventAttribute>(inherit: false)
+        var attribute = eventType.GetCustomAttribute<IntegrationEventAttribute>(inherit: false)  //cerca l'attributo sul tipo. inherit:false cioè guarda solo il tipo stesso (quindi non le classi da cui eredita)
             ?? throw new InvalidOperationException(
                 $"L'evento '{eventType.FullName}' non ha l'attributo [IntegrationEvent(exchange, name)].");
 
-        if (string.IsNullOrWhiteSpace(attribute.Exchange) || string.IsNullOrWhiteSpace(attribute.Name))
+        if (string.IsNullOrWhiteSpace(attribute.Exchange) || string.IsNullOrWhiteSpace(attribute.Name))  //se l'attributo c'è ma i suoi valori sono vuoit (non va bene!)
             throw new InvalidOperationException($"L'evento '{eventType.FullName}' ha exchange o nome vuoti.");
 
-        return new EventMetadata(attribute.Exchange, attribute.Name);
+        return new EventMetadata(attribute.Exchange, attribute.Name);  //crea il record
     }
 
 

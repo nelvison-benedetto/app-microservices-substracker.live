@@ -13,7 +13,7 @@ public sealed class MessagingBuilder
 {
     private readonly ConsumerRegistry _registry;
 
-    internal MessagingBuilder(IServiceCollection services, ConsumerRegistry registry)
+    internal MessagingBuilder(IServiceCollection services, ConsumerRegistry registry)  //constructor
     {
         Services = services;
         _registry = registry;
@@ -21,20 +21,19 @@ public sealed class MessagingBuilder
 
     public IServiceCollection Services { get; }
 
-    /// <summary>Iscrive il servizio a un evento. Più handler per lo stesso evento sono ammessi.</summary>
+
+    //iscrive il servizio a un evento. Più handler per lo stesso evento sono ammessi
     public MessagingBuilder AddConsumer<TEvent, THandler>()
         where TEvent : IntegrationEvent
         where THandler : class, IIntegrationEventHandler<TEvent>
     {
-        _registry.Add<TEvent, THandler>();
-        Services.TryAddScoped<THandler>();
+        _registry.Add<TEvent, THandler>();  //annota nel registro nome dell’evento, exchange, tipo e handler (il file che hai visto).
+        Services.TryAddScoped<THandler>();  //registra l’handler nel DI, per la sua classe concreta. (TryAddScoped, cosi se 2 events usassero la stessa classe handler (classe che implementa 2 interfaces) la registrazione non viene duplicata)
         return this;
     }
 
-    /// <summary>
-    /// Outbox transazionale sul DbContext del servizio: IIntegrationEventOutbox.Add() salva l'evento
-    /// insieme ai dati (stesso SaveChanges), e OutboxProcessor lo pubblica su RabbitMQ.
-    /// </summary>
+
+    //🔥🔥“Questo servizio pubblica eventi tramite l’Outbox sul suo DbContext.” Registra le due metà del Transactional Outbox (cioe OutboxProcessor.cs e IIntegrationEventOutbox.cs)
     public MessagingBuilder AddOutbox<TContext>() where TContext : DbContext
     {
         Services.TryAddScoped<IIntegrationEventOutbox, EfCoreOutbox<TContext>>();
@@ -42,14 +41,14 @@ public sealed class MessagingBuilder
         return this;
     }
 
-    /// <summary>
-    /// Inbox sul DbContext del servizio: ogni handler processa ogni messaggio una sola volta.
-    /// Handler e record Inbox girano nella stessa transazione del database.
-    /// </summary>
+    //“Questo servizio consuma eventi con garanzia di esecuzione unica, sul suo DbContext”
     public MessagingBuilder AddInbox<TContext>() where TContext : DbContext
     {
-        Services.AddScoped<IInboxStore, EfCoreInboxStore<TContext>>();
-        Services.AddHostedService<InboxCleanupService<TContext>>();
+        Services.AddScoped<IInboxStore, EfCoreInboxStore<TContext>>();  //InboxStore ricorda che fa ogni handler gira in una transazione con il controllo e il record “già processato”
+        Services.AddHostedService<InboxCleanupService<TContext>>();  //cleanup. ogni 6h cancella i records olds >30gg.
         return this;
     }
+
+
+
 }

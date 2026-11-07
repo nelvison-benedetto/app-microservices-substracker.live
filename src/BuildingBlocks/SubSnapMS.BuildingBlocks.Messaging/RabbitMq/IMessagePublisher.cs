@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
 
-namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
-
-/// <summary>Publish di basso livello, usata dall'OutboxProcessor.</summary>
+//publish di basso livello, usata dall'OutboxProcessor
 internal interface IMessagePublisher
 {
-    Task PublishRawAsync(OutgoingMessage message, CancellationToken cancellationToken = default);
+    Task PublishRawAsync(OutgoingMessage message, CancellationToken cancellationToken = default);  //Raw means che riceve il mex gia serializzato (in bytes), con Task ovviamente il metodo termina solo quando rabbitmq ha la publish confims.
 }
+
