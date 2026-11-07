@@ -195,30 +195,28 @@ internal sealed class RabbitMqConsumerService(
             //Shutdown durante l'elaborazione: nessun ack, RabbitMQ lo riconsegnerà alla prossima istanza
             logger.LogInformation("Shutdown while processing {EventName} {MessageId}: it will be redelivered", eventName, messageId);
         }
-        catch (Exception exception)
+        catch (Exception exception) 
         {
-            MessagingDiagnostics.RecordError(activity, exception);
+            MessagingDiagnostics.RecordError(activity, exception);  //RecordError marca lo span come errore e ci allega l’eccezione, così in Jaeger lo vedi in rosso con lo stack trace
             logger.LogError(exception, "{EventName} {MessageId} failed after all retries: moved to {Dlq}", eventName, messageId, settings.DeadLetterQueue);
-            await channel.BasicNackAsync(delivery.DeliveryTag, multiple: false, requeue: false, CancellationToken.None);
-            MessagingDiagnostics.RecordProcessed(eventName, MessagingDiagnostics.OutcomeDeadLettered, startTimestamp);
+            await channel.BasicNackAsync(delivery.DeliveryTag, multiple: false, requeue: false, CancellationToken.None);  //mex va nella DLQ (se era requeue=true il mex tornerebbe in testa alla queue, no è proprio fallito questo mex!)
+            MessagingDiagnostics.RecordProcessed(eventName, MessagingDiagnostics.OutcomeDeadLettered, startTimestamp);  //metrica dead_lettered
         }
     }
 
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        await base.StopAsync(cancellationToken);   // annulla ExecuteAsync e gli handler in corso
-        await DisposeChannelAsync();               // i messaggi non confermati tornano in coda
-    }
+        await base.StopAsync(cancellationToken);   //annulla ExecuteAsync e gli handler in corso
+        await DisposeChannelAsync();               //i mexs non confermati tornano in coda
+    }  //override di StopAsync, chiamato auto dall'host allo spegnimento.
 
 
     private async Task DisposeChannelAsync()
     {
         if (_channel is null) return;
-
         try { await _channel.DisposeAsync(); }
         catch (Exception exception) { logger.LogDebug(exception, "Error while disposing the consumer channel"); }
-
         _channel = null;
     }
 
