@@ -9,10 +9,10 @@ internal sealed class RabbitMqHealthCheck(RabbitMqConnection connection) : IHeal
     {
         try
         {
-            var rabbitConnection = await connection.GetConnectionAsync(cancellationToken);
+            var rabbitConnection = await connection.GetConnectionAsync(cancellationToken);  //tenta di aprire la connessione
 
             return rabbitConnection.IsOpen
-                ? HealthCheckResult.Healthy("RabbitMQ connection is open.")
+                ? HealthCheckResult.Healthy("RabbitMQ connection is open.")  //method factory x risulatot positico, con mex
                 : new HealthCheckResult(context.Registration.FailureStatus, "RabbitMQ connection is recovering.");
         }
         catch (Exception exception)
@@ -21,3 +21,4 @@ internal sealed class RabbitMqHealthCheck(RabbitMqConnection connection) : IHeal
         }
     }
 }
+

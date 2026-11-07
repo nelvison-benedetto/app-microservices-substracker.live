@@ -14,10 +14,8 @@ using System.Text.Json;
 
 namespace SubSnapMS.BuildingBlocks.Messaging.RabbitMq;
 
-/// <summary>
-/// Dichiara la topologia del servizio (coda quorum + DLQ + binding) e consuma i messaggi.
-/// ack = processato · nack senza requeue = va in DLQ · nessuna risposta (shutdown) = RabbitMQ lo riconsegna.
-/// </summary>
+//Dichiara la topologia del servizio (coda quorum + DLQ + binding) e consuma i messaggi.  ack = processato · nack senza requeue = va in DLQ · nessuna risposta (shutdown) = RabbitMQ lo riconsegna.
+
 internal sealed class RabbitMqConsumerService(
     RabbitMqConnection connection,
     ConsumerRegistry registry,
@@ -184,6 +182,7 @@ internal sealed class RabbitMqConsumerService(
         }
     }
 
+
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
         await base.StopAsync(cancellationToken);   // annulla ExecuteAsync e gli handler in corso
@@ -199,4 +198,6 @@ internal sealed class RabbitMqConsumerService(
 
         _channel = null;
     }
+
+
 }
