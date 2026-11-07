@@ -140,22 +140,21 @@ internal sealed class RabbitMqEventPublisher(  //unico componente che pubblica d
     private async Task EnsureExchangeAsync(IChannel channel, string exchange, CancellationToken cancellationToken)
     {
         if (_declaredExchanges.Contains(exchange)) return;
-
-        // Idempotente: se l'exchange esiste già con gli stessi parametri non succede nulla
+        //se l'exchange è stato gia dichiarato su questo channel, esci subito.
         await channel.ExchangeDeclareAsync(
             exchange: exchange,
             type: ExchangeType.Topic,
             durable: true,
             autoDelete: false,
             cancellationToken: cancellationToken);
-
+        //dichiara l'exchange CON GLI STESSI IDENTICI PARAMETRI USATI DAL CONSUMER, è fondamentale che coincidano (altrimenti il broker chiuderebbe il channel)
         _declaredExchanges.Add(exchange);
     }
 
 
     private async Task ResetChannelAsync()  //chiude il channel vecchio e svuota la cache degli exchange
     {
-        _declaredExchanges.Clear();
+        _declaredExchanges.Clear();  //svuota sempre la cache degli exchange (anche se non c'è un channel da chiudere)
         if (_channel is null) return;
         try { await _channel.DisposeAsync(); }
         catch (Exception exception) { logger.LogDebug(exception, "Error while disposing the publisher channel"); }
