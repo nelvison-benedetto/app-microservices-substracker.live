@@ -10,10 +10,7 @@ using SubSnapMS.Identity.Infrastructure.Persistence.Configurations;
 
 namespace SubSnapMS.Identity.Infrastructure.Persistence;
 
-/// <summary>
-/// Database di Identity (identity_db). È anche l'IUnitOfWork della richiesta:
-/// a ogni SaveChangesAsync esegue i domain event, salva tutto in una transazione, traduce gli errori.
-/// </summary>
+//Database di Identity (identity_db). È anche l'IUnitOfWork della richiesta: a ogni SaveChangesAsync esegue i domain event, salva tutto in una transazione, traduce gli errori.
 public sealed class IdentityDbContext(
     DbContextOptions<IdentityDbContext> options,
     IDomainEventDispatcher domainEventDispatcher) : ServiceDbContext(options, domainEventDispatcher)
@@ -30,10 +27,7 @@ public sealed class IdentityDbContext(
         modelBuilder.ApplyOutboxConfiguration().ApplyInboxConfiguration();
     }
 
-    /// <summary>
-    /// Due registrazioni (o cambi email) simultanei con la stessa email superano entrambe il controllo
-    /// applicativo: l'indice univoco ferma la seconda, che riceve lo stesso errore di dominio (409).
-    /// </summary>
+    //Due registrazioni (o cambi email) simultanei con la stessa email superano entrambe il controllo applicativo: l'indice univoco ferma la seconda, che riceve lo stesso errore di dominio (409).
     protected override Exception? TranslateSaveException(DbUpdateException exception) =>
         exception.InnerException is PostgresException
         {

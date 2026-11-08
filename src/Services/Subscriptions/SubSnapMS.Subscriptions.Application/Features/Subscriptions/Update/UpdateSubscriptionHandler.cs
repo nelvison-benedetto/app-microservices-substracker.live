@@ -6,20 +6,17 @@ using SubSnapMS.Subscriptions.Core.Subscriptions.Exceptions;
 
 namespace SubSnapMS.Subscriptions.Application.Features.Subscriptions.Update;
 
-/// <summary>
-/// Modifica l'abbonamento. Se nessun campo cambia, non succede nulla (niente storico, niente evento).
-/// Version: controllata dal dominio (ExpectedVersion → 409) e dal database (concurrency token → 409).
-/// </summary>
+//Modifica l'abbonamento. Se nessun campo cambia, non succede nulla (niente storico, niente evento).
+//Version: controllata dal dominio (ExpectedVersion → 409) e dal database (concurrency token → 409).
 internal sealed class UpdateSubscriptionHandler(
     ISubscriptionRepository repository,
     TimeProvider timeProvider) : ICommandHandler<UpdateSubscriptionCommand, SubscriptionResult>
 {
     public async Task<SubscriptionResult> Handle(UpdateSubscriptionCommand command, CancellationToken cancellationToken)
     {
-        var subscription = await repository.GetByIdAsync(command.SubscriptionId, cancellationToken)
-                           ?? throw new SubscriptionNotFoundException();
+        var subscription = await repository.GetByIdAsync(command.SubscriptionId, cancellationToken) ?? throw new SubscriptionNotFoundException();
 
-        // Di un altro utente → 404, come se non esistesse
+        //Di un altro utente → 404, come se non esistesse
         subscription.EnsureOwnedBy(command.UserId);
 
         var details = SubscriptionDetails.Create(

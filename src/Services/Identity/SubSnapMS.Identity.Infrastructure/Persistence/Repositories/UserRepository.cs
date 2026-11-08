@@ -4,10 +4,7 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Infrastructure.Persistence.Repositories;
 
-/// <summary>
-/// Carica sempre l'aggregate completo (utente + refresh token) con due query separate (AsSplitQuery):
-/// niente join che moltiplica le righe. I token sono pochi grazie alla pulizia dei token scaduti.
-/// </summary>
+//Carica sempre l'aggregate completo (utente + refresh token) con due query separate (AsSplitQuery): niente join che moltiplica le righe. I token sono pochi grazie alla pulizia dei token scaduti.
 internal sealed class UserRepository(IdentityDbContext dbContext) : IUserRepository
 {
     public Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken) =>

@@ -5,14 +5,12 @@ using SubSnapMS.Subscriptions.Core.Common;
 
 namespace SubSnapMS.Subscriptions.Application.Features.Subscriptions.Create;
 
-/// <param name="Currency">ISO 4217; null → valuta di default (EUR).</param>
-/// <param name="BillingCycle">Codice: weekly | monthly | quarterly | biannual | yearly.</param>
 public sealed record CreateSubscriptionCommand(
     UserId UserId,
     string Name,
     string? Category,
     decimal Amount,
-    string? Currency,
-    string BillingCycle,
+    string? Currency,  //ISO 4217 e.g.EUR, se null → valuta di default (EUR)
+    string BillingCycle,  //weekly | monthly | quarterly | biannual | yearly
     DateOnly StartDate,
     DateOnly? EndDate) : ICommand<SubscriptionResult>, IInvalidatesUserSubscriptions;

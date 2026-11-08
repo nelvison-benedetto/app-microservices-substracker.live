@@ -1,6 +1,6 @@
 namespace SubSnapMS.Subscriptions.Application.Common.Results;
 
-/// <summary>Abbonamento + storico, dal più recente.</summary>
+//Abbonamento + storico, dal più recente
 public sealed record SubscriptionDetailResult(
     SubscriptionResult Subscription,
     IReadOnlyList<SubscriptionHistoryEntryResult> History);

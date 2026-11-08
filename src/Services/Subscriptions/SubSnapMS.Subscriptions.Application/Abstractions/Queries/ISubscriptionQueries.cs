@@ -4,12 +4,12 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.Application.Abstractions.Queries;
 
-/// <summary>Lato lettura (CQRS): AsNoTracking, risultati già nel formato dei DTO.</summary>
+//Lato lettura (CQRS): AsNoTracking, risultati già nel formato dei DTO
 public interface ISubscriptionQueries
 {
-    /// <summary>Abbonamenti dell'utente, dal più recente.</summary>
+    //Abbonamenti dell'utente, dal più recente
     Task<IReadOnlyList<SubscriptionResult>> GetUserSubscriptionsAsync(UserId userId, CancellationToken cancellationToken);
 
-    /// <summary>Dettaglio + storico (dal più recente). Null se non esiste O non appartiene all'utente.</summary>
+    //Dettaglio + storico (dal più recente). Null se non esiste O non appartiene all'utente
     Task<SubscriptionDetailResult?> GetDetailAsync(UserId userId, SubscriptionId subscriptionId, CancellationToken cancellationToken);
 }

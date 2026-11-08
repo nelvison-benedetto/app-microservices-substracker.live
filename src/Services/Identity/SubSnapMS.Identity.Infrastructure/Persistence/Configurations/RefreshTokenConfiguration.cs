@@ -8,7 +8,7 @@ namespace SubSnapMS.Identity.Infrastructure.Persistence.Configurations;
 
 internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 {
-    /// <summary>FK "shadow": il dominio non ha RefreshToken.UserId (si accede sempre tramite User).</summary>
+    //FK "shadow": il dominio non ha RefreshToken.UserId (si accede sempre tramite User)
     public const string UserIdProperty = "UserId";
 
     public void Configure(EntityTypeBuilder<RefreshToken> builder)

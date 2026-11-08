@@ -6,11 +6,8 @@ using SubSnapMS.Subscriptions.Core.Common;
 
 namespace SubSnapMS.Subscriptions.Application.Common.Caching;
 
-/// <summary>
-/// Cache della lista abbonamenti per utente. HybridCache: memoria (L1) + Redis (L2), con protezione
-/// dallo "stampede" (richieste simultanee per la stessa chiave → una sola query al database).
-/// Chiavi con prefisso "subscriptions:": Redis è condiviso, ogni servizio usa solo le proprie chiavi.
-/// </summary>
+//Cache della lista abbonamenti per utente. HybridCache: memoria (L1) + Redis (L2), con protezione dallo "stampede" (richieste simultanee per la stessa chiave → una sola query al database).
+//Chiavi con prefisso "subscriptions:": Redis è condiviso, ogni servizio usa solo le proprie chiavi.
 public sealed class UserSubscriptionsCache(HybridCache cache, IOptions<SubscriptionCachingOptions> options)
 {
     public ValueTask<IReadOnlyList<SubscriptionResult>> GetOrLoadAsync(
@@ -37,7 +34,7 @@ public sealed class UserSubscriptionsCache(HybridCache cache, IOptions<Subscript
             : new HybridCacheEntryOptions
             {
                 Expiration = settings.UserSubscriptionsExpiration,
-                Flags = HybridCacheEntryFlags.DisableLocalCache   // solo Redis: coerente tra repliche
+                Flags = HybridCacheEntryFlags.DisableLocalCache   //solo Redis: coerente tra repliche
             };
     }
 }

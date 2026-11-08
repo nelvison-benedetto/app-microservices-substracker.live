@@ -2,7 +2,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.Application.Common.Results;
 
-/// <summary>Un abbonamento in uscita dall'Application. BillingCycle come codice neutro ("monthly"...).</summary>
+//Un abbonamento in uscita dall'Application. BillingCycle come codice neutro ("monthly"...)
 public sealed record SubscriptionResult(
     Guid Id,
     string Name,

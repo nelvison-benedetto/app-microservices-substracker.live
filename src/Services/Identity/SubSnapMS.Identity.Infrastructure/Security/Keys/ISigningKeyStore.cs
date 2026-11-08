@@ -2,15 +2,15 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace SubSnapMS.Identity.Infrastructure.Security.Keys;
 
-/// <summary>Chiavi RSA di Identity: una attiva per firmare, tutte valide per verificare (rotazione).</summary>
+//Chiavi RSA di Identity: una attiva per firmare, tutte valide per verificare (rotazione)
 public interface ISigningKeyStore
 {
-    /// <summary>Credenziali della chiave attiva (firma dei nuovi token).</summary>
+    //Credenziali della chiave attiva (firma dei nuovi token)
     SigningCredentials GetSigningCredentials();
 
-    /// <summary>Chiavi pubbliche di TUTTE le chiavi configurate (validazione locale in Identity).</summary>
+    //Chiavi pubbliche di TUTTE le chiavi configurate (validazione locale in Identity)
     IReadOnlyList<SecurityKey> GetValidationKeys();
 
-    /// <summary>Parametri pubblici per il JWKS (/.well-known/jwks.json).</summary>
+    //Parametri pubblici per il JWKS (/.well-known/jwks.json)
     IReadOnlyList<PublicSigningKey> GetPublicKeys();
 }

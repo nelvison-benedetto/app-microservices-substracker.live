@@ -4,7 +4,7 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Infrastructure.Persistence.Converters;
 
-/// <summary>Value Object ↔ tipo primitivo del database. Il dominio non sa nulla di come viene salvato.</summary>
+//Value Object ↔ tipo primitivo del database. Il dominio non sa nulla di come viene salvato
 internal static class IdentityValueConverters
 {
     public static readonly ValueConverter<UserId, Guid> UserIdConverter =

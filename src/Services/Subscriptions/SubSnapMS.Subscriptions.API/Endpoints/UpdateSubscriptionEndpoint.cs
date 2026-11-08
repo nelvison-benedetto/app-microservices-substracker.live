@@ -10,10 +10,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.API.Endpoints;
 
-/// <param name="Version">
-/// Opzionale: la version letta dal client. Se nel frattempo l'abbonamento è stato modificato
-/// (version diversa) la richiesta fallisce con 409 invece di sovrascrivere le modifiche altrui.
-/// </param>
+//Opzionale: la version letta dal client. Se nel frattempo l'abbonamento è stato modificato (version diversa) la richiesta fallisce con 409 invece di sovrascrivere le modifiche altrui.
 public sealed record UpdateSubscriptionRequest(
     string Name,
     string? Category,

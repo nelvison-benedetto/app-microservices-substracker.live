@@ -9,7 +9,7 @@ using SubSnapMS.Subscriptions.Core.Common;
 
 namespace SubSnapMS.Subscriptions.API.Endpoints;
 
-/// <summary>Tutti gli abbonamenti dell'utente autenticato, dal più recente. Servito dalla cache se presente.</summary>
+//Tutti gli abbonamenti dell'utente autenticato, dal più recente. Servito dalla cache se presente
 internal sealed class GetUserSubscriptionsEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder routes) =>

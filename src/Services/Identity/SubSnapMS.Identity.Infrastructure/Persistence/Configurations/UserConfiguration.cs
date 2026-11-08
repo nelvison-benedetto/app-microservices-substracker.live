@@ -46,11 +46,11 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.LastLoginAtUtc).HasColumnName("last_login_at");
         builder.Property(u => u.DeletionRequestedAtUtc).HasColumnName("deletion_requested_at");
 
-        // Optimistic concurrency: xmin è una colonna di SISTEMA di Postgres, aggiornata a ogni modifica.
-        // Nessuna colonna da creare o gestire; un salvataggio concorrente → ConcurrencyConflictException (409).
+        //Optimistic concurrency: xmin è una colonna di SISTEMA di Postgres, aggiornata a ogni modifica.
+        //Nessuna colonna da creare o gestire; un salvataggio concorrente → ConcurrencyConflictException (409).
         builder.Property<uint>("Version").IsRowVersion();
 
-        // Sessioni: figli dell'aggregate, eliminati con l'utente e quando escono dalla collezione (orphan delete)
+        //Sessioni: figli dell'aggregate, eliminati con l'utente e quando escono dalla collezione (orphan delete)
         builder.HasMany(u => u.RefreshTokens)
             .WithOne()
             .HasForeignKey(RefreshTokenConfiguration.UserIdProperty)

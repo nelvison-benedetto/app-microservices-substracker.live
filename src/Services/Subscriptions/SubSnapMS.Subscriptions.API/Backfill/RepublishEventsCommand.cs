@@ -6,10 +6,7 @@ using SubSnapMS.Subscriptions.Infrastructure.Persistence;
 
 namespace SubSnapMS.Subscriptions.API.Backfill;
 
-/// <summary>
-/// "--republish-events": accoda nell'Outbox un SubscriptionCreated per ogni abbonamento esistente
-/// (stato e Version attuali) ed esce. Gli eventi partono al successivo avvio normale del servizio.
-/// </summary>
+//"--republish-events": accoda nell'Outbox un SubscriptionCreated per ogni abbonamento esistente (stato e Version attuali) ed esce. Gli eventi partono al successivo avvio normale del servizio.
 public static class RepublishEventsCommand
 {
     public const string Argument = "--republish-events";
@@ -26,7 +23,7 @@ public static class RepublishEventsCommand
 
         while (true)
         {
-            // Scope nuovo per batch: DbContext leggero, Outbox svuotata a ogni SaveChanges
+            //Scope nuovo per batch: DbContext leggero, Outbox svuotata a ogni SaveChanges
             await using var scope = app.Services.CreateAsyncScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<SubscriptionsDbContext>();
             var outbox = scope.ServiceProvider.GetRequiredService<IIntegrationEventOutbox>();

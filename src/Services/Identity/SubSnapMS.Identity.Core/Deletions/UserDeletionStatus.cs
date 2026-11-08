@@ -2,9 +2,9 @@ namespace SubSnapMS.Identity.Core.Deletions;
 
 public enum UserDeletionStatus
 {
-    /// <summary>In attesa delle conferme dei servizi.</summary>
+    //In attesa delle conferme dei servizi
     InProgress = 1,
 
-    /// <summary>Tutti i servizi hanno confermato e l'utente è stato rimosso.</summary>
+    //Tutti i servizi hanno confermato e l'utente è stato rimosso
     Completed = 2
 }

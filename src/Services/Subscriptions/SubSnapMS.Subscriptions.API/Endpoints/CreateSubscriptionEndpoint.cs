@@ -9,8 +9,6 @@ using SubSnapMS.Subscriptions.Core.Common;
 
 namespace SubSnapMS.Subscriptions.API.Endpoints;
 
-/// <param name="Currency">Codice ISO 4217; se assente: "EUR".</param>
-/// <param name="BillingCycle">weekly | monthly | quarterly | biannual | yearly</param>
 public sealed record CreateSubscriptionRequest(
     string Name,
     string? Category,

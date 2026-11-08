@@ -5,10 +5,7 @@ using SubSnapMS.Identity.Infrastructure.Persistence.Converters;
 
 namespace SubSnapMS.Identity.Infrastructure.Persistence.Configurations;
 
-/// <summary>
-/// Stato della saga di cancellazione. Resta dopo la rimozione dell'utente come audit:
-/// contiene solo l'id e le date, nessun dato personale.
-/// </summary>
+//Stato della saga di cancellazione. Resta dopo la rimozione dell'utente come audit: contiene solo l'id e le date, nessun dato personale.
 internal sealed class UserDeletionConfiguration : IEntityTypeConfiguration<UserDeletion>
 {
     public void Configure(EntityTypeBuilder<UserDeletion> builder)
@@ -41,7 +38,7 @@ internal sealed class UserDeletionConfiguration : IEntityTypeConfiguration<UserD
             .HasField("_confirmedServices")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        // Il monitor cerca le saghe in corso più vecchie di una soglia
+        //Il monitor cerca le saghe in corso più vecchie di una soglia
         builder.HasIndex(d => new { d.Status, d.RequestedAtUtc })
             .HasDatabaseName("ix_user_deletions_status_requested_at");
 

@@ -8,11 +8,7 @@ using SubSnapMS.Identity.Infrastructure.Persistence;
 
 namespace SubSnapMS.Identity.Infrastructure.Background;
 
-/// <summary>
-/// Segnala le saghe di cancellazione bloccate (un servizio non ha confermato entro la soglia):
-/// log Warning con i servizi mancanti → Sentry/alert. Di solito il messaggio è nella DLQ di quel servizio:
-/// si corregge il problema e lo si riprocessa. Non forza la cancellazione: i dati di quel servizio esistono ancora.
-/// </summary>
+//Segnala le saghe di cancellazione bloccate (un servizio non ha confermato entro la soglia): log Warning con i servizi mancanti → Sentry/alert. Di solito il messaggio è nella DLQ di quel servizio: si corregge il problema e lo si riprocessa. Non forza la cancellazione: i dati di quel servizio esistono ancora.
 internal sealed class UserDeletionMonitor(
     IServiceScopeFactory scopeFactory,
     IOptions<UserDeletionMonitorOptions> options,
@@ -42,7 +38,7 @@ internal sealed class UserDeletionMonitor(
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {
-            // shutdown normale
+            //shutdown normale
         }
     }
 

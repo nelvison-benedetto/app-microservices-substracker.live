@@ -5,10 +5,8 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.Application.Features.Subscriptions.Create;
 
-/// <summary>
-/// Crea l'abbonamento (con la prima voce di storico "created").
-/// Al salvataggio: SubscriptionCreatedDomainEvent → SubscriptionCreated nell'Outbox. Dopo il commit: cache invalidata.
-/// </summary>
+//Crea l'abbonamento (con la prima voce di storico "created").
+//Al salvataggio: SubscriptionCreatedDomainEvent → SubscriptionCreated nell'Outbox. Dopo il commit: cache invalidata.
 internal sealed class CreateSubscriptionHandler(
     ISubscriptionRepository repository,
     TimeProvider timeProvider) : ICommandHandler<CreateSubscriptionCommand, SubscriptionResult>

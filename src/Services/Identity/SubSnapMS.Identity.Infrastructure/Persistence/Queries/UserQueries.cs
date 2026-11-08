@@ -6,10 +6,7 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Infrastructure.Persistence.Queries;
 
-/// <summary>
-/// Lato lettura (CQRS): proiezioni dirette in DTO, AsNoTracking, solo le colonne necessarie.
-/// Nessun refresh token caricato, nessun aggregate costruito.
-/// </summary>
+//Lato lettura (CQRS): proiezioni dirette in DTO, AsNoTracking, solo le colonne necessarie. Nessun refresh token caricato, nessun aggregate costruito.
 internal sealed class UserQueries(IdentityDbContext dbContext) : IUserQueries
 {
     public Task<UserProfileResult?> GetProfileAsync(UserId userId, CancellationToken cancellationToken) =>

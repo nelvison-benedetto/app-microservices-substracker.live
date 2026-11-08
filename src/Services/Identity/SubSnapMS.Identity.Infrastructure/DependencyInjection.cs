@@ -21,7 +21,9 @@ public static class DependencyInjection
 
     public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // ── Persistence ───────────────────────────────────────────────────────────
+
+        //Persistence
+
         var connectionString = configuration.GetConnectionString(ConnectionStringName)
             ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' is missing.");
 
@@ -37,12 +39,14 @@ public static class DependencyInjection
         services.AddScoped<IUserDeletionRepository, UserDeletionRepository>();
         services.AddScoped<IUserQueries, UserQueries>();
 
-        // ── Security ──────────────────────────────────────────────────────────────
+
+        //Security
+
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.SectionName))
             .Configure(options =>
             {
-                // Issuer e Audience: UNA sola fonte ("Auth"), usata sia per emettere sia per validare
+                //Issuer e Audience: UNA sola fonte ("Auth"), usata sia per emettere sia per validare
                 options.Issuer = configuration["Auth:Issuer"] ?? string.Empty;
                 options.Audience = configuration["Auth:Audience"] ?? string.Empty;
             })
@@ -59,7 +63,9 @@ public static class DependencyInjection
         services.AddSingleton<IRefreshTokenFactory, Sha256RefreshTokenFactory>();
         services.AddSingleton<IAccessTokenIssuer, JwtAccessTokenIssuer>();
 
-        // ── Background ────────────────────────────────────────────────────────────
+
+        //Background
+
         services.AddOptions<UserDeletionMonitorOptions>()
             .Bind(configuration.GetSection(UserDeletionMonitorOptions.SectionName));
         services.AddHostedService<UserDeletionMonitor>();

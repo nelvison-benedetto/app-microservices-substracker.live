@@ -2,7 +2,7 @@ using SubSnapMS.Subscriptions.Application.Common.Results;
 
 namespace SubSnapMS.Subscriptions.API.Endpoints.Common;
 
-/// <summary>Abbonamento + storico (dal più recente).</summary>
+//Abbonamento + storico (dal più recente)
 public sealed record SubscriptionDetailResponse(
     SubscriptionResponse Subscription,
     IReadOnlyList<SubscriptionHistoryEntryResponse> History)
@@ -12,7 +12,7 @@ public sealed record SubscriptionDetailResponse(
         result.History.Select(SubscriptionHistoryEntryResponse.From).ToList());
 }
 
-/// <summary>Una voce dello storico: "created" o "updated", con i campi cambiati.</summary>
+//Una voce dello storico: "created" o "updated", con i campi cambiati
 public sealed record SubscriptionHistoryEntryResponse(
     Guid Id,
     string Action,
@@ -26,5 +26,6 @@ public sealed record SubscriptionHistoryEntryResponse(
         result.Changes.Select(c => new SubscriptionFieldChangeResponse(c.Field, c.OldValue, c.NewValue)).ToList());
 }
 
-/// <summary>Es. { field: "amount", oldValue: "9.99", newValue: "12.99" }. Alla creazione oldValue è null.</summary>
+//e.g. { field: "amount", oldValue: "9.99", newValue: "12.99" }. Alla creazione oldValue è null
 public sealed record SubscriptionFieldChangeResponse(string Field, string? OldValue, string? NewValue);
+

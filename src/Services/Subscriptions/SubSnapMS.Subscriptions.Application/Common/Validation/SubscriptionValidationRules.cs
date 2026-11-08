@@ -3,7 +3,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.Application.Common.Validation;
 
-/// <summary>Regole comuni a creazione e modifica. Il dominio rivalida comunque (difesa in profondità).</summary>
+//Regole comuni a creazione e modifica. Il dominio rivalida comunque (difesa in profondità)
 internal static class SubscriptionValidationRules
 {
     public static IRuleBuilderOptions<T, string> ValidName<T>(this IRuleBuilder<T, string> rule) =>
@@ -25,7 +25,7 @@ internal static class SubscriptionValidationRules
             .PrecisionScale(12, 2, ignoreTrailingZeros: true).WithErrorCode("subscription.amount_precision")
                 .WithMessage("Amount can have at most 2 decimal places.");
 
-    /// <summary>Opzionale: se assente si usa la valuta di default.</summary>
+    //Opzionale: se assente si usa la valuta di default
     public static IRuleBuilderOptions<T, string?> ValidCurrency<T>(this IRuleBuilder<T, string?> rule) =>
         rule
             .Matches("^[A-Za-z]{3}$").When((_, currency) => currency is not null)
@@ -40,4 +40,5 @@ internal static class SubscriptionValidationRules
     public static IRuleBuilderOptions<T, DateOnly> ValidStartDate<T>(this IRuleBuilder<T, DateOnly> rule) =>
         rule
             .NotEqual(default(DateOnly)).WithErrorCode("subscription.start_date_required").WithMessage("Start date is required.");
+
 }

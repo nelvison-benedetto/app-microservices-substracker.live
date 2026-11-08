@@ -2,10 +2,7 @@ using SubSnapMS.Subscriptions.Application.Common.Results;
 
 namespace SubSnapMS.Subscriptions.API.Endpoints.Common;
 
-/// <summary>
-/// Un abbonamento come lo riceve il frontend. Stessi campi del monolite (id, name, amount, billingCycle,
-/// startDate, endDate, category, createdAt, updatedAt) + currency, monthlyAmount e version.
-/// </summary>
+//Un abbonamento come lo riceve il frontend. Stessi campi del old monolith SubSnap (id, name, amount, billingCycle, startDate, endDate, category, createdAt, updatedAt) + currency, monthlyAmount e version.
 public sealed record SubscriptionResponse(
     Guid Id,
     string Name,

@@ -8,10 +8,8 @@ using SubSnapMS.Identity.Infrastructure.Security.Tokens;
 
 namespace SubSnapMS.Identity.Infrastructure.Security.Keys;
 
-/// <summary>
-/// Carica le chiavi all'avvio (singleton) e fallisce subito se la configurazione è sbagliata.
-/// Produzione: chiavi da configurazione, obbligatorie. Sviluppo: se mancano, genera e salva una chiave locale.
-/// </summary>
+//Carica le chiavi all'avvio (singleton) e fallisce subito se la configurazione è sbagliata.
+//Produzione: chiavi da configurazione, obbligatorie. Sviluppo: se mancano, genera e salva una chiave locale.
 internal sealed class SigningKeyStore : ISigningKeyStore, IDisposable
 {
     private const int MinimumKeySizeInBits = 2048;
@@ -112,7 +110,7 @@ internal sealed class SigningKeyStore : ISigningKeyStore, IDisposable
             logger.LogWarning("Generated a DEVELOPMENT JWT signing key at {Path}. Never use it in production.", path);
         }
 
-        // Id stabile derivato dalla chiave pubblica: lo stesso file → lo stesso kid
+        //Id stabile derivato dalla chiave pubblica: lo stesso file → lo stesso kid
         var thumbprint = Convert.ToHexStringLower(SHA256.HashData(rsa.ExportSubjectPublicKeyInfo()))[..12];
         return new LoadedKey($"dev-{thumbprint}", rsa, Active: true);
     }

@@ -5,12 +5,9 @@ using SubSnapMS.Identity.Application.Abstractions.Security;
 
 namespace SubSnapMS.Identity.Infrastructure.Security.Tokens;
 
-/// <summary>
-/// Refresh token: 64 byte casuali (512 bit) in base64url (~86 caratteri).
-/// Nel database solo SHA-256 in esadecimale: deterministico → lookup per uguaglianza con indice univoco.
-/// (Il monolite usava PasswordHasher: salt casuale → impossibile cercare per hash.)
-/// SHA-256 senza salt va bene qui: il token ha 512 bit di entropia, non è indovinabile come una password.
-/// </summary>
+//Refresh token: 64 byte casuali (512 bit) in base64url (~86 caratteri).
+//Nel database solo SHA-256 in esadecimale: deterministico → lookup per uguaglianza con indice univoco.
+//(l'old monolith SubSnap usava PasswordHasher: salt casuale → impossibile cercare per hash.) SHA-256 senza salt va bene qui: il token ha 512 bit di entropia, non è indovinabile come una password.
 internal sealed class Sha256RefreshTokenFactory : IRefreshTokenFactory
 {
     private const int TokenSizeInBytes = 64;

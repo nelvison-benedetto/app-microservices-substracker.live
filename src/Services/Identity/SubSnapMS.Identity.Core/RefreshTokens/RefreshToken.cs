@@ -2,11 +2,9 @@ using SubSnapMS.BuildingBlocks.Domain;
 
 namespace SubSnapMS.Identity.Core.RefreshTokens;
 
-/// <summary>
-/// Figlio dell'aggregate User: si crea e si revoca SOLO tramite User.
-/// Contiene l'hash SHA-256 del token, mai il token in chiaro (che arriva solo al client).
-/// FamilyId raggruppa tutti i token nati dallo stesso login (una "sessione").
-/// </summary>
+//Figlio dell'aggregate User: si crea e si revoca SOLO tramite User.
+//Contiene l'hash SHA-256 del token, mai il token in chiaro (che arriva solo al client).
+//FamilyId raggruppa tutti i token nati dallo stesso login (una "sessione").
 public sealed class RefreshToken : Entity<RefreshTokenId>
 {
     public const int TokenHashMaxLength = 128;
@@ -44,7 +42,7 @@ public sealed class RefreshToken : Entity<RefreshTokenId>
         };
     }
 
-    /// <summary>Idempotente: un token già revocato mantiene la prima revoca (motivo e data originali).</summary>
+    //>Idempotente: un token già revocato mantiene la prima revoca (motivo e data originali)
     internal void Revoke(DateTimeOffset now, RefreshTokenRevocationReason reason, RefreshTokenId? replacedBy = null)
     {
         if (IsRevoked)
@@ -54,4 +52,5 @@ public sealed class RefreshToken : Entity<RefreshTokenId>
         RevocationReason = reason;
         ReplacedByTokenId = replacedBy;
     }
+
 }

@@ -5,7 +5,7 @@ using SubSnapMS.Subscriptions.Application.Common.Results;
 
 namespace SubSnapMS.Subscriptions.Application.Features.Subscriptions.GetUserSubscriptions;
 
-/// <summary>Cache-aside: dalla cache se presente, altrimenti dal database (e poi in cache).</summary>
+//🔥Cache-aside: dalla cache se presente, altrimenti dal db (e poi in cache)
 internal sealed class GetUserSubscriptionsHandler(
     ISubscriptionQueries queries,
     UserSubscriptionsCache cache) : IQueryHandler<GetUserSubscriptionsQuery, IReadOnlyList<SubscriptionResult>>

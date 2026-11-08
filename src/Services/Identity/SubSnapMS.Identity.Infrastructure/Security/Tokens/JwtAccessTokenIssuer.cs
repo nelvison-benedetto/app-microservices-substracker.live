@@ -7,10 +7,8 @@ using SubSnapMS.Identity.Infrastructure.Security.Keys;
 
 namespace SubSnapMS.Identity.Infrastructure.Security.Tokens;
 
-/// <summary>
-/// Access token JWT firmato RS256 con la chiave attiva (header "kid" → i validatori scelgono la chiave giusta dal JWKS).
-/// Claims minimi: sub (userId), email, jti. Niente dati sensibili: un JWT è leggibile da chiunque lo abbia.
-/// </summary>
+//Access token JWT firmato RS256 con la chiave attiva (header "kid" → i validatori scelgono la chiave giusta dal JWKS).
+//Claims minimi: sub (userId), email, jti. Niente dati sensibili: un JWT è leggibile da chiunque lo abbia.
 internal sealed class JwtAccessTokenIssuer(ISigningKeyStore signingKeys, IOptions<JwtOptions> options) : IAccessTokenIssuer
 {
     private readonly JsonWebTokenHandler _handler = new() { SetDefaultTimesOnTokenCreation = false };

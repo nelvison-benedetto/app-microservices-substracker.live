@@ -6,7 +6,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions.Events;
 
 namespace SubSnapMS.Subscriptions.Application.DomainEventHandlers;
 
-/// <summary>Stato COMPLETO dopo la modifica: i consumer fanno un upsert e scartano le version vecchie.</summary>
+//Stato COMPLETO dopo la modifica: i consumer fanno un upsert e scartano le version vecchie
 internal sealed class SubscriptionUpdatedDomainEventHandler(IIntegrationEventOutbox outbox)
     : IDomainEventHandler<SubscriptionUpdatedDomainEvent>
 {

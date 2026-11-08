@@ -5,11 +5,8 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Core.Deletions;
 
-/// <summary>
-/// Stato della saga di cancellazione di UN utente (Id = UserId). Aggregate separato da User,
-/// perché sopravvive alla rimozione dell'utente come traccia di audit (senza dati personali).
-/// ExpectedServices: i servizi che possiedono dati dell'utente e devono confermare con UserDataDeleted.
-/// </summary>
+//Stato della saga di cancellazione di UN utente (Id = UserId). Aggregate separato da User, perché sopravvive alla rimozione dell'utente come traccia di audit (senza dati personali).
+//ExpectedServices: i servizi che possiedono dati dell'utente e devono confermare con UserDataDeleted.
 public sealed class UserDeletion : AggregateRoot<UserId>
 {
     private readonly List<string> _expectedServices = [];
@@ -48,10 +45,7 @@ public sealed class UserDeletion : AggregateRoot<UserId>
         return deletion;
     }
 
-    /// <summary>
-    /// Registra la conferma di un servizio. Idempotente: un duplicato (at-least-once) o un servizio
-    /// non atteso restituiscono false senza errori.
-    /// </summary>
+    //Registra la conferma di un servizio. Idempotente: un duplicato (at-least-once) o un servizio non atteso restituiscono false senza errori.
     public bool Confirm(string service)
     {
         if (Status == UserDeletionStatus.Completed)
@@ -65,7 +59,7 @@ public sealed class UserDeletion : AggregateRoot<UserId>
         return true;
     }
 
-    /// <summary>Chiude la saga. Da chiamare dopo aver rimosso l'utente, nella stessa transazione.</summary>
+    //Chiude la saga. Da chiamare dopo aver rimosso l'utente, nella stessa transazione
     public void Complete(DateTimeOffset now)
     {
         if (Status == UserDeletionStatus.Completed)

@@ -10,7 +10,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.API.Endpoints;
 
-/// <summary>Dettaglio con storico. Un abbonamento di un altro utente risponde 404, come uno inesistente.</summary>
+//Dettaglio con storico. Un abbonamento di un altro utente risponde 404, come uno inesistente
 internal sealed class GetSubscriptionDetailEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder routes) =>

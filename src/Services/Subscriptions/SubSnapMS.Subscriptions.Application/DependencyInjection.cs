@@ -17,11 +17,10 @@ public static class DependencyInjection
             .Validate(o => o.LocalCacheExpiration >= TimeSpan.Zero, "Subscriptions:Caching:LocalCacheExpiration cannot be negative.")
             .ValidateOnStart();
 
-        // Registrato PRIMA dei behaviors comuni → è il più esterno della pipeline:
-        // quando next() ritorna il TransactionBehavior ha già fatto commit, quindi l'invalidazione avviene dopo il salvataggio.
+        //Registrato PRIMA dei behaviors comuni → è il più esterno della pipeline: quando next() ritorna il TransactionBehavior ha già fatto commit, quindi l'invalidazione avviene dopo il salvataggio.
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UserSubscriptionsCacheInvalidationBehavior<,>));
 
-        // MediatR (handler + Tracing → Validation → Transaction), validator, domain event handler, TimeProvider
+        //MediatR (handler + Tracing → Validation → Transaction), validator, domain event handler, TimeProvider
         services.AddApplicationBuildingBlocks(typeof(DependencyInjection).Assembly, configuration["MediatR:LicenseKey"]);
 
         services.AddScoped<UserSubscriptionsCache>();

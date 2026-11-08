@@ -5,7 +5,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions.Exceptions;
 
 namespace SubSnapMS.Subscriptions.Application.Features.Subscriptions.GetDetail;
 
-/// <summary>Il filtro per utente è nella query: un abbonamento altrui è indistinguibile da uno inesistente (404).</summary>
+//Il filtro per utente è nella query: un abbonamento altrui è indistinguibile da uno inesistente (404)
 internal sealed class GetSubscriptionDetailHandler(ISubscriptionQueries queries)
     : IQueryHandler<GetSubscriptionDetailQuery, SubscriptionDetailResult>
 {

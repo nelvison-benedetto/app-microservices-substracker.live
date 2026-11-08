@@ -4,16 +4,13 @@ using SubSnapMS.Identity.Application.Abstractions.Security;
 
 namespace SubSnapMS.Identity.Infrastructure.Security.Passwords;
 
-/// <summary>
-/// PasswordHasher di ASP.NET Core (formato V3: PBKDF2-HMAC-SHA512, salt casuale), lo stesso del monolite.
-/// Iterazioni al valore raccomandato da OWASP: gli hash con meno iterazioni vengono verificati
-/// e segnalati con SuccessRehashNeeded → ricalcolati automaticamente al login.
-/// </summary>
+//PasswordHasher di ASP.NET Core (formato V3: PBKDF2-HMAC-SHA512, salt casuale), lo stesso del monolite.
+//Iterazioni al valore raccomandato da OWASP: gli hash con meno iterazioni vengono verificati e segnalati con SuccessRehashNeeded → ricalcolati automaticamente al login.
 internal sealed class AspNetPasswordHasher : IPasswordHasher
 {
     private const int IterationCount = 210_000;
 
-    // PasswordHasher<TUser> non usa l'utente: serve solo un oggetto qualsiasi
+    //PasswordHasher<TUser> non usa l'utente: serve solo un oggetto qualsiasi
     private static readonly object Subject = new();
 
     private readonly PasswordHasher<object> _hasher = new(Options.Create(new PasswordHasherOptions
@@ -22,7 +19,7 @@ internal sealed class AspNetPasswordHasher : IPasswordHasher
         IterationCount = IterationCount
     }));
 
-    // Hash fittizio con lo stesso costo di uno reale: usato quando l'email non esiste (timing attack)
+    //Hash fittizio con lo stesso costo di uno reale: usato quando l'email non esiste (timing attack)
     private readonly Lazy<string> _dummyHash;
 
     public AspNetPasswordHasher()
@@ -52,7 +49,7 @@ internal sealed class AspNetPasswordHasher : IPasswordHasher
         }
         catch (FormatException)
         {
-            // Hash corrotto o in un formato sconosciuto: trattato come password errata, mai come errore 500
+            //Hash corrotto o in un formato sconosciuto: trattato come password errata, mai come errore 500
             return PasswordVerification.Failed;
         }
     }
