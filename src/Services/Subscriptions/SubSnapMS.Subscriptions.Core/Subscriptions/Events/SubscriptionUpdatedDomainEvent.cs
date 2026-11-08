@@ -3,7 +3,7 @@ using SubSnapMS.Subscriptions.Core.Common;
 
 namespace SubSnapMS.Subscriptions.Core.Subscriptions.Events;
 
-/// <summary>Contiene lo stato COMPLETO dopo la modifica e la nuova Version.</summary>
+//Contiene lo stato COMPLETO dopo la modifica e la nuova Version
 public sealed record SubscriptionUpdatedDomainEvent(
     SubscriptionId SubscriptionId,
     UserId UserId,

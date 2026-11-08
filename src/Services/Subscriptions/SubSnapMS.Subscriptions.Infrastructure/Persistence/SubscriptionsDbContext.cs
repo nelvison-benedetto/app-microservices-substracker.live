@@ -6,15 +6,12 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.Infrastructure.Persistence;
 
-/// <summary>
-/// Database di Subscriptions (subscriptions_db). È anche l'IUnitOfWork della richiesta:
-/// a ogni SaveChangesAsync esegue i domain event (→ Outbox), salva in una transazione, traduce gli errori
-/// (version cambiata nel frattempo → ConcurrencyConflictException → 409).
-/// </summary>
+//Database di Subscriptions (subscriptions_db). È anche l'IUnitOfWork della richiesta: a ogni SaveChangesAsync esegue i domain event (→ Outbox), salva in una transazione, traduce gli errori (version cambiata nel frattempo → ConcurrencyConflictException → 409).
 public sealed class SubscriptionsDbContext(
     DbContextOptions<SubscriptionsDbContext> options,
     IDomainEventDispatcher domainEventDispatcher) : ServiceDbContext(options, domainEventDispatcher)
 {
+
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
 
     public DbSet<SubscriptionHistoryEntry> SubscriptionHistory => Set<SubscriptionHistoryEntry>();
@@ -23,7 +20,8 @@ public sealed class SubscriptionsDbContext(
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SubscriptionsDbContext).Assembly);
 
-        // Tabelle outbox_messages e inbox_messages (BuildingBlocks.Messaging)
+        //Tabelle outbox_messages e inbox_messages (BuildingBlocks.Messaging)
         modelBuilder.ApplyOutboxConfiguration().ApplyInboxConfiguration();
     }
+
 }

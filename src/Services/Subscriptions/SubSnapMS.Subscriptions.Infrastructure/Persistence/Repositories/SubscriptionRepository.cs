@@ -5,10 +5,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.Infrastructure.Persistence.Repositories;
 
-/// <summary>
-/// Carica l'aggregate SENZA storico (append-only: le voci nuove vengono inserite al salvataggio,
-/// quelle vecchie si leggono solo dal lato query).
-/// </summary>
+//Carica l'aggregate SENZA storico (append-only: le voci nuove vengono inserite al salvataggio, quelle vecchie si leggono solo dal lato query)
 internal sealed class SubscriptionRepository(SubscriptionsDbContext dbContext) : ISubscriptionRepository
 {
     public Task<Subscription?> GetByIdAsync(SubscriptionId id, CancellationToken cancellationToken) =>
@@ -16,13 +13,10 @@ internal sealed class SubscriptionRepository(SubscriptionsDbContext dbContext) :
 
     public void Add(Subscription subscription) => dbContext.Subscriptions.Add(subscription);
 
-    /// <summary>Lo storico non caricato viene eliminato dalla cascade del database.</summary>
+    //Lo storico non caricato viene eliminato dalla cascade del database
     public void Remove(Subscription subscription) => dbContext.Subscriptions.Remove(subscription);
 
-    /// <summary>
-    /// Una sola DELETE, eseguita subito (non aspetta SaveChanges): nella saga gira dentro la transazione
-    /// esplicita dell'Inbox, quindi resta atomica con la conferma nell'Outbox.
-    /// </summary>
+    //una sola DELETE, eseguita subito (non aspetta SaveChanges): nella saga gira dentro la transazione esplicita dell'Inbox, quindi resta atomica con la conferma nell'Outbox.
     public Task<int> DeleteAllForUserAsync(UserId userId, CancellationToken cancellationToken) =>
         dbContext.Subscriptions
             .Where(s => s.UserId == userId)

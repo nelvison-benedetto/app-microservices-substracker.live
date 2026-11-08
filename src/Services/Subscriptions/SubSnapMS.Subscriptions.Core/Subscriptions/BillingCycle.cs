@@ -11,10 +11,7 @@ public enum BillingCycle
     Yearly = 5
 }
 
-/// <summary>
-/// Conversione enum ↔ codice neutro. I codici coincidono con Contracts.BillingCycles e con l'API;
-/// il frontend li traduce con next-intl. Il parsing ignora maiuscole/minuscole ("Monthly" = "monthly").
-/// </summary>
+//Conversione enum ↔ codice neutro. I codici coincidono con Contracts.BillingCycles e con l'API; il frontend li traduce con next-intl. Il parsing ignora maiuscole/minuscole ("Monthly" = "monthly")
 public static class BillingCycleExtensions
 {
     private static readonly Dictionary<string, BillingCycle> ByCode = new(StringComparer.OrdinalIgnoreCase)
@@ -47,4 +44,5 @@ public static class BillingCycleExtensions
             : throw new DomainException(
                 "billing_cycle.invalid",
                 $"Billing cycle must be one of: {string.Join(", ", AllCodes)}.");
+
 }

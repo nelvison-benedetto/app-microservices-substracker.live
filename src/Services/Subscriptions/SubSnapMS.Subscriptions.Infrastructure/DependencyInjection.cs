@@ -17,14 +17,14 @@ public static class DependencyInjection
 
     public static IServiceCollection AddSubscriptionsInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // ── Persistence ───────────────────────────────────────────────────────────
+        //Persistence
         var connectionString = configuration.GetConnectionString(ConnectionStringName)
             ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' is missing.");
 
         services.AddServiceDbContext<SubscriptionsDbContext>((_, options) =>
             options.UseNpgsql(connectionString, npgsql =>
             {
-                // Errori transitori (riavvio di Postgres, rete): ritenta. Outbox e Inbox usano già la execution strategy.
+                //errori transitori (riavvio di Postgres, rete): ritenta. Outbox e Inbox usano già la execution strategy
                 npgsql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorCodesToAdd: null);
                 npgsql.MigrationsHistoryTable("__ef_migrations_history");
             }));
@@ -32,8 +32,8 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<ISubscriptionQueries, SubscriptionQueries>();
 
-        // ── Caching: HybridCache (memoria + Redis) ────────────────────────────────
-        services.AddSubscriptionsCaching(configuration);
+        //Caching: HybridCache (memoria + Redis)
+        services.AddSubscriptionsCaching(configuration);  
 
         return services;
     }

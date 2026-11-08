@@ -3,10 +3,8 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Subscriptions.Core.Subscriptions;
 
-/// <summary>
-/// Tutto ciò che l'utente può modificare di un abbonamento, validato e normalizzato.
-/// Immutabile: una modifica crea un nuovo SubscriptionDetails, confrontato con il precedente.
-/// </summary>
+//Tutto ciò che l'utente può modificare di un abbonamento, validato e normalizzato.
+//Immutabile: una modifica crea un nuovo SubscriptionDetails, confrontato con il precedente.
 public sealed record SubscriptionDetails
 {
     public const int NameMaxLength = 100;

@@ -15,15 +15,15 @@ internal sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subsc
         builder.Property(s => s.Id)
             .HasColumnName("id")
             .HasConversion(SubscriptionsValueConverters.SubscriptionIdConverter)
-            .ValueGeneratedNever();   // generato nel dominio
+            .ValueGeneratedNever();   //xk l'id lo crea il dominio e.g.SubscriptionId.New() ! il db non deve generarlo.
 
         builder.Property(s => s.UserId)
             .HasColumnName("user_id")
             .HasConversion(SubscriptionsValueConverters.UserIdConverter)
             .IsRequired();
 
-        // Version gestita dal dominio (+1 a ogni modifica) e usata come concurrency token:
-        // UPDATE ... WHERE id = @id AND version = @versioneLetta → 0 righe = modificato da altri → 409
+        //Version gestita dal dominio (+1 a ogni modifica) e usata come concurrency token:
+        //🔥🔥UPDATE ... WHERE id = @id AND version = @versioneLetta se return 0 rows ALLORA QUALCUNO HA MODIFICATO LA ROW NEL FRATTEMPO! quindi error 409 e il client riprova
         builder.Property(s => s.Version)
             .HasColumnName("version")
             .IsConcurrencyToken()
@@ -32,12 +32,12 @@ internal sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subsc
         builder.Property(s => s.CreatedAtUtc).HasColumnName("created_at").IsRequired();
         builder.Property(s => s.UpdatedAtUtc).HasColumnName("updated_at").IsRequired();
 
-        // Valore derivato, calcolato dal dominio: non si salva
-        builder.Ignore(s => s.MonthlyCost);
+        builder.Ignore(s => s.MonthlyCost);  //questo viene calcolato dal dominio, EF la esclude proprio no column nella tab
 
-        // Value Object annidati → colonne della stessa tabella (complex types: niente join)
+        //Value Object annidati → colonne della stessa tabella (complex types: niente join)
         builder.ComplexProperty(s => s.Details, details =>
-        {
+        {  //nel dominio Subscription contiene un Value Object SubscriptionDetails, che ha sua volta contiene altri Value Object 
+
             details.Property(d => d.Name)
                 .HasColumnName("name")
                 .HasMaxLength(SubscriptionDetails.NameMaxLength)
@@ -73,20 +73,25 @@ internal sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subsc
             });
         });
 
-        // Lista dell'utente, già ordinata dal più recente
+
+        //Lista dell'utente, già ordinata dal più recente
         builder.HasIndex(s => new { s.UserId, s.CreatedAtUtc })
             .HasDatabaseName("ix_subscriptions_user_id_created_at")
             .IsDescending(false, true);
 
-        // Storico: figlio append-only. Mai caricato con l'aggregate; le voci nuove vengono inserite.
-        // Cascade NEL DATABASE: cancellare un abbonamento (anche con ExecuteDelete) elimina lo storico.
+        //Storico: figlio append-only. Mai caricato con l'aggregate; le voci nuove vengono inserite.
+        //Cascade NEL DATABASE: cancellare un abbonamento (anche con ExecuteDelete) elimina lo storico.
+
+        //relazione 1:N
         builder.HasMany(s => s.HistoryEntries)
             .WithOne()
-            .HasForeignKey(SubscriptionHistoryEntryConfiguration.SubscriptionIdProperty)
+            .HasForeignKey(SubscriptionHistoryEntryConfiguration.SubscriptionIdProperty)  //🔥🔥SHADOW KEY
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Navigation(s => s.HistoryEntries)
-            .HasField("_historyEntries")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Navigation(s => s.HistoryEntries)  //
+            .HasField("_historyEntries")  //dice a EF quale campo privato contiene davvero i dati
+            .UsePropertyAccessMode(PropertyAccessMode.Field);  //EF legge e scrive direttamente il campo
+        //EF legge e scrivo il campo privato _changes, mente il resto del code vede solo una lista in sola lettura
     }
 }

@@ -7,10 +7,7 @@ using SubSnapMS.Subscriptions.Infrastructure.Persistence.Configurations;
 
 namespace SubSnapMS.Subscriptions.Infrastructure.Persistence.Queries;
 
-/// <summary>
-/// Lato lettura: AsNoTracking. Si materializza il Value Object e si mappa con SubscriptionResult.From,
-/// così il costo mensile viene calcolato dalla stessa regola del dominio (Money.ToMonthly), non duplicato in SQL.
-/// </summary>
+//Lato lettura: AsNoTracking. Si materializza il Value Object e si mappa con SubscriptionResult.From, così il costo mensile viene calcolato dalla stessa regola del dominio (Money.ToMonthly), non duplicato in SQL.
 internal sealed class SubscriptionQueries(SubscriptionsDbContext dbContext) : ISubscriptionQueries
 {
     public async Task<IReadOnlyList<SubscriptionResult>> GetUserSubscriptionsAsync(UserId userId, CancellationToken cancellationToken)
@@ -26,7 +23,8 @@ internal sealed class SubscriptionQueries(SubscriptionsDbContext dbContext) : IS
 
     public async Task<SubscriptionDetailResult?> GetDetailAsync(UserId userId, SubscriptionId subscriptionId, CancellationToken cancellationToken)
     {
-        // Filtro per id E utente: un abbonamento altrui non viene trovato (→ 404)
+        //Filtro per id & utente: un abbonamento altrui non viene trovato (→ 404)
+
         var subscription = await dbContext.Subscriptions
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == subscriptionId && s.UserId == userId, cancellationToken);
@@ -43,5 +41,6 @@ internal sealed class SubscriptionQueries(SubscriptionsDbContext dbContext) : IS
         return new SubscriptionDetailResult(
             SubscriptionResult.From(subscription),
             history.Select(SubscriptionHistoryEntryResult.From).ToList());
+
     }
 }

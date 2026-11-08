@@ -5,36 +5,31 @@ using SubSnapMS.Subscriptions.Core.Subscriptions.Exceptions;
 
 namespace SubSnapMS.Subscriptions.Core.Subscriptions;
 
-/// <summary>
-/// Aggregate root dell'abbonamento. Si referenzia all'utente solo per Id.
-/// Lo storico è append-only: l'aggregate aggiunge voci ma non carica mai quelle passate.
-/// </summary>
+//Aggregate root dell'abbonamento. Si referenzia all'utente solo per Id.
+//Lo storico è append-only: l'aggregate aggiunge voci ma non carica mai quelle passate
 public sealed class Subscription : AggregateRoot<SubscriptionId>
 {
     private readonly List<SubscriptionHistoryEntry> _historyEntries = [];
     private bool _deleted;
 
-    private Subscription() { }   // per EF Core
+    private Subscription() { }   //x EF Core
 
     public UserId UserId { get; private set; }
     public SubscriptionDetails Details { get; private set; } = default!;
 
-    /// <summary>1 alla creazione, +1 a ogni modifica effettiva. Concorrenza ottimistica e ordine degli eventi.</summary>
+    //1 alla creazione, +1 a ogni modifica effettiva. Concorrenza ottimistica e ordine degli eventi
     public long Version { get; private set; }
 
     public DateTimeOffset CreatedAtUtc { get; private set; }
     public DateTimeOffset UpdatedAtUtc { get; private set; }
 
-    /// <summary>Costo mensile equivalente (stessa valuta), calcolato dal ciclo di fatturazione.</summary>
+    //costo mensile equivalente (stessa valuta), calcolato dal ciclo di fatturazione
     public Money MonthlyCost => Details.Price.ToMonthly(Details.BillingCycle);
 
-    /// <summary>
-    /// Solo le voci aggiunte in QUESTA operazione: il repository non carica lo storico esistente
-    /// (si legge dal lato query). Le nuove voci vengono inserite al salvataggio.
-    /// </summary>
+    //Solo le voci aggiunte in QUESTA operazione: il repository non carica lo storico esistente (si legge dal lato query). Le nuove voci vengono inserite al salvataggio
     public IReadOnlyCollection<SubscriptionHistoryEntry> HistoryEntries => _historyEntries.AsReadOnly();
 
-    // ── Ciclo di vita ─────────────────────────────────────────────────────────────
+
 
     public static Subscription Create(UserId userId, SubscriptionDetails details, DateTimeOffset now)
     {
@@ -57,10 +52,7 @@ public sealed class Subscription : AggregateRoot<SubscriptionId>
         return subscription;
     }
 
-    /// <summary>
-    /// Sostituisce i dettagli. Restituisce false se non cambia nulla (niente storico, niente evento, version invariata).
-    /// </summary>
-    /// <param name="expectedVersion">Version letta dal client: se diversa → SubscriptionVersionMismatchException (409).</param>
+    //Sostituisce i dettagli. Restituisce false se non cambia nulla (niente storico, niente evento, version invariata)
     public bool Update(SubscriptionDetails details, long? expectedVersion, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(details);
@@ -81,10 +73,7 @@ public sealed class Subscription : AggregateRoot<SubscriptionId>
         return true;
     }
 
-    /// <summary>
-    /// Registra la cancellazione (evento per i read model). La rimozione la fa il repository;
-    /// lo storico viene eliminato in cascade dal database.
-    /// </summary>
+    //Registra la cancellazione (evento per i read model). La rimozione la fa il repository; lo storico viene eliminato in cascade dal database.
     public void Delete(DateTimeOffset now)
     {
         if (_deleted)
@@ -94,9 +83,7 @@ public sealed class Subscription : AggregateRoot<SubscriptionId>
         Raise(new SubscriptionDeletedDomainEvent(Id, UserId, now));
     }
 
-    // ── Regole ────────────────────────────────────────────────────────────────────
-
-    /// <summary>Un abbonamento di un altro utente è trattato come inesistente (404): non se ne rivela l'esistenza.</summary>
+    //un abbonamento di un altro utente è trattato come inesistente (404): non se ne rivela l'esistenza
     public void EnsureOwnedBy(UserId userId)
     {
         if (UserId != userId)

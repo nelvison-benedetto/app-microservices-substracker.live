@@ -2,10 +2,7 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Subscriptions.Core.Common;
 
-/// <summary>
-/// Proprietario di un abbonamento. Tipo di QUESTO servizio (non quello di Identity):
-/// i servizi condividono solo il valore (il claim "sub" del JWT), mai il codice di dominio.
-/// </summary>
+
 public readonly record struct UserId(Guid Value)
 {
     public static UserId From(Guid value) =>
@@ -14,4 +11,5 @@ public readonly record struct UserId(Guid Value)
             : new UserId(value);
 
     public override string ToString() => Value.ToString();
+
 }

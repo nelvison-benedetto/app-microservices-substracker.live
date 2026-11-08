@@ -2,17 +2,14 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Subscriptions.Core.Subscriptions;
 
-/// <summary>
-/// Importo + valuta. Un decimal da solo non dice in che valuta è:
-/// tenerli insieme evita di sommare EUR e USD per errore.
-/// </summary>
+//Importo + valuta. Un decimal da solo non dice in che valuta è: tenerli insieme evita di sommare EUR e USD per errore.
 public sealed record Money
 {
     public const string DefaultCurrency = "EUR";
     public const decimal MaxAmount = 1_000_000m;
     public const int Decimals = 2;
 
-    private Money() { }   // per EF Core
+    private Money() { }   //x EF Core
 
     private Money(decimal amount, string currency)
     {
@@ -22,7 +19,7 @@ public sealed record Money
 
     public decimal Amount { get; private set; }
 
-    /// <summary>Codice ISO 4217 in maiuscolo (es. "EUR").</summary>
+    //Codice ISO 4217 in maiuscolo (e.g. "EUR")
     public string Currency { get; private set; } = default!;
 
     public static Money Create(decimal amount, string currency)
@@ -43,11 +40,8 @@ public sealed record Money
         return new Money(amount, normalizedCurrency);
     }
 
-    /// <summary>
-    /// Equivalente mensile nella stessa valuta, arrotondato a 2 decimali.
-    /// Settimanale × 52 / 12 · mensile × 1 · trimestrale / 3 · semestrale / 6 · annuale / 12.
-    /// Può risultare 0.00 per importi minimi su cicli lunghi: è un valore derivato, non un prezzo.
-    /// </summary>
+    //equivalente mensile nella stessa valuta, arrotondato a 2 decimali.
+    //Settimanale × 52 / 12 · mensile × 1 · trimestrale / 3 · semestrale / 6 · annuale / 12. Può risultare 0.00 per importi minimi su cicli lunghi: è un valore derivato, non un prezzo.
     public Money ToMonthly(BillingCycle billingCycle)
     {
         var monthly = billingCycle switch
@@ -59,7 +53,6 @@ public sealed record Money
             BillingCycle.Yearly => Amount / 12m,
             _ => throw new ArgumentOutOfRangeException(nameof(billingCycle), billingCycle, "Unknown billing cycle.")
         };
-
         return new Money(decimal.Round(monthly, Decimals, MidpointRounding.AwayFromZero), Currency);
     }
 

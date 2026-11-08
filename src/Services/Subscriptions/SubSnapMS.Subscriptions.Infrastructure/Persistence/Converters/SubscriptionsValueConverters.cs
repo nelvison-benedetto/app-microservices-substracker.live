@@ -4,7 +4,7 @@ using SubSnapMS.Subscriptions.Core.Subscriptions;
 
 namespace SubSnapMS.Subscriptions.Infrastructure.Persistence.Converters;
 
-/// <summary>Value Object ↔ tipo primitivo del database. Il dominio non sa nulla di come viene salvato.</summary>
+//Value Object ↔ tipo primitivo del database. Il dominio non sa nulla di come viene salvato
 internal static class SubscriptionsValueConverters
 {
     public static readonly ValueConverter<UserId, Guid> UserIdConverter =
@@ -16,7 +16,7 @@ internal static class SubscriptionsValueConverters
     public static readonly ValueConverter<SubscriptionHistoryEntryId, Guid> HistoryEntryIdConverter =
         new(id => id.Value, value => new SubscriptionHistoryEntryId(value));
 
-    /// <summary>Salvato come codice neutro ("monthly"): lo stesso valore di API ed eventi.</summary>
+    //Salvato come codice neutro ("monthly"): lo stesso valore di API ed eventi
     public static readonly ValueConverter<BillingCycle, string> BillingCycleConverter =
         new(cycle => cycle.ToCode(), code => BillingCycleExtensions.Parse(code));
 }
