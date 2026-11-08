@@ -16,11 +16,11 @@ internal sealed class RefreshSessionHandler(
     {
         var presentedHash = refreshTokenFactory.ComputeHash(command.RefreshToken);
 
-        // Token sconosciuto: nessuno stato da salvare, quindi un'eccezione va bene
+        //Token sconosciuto: nessuno stato da salvare, quindi un'eccezione va bene
         var user = await users.GetByRefreshTokenHashAsync(presentedHash, cancellationToken)
                    ?? throw new InvalidRefreshTokenException();
 
-        // Esito come valore: con la reuse detection la revoca della famiglia viene salvata anche se il refresh fallisce
+        //Esito come valore: con la reuse detection la revoca della famiglia viene salvata anche se il refresh fallisce
         return sessions.RotateSession(user, presentedHash, timeProvider.GetUtcNow());
     }
 }

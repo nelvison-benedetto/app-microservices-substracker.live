@@ -13,9 +13,9 @@ internal sealed class LogoutHandler(
     {
         var user = await users.GetByIdAsync(command.UserId, cancellationToken);
         if (user is null)
-            return;   // idempotente: il frontend cancella comunque i cookie
+            return;   //idempotente: il frontend cancella comunque i cookie
 
-        // Cerca solo tra i token dell'utente autenticato: non si può chiudere la sessione di un altro
+        //cerca solo tra i token dell'utente autenticato: non si può chiudere la sessione di un altro
         user.SignOut(refreshTokenFactory.ComputeHash(command.RefreshToken), timeProvider.GetUtcNow());
     }
 }

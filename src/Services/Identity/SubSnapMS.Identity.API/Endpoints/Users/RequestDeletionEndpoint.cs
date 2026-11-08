@@ -11,10 +11,7 @@ namespace SubSnapMS.Identity.API.Endpoints.Users;
 
 public sealed record RequestDeletionRequest(string CurrentPassword);
 
-/// <summary>
-/// 202 Accepted: la cancellazione è una saga asincrona (gli altri servizi cancellano i loro dati,
-/// poi Identity rimuove l'utente). Da subito l'account non può più autenticarsi.
-/// </summary>
+// 202 Accepted: la cancellazione è una saga asincrona (gli altri servizi cancellano i loro dati, poi Identity rimuove l'utente). Da subito l'account non può più autenticarsi.
 internal sealed class RequestDeletionEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder routes) =>
@@ -22,7 +19,7 @@ internal sealed class RequestDeletionEndpoint : IEndpoint
             .WithTags(EndpointTags.Users)
             .WithName("DeleteMyAccount");
 
-    // Su DELETE il body non viene dedotto in automatico: [FromBody] è obbligatorio
+    //Su DELETE il body non viene dedotto in automatico: [FromBody] è obbligatorio
     private static async Task<Accepted> HandleAsync(
         [FromBody] RequestDeletionRequest request, ICurrentUser currentUser, ISender sender, CancellationToken cancellationToken)
     {

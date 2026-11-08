@@ -11,7 +11,7 @@ namespace SubSnapMS.Identity.API.Endpoints.Users;
 
 public sealed record ChangePasswordRequest(string CurrentPassword, string NewPassword);
 
-/// <summary>Tutte le sessioni vengono chiuse: la risposta contiene i token della nuova sessione di questo dispositivo.</summary>
+//Tutte le sessioni vengono chiuse: la risposta contiene i token della nuova sessione di questo dispositivo
 internal sealed class ChangePasswordEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder routes) =>

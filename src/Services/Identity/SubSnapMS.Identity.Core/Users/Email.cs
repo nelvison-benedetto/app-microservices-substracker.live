@@ -3,7 +3,7 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Identity.Core.Users;
 
-/// <summary>Email normalizzata (trim + lowercase) e validata. Se esiste un'istanza, è valida.</summary>
+//Email normalizzata (trim + lowercase) e validata. Se esiste un'istanza, è valida
 public sealed partial record Email
 {
     public const int MaxLength = 254;   // limite pratico RFC 5321
@@ -30,7 +30,7 @@ public sealed partial record Email
 
     public override string ToString() => Value;
 
-    // Validazione volutamente semplice: la vera verifica di un'email è l'invio di un messaggio
+    //Validazione volutamente semplice: la vera verifica di un'email è l'invio di un messaggio
     [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.CultureInvariant)]
     private static partial Regex EmailPattern();
 }

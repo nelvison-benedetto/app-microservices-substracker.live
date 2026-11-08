@@ -1,6 +1,6 @@
 namespace SubSnapMS.Identity.Application.Common.Sessions;
 
-/// <summary>Coppia di token di una sessione. Il refresh token in chiaro esiste solo qui e nel client.</summary>
+//Coppia di token di una sessione. Il refresh token in chiaro esiste solo qui e nel client
 public sealed record AuthTokensResult(
     string AccessToken,
     DateTimeOffset AccessTokenExpiresAtUtc,

@@ -6,13 +6,9 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Application.IntegrationEventHandlers;
 
-/// <summary>
-/// Orchestratore della saga: registra la conferma di un servizio; quando sono arrivate tutte,
-/// rimuove l'utente e chiude il processo (→ UserDeletionCompleted).
-/// Gira dentro la transazione dell'Inbox: niente SaveChanges qui, salva l'Inbox
-/// (e il salvataggio esegue anche i domain event handler).
-/// Public: registrato da Program.cs con messaging.AddConsumer&lt;UserDataDeleted, UserDataDeletedHandler&gt;().
-/// </summary>
+//Orchestratore della saga: registra la conferma di un servizio; quando sono arrivate tutte, rimuove l'utente e chiude il processo (→ UserDeletionCompleted).
+//Gira dentro la transazione dell'Inbox: niente SaveChanges qui, salva l'Inbox (e il salvataggio esegue anche i domain event handler).
+//Public: registrato da Program.cs con messaging.AddConsumer&lt;UserDataDeleted, UserDataDeletedHandler&gt;().
 public sealed class UserDataDeletedHandler(
     IUserDeletionRepository deletions,
     IUserRepository users,
@@ -31,7 +27,7 @@ public sealed class UserDataDeletedHandler(
         }
 
         if (!deletion.Confirm(integrationEvent.Service))
-            return;   // duplicato o servizio non atteso
+            return;   //duplicato o servizio non atteso
 
         logger.LogInformation("User deletion {UserId}: {Service} confirmed ({Pending} pending)",
             userId, integrationEvent.Service, deletion.PendingServices.Count);

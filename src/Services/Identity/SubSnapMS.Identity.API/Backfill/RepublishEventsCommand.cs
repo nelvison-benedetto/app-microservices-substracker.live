@@ -6,11 +6,9 @@ using SubSnapMS.Identity.Infrastructure.Persistence;
 
 namespace SubSnapMS.Identity.API.Backfill;
 
-/// <summary>
-/// "--republish-events": accoda un UserRegistered per ogni utente attivo (email attuale, data di registrazione originale).
-/// RegisteredOnUtc vecchia → Notification salva l'email ma NON invia il benvenuto.
-/// Solo id, email e data: la proiezione non carica password né refresh token.
-/// </summary>
+//"--republish-events": accoda un UserRegistered per ogni utente attivo (email attuale, data di registrazione originale).
+//RegisteredOnUtc vecchia → Notification salva l'email ma NON invia il benvenuto.
+//Solo id, email e data: la proiezione non carica password né refresh token.
 public static class RepublishEventsCommand
 {
     public const string Argument = "--republish-events";

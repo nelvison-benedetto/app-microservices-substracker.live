@@ -6,10 +6,7 @@ using SubSnapMS.Identity.Core.Users.Exceptions;
 
 namespace SubSnapMS.Identity.Application.Features.Users.RequestDeletion;
 
-/// <summary>
-/// Marca l'utente PendingDeletion e chiude le sessioni. Il resto della saga parte al salvataggio:
-/// UserDeletionRequestedDomainEventHandler crea il processo UserDeletion e pubblica l'integration event.
-/// </summary>
+//Marca l'utente PendingDeletion e chiude le sessioni. Il resto della saga parte al salvataggio: UserDeletionRequestedDomainEventHandler crea il processo UserDeletion e pubblica l'integration event.
 internal sealed class RequestUserDeletionHandler(
     IUserRepository users,
     IPasswordHasher passwordHasher,

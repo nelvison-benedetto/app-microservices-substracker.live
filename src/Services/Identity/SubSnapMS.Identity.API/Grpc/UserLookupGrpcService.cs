@@ -6,10 +6,8 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.API.Grpc;
 
-/// <summary>
-/// Implementazione server del contratto Contracts/Protos/identity/v1/user_lookup.proto.
-/// Chiamata interna (Media prima di emettere un presigned URL). Porta 8081, HTTP/2.
-/// </summary>
+//Implementazione server del contratto Contracts/Protos/identity/v1/user_lookup.proto.
+//Chiamata interna (Media prima di emettere un presigned URL). Porta 8081, HTTP/2.
 internal sealed class UserLookupGrpcService(ISender sender) : UserLookup.UserLookupBase
 {
     public override async Task<GetUserStatusResponse> GetUserStatus(GetUserStatusRequest request, ServerCallContext context)

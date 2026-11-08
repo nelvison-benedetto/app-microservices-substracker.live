@@ -4,7 +4,7 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Application.Common.Security;
 
-/// <summary>Re-autenticazione per le operazioni sensibili (cambio email/password, cancellazione account).</summary>
+//Re-autenticazione per le operazioni sensibili (cambio email/password, cancellazione account)
 internal static class CurrentPasswordGuard
 {
     public static void Ensure(IPasswordHasher passwordHasher, User user, string currentPassword)

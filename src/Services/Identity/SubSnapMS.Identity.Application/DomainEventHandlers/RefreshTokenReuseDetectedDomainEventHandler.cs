@@ -4,7 +4,7 @@ using SubSnapMS.Identity.Core.Users.Events;
 
 namespace SubSnapMS.Identity.Application.DomainEventHandlers;
 
-/// <summary>Evento di sicurezza: log a livello Warning (finisce su Sentry/log centralizzati per un alert).</summary>
+//Evento di sicurezza: log a livello Warning (finisce su Sentry/log centralizzati per un alert)
 internal sealed class RefreshTokenReuseDetectedDomainEventHandler(ILogger<RefreshTokenReuseDetectedDomainEventHandler> logger)
     : IDomainEventHandler<RefreshTokenReuseDetectedDomainEvent>
 {

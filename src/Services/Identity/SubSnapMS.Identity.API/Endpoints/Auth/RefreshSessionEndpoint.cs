@@ -24,8 +24,7 @@ internal sealed class RefreshSessionEndpoint : IEndpoint
     {
         var result = await sender.Send(new RefreshSessionCommand(request.RefreshToken), cancellationToken);
 
-        // A questo punto la transazione è già stata salvata (es. revoca della famiglia per reuse detection):
-        // lanciare qui produce il 401 senza annullare quel salvataggio.
+        //A questo punto la transazione è già stata salvata (es. revoca della famiglia per reuse detection): lanciare qui produce il 401 senza annullare quel salvataggio.
         if (!result.Succeeded)
         {
             throw result.Status switch

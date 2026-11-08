@@ -2,10 +2,7 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Identity.Core.Users;
 
-/// <summary>
-/// Hash della password (mai la password in chiaro). L'algoritmo è in Infrastructure:
-/// il dominio sa solo che un hash esiste ed è valorizzato.
-/// </summary>
+//Hash della password (mai la password in chiaro). L'algoritmo è in Infrastructure: il dominio sa solo che un hash esiste ed è valorizzato.
 public sealed record PasswordHash
 {
     public const int MaxLength = 512;
@@ -25,6 +22,6 @@ public sealed record PasswordHash
         return new PasswordHash(value);
     }
 
-    // Non finisce mai in un log per errore
+    //Non finisce mai in un log per errore
     public override string ToString() => "PasswordHash(***)";
 }

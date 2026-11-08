@@ -3,7 +3,7 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Application.Common.Validation;
 
-/// <summary>Regole riusate da più validator. La password segue le stesse regole del form Zod del frontend.</summary>
+//Regole riusate da più validator. La password segue le stesse regole del form Zod del frontend
 internal static class IdentityValidationRules
 {
     public const int PasswordMinLength = 8;
@@ -24,7 +24,7 @@ internal static class IdentityValidationRules
             .Matches("[0-9]").WithErrorCode("password.digit_required").WithMessage("Password must contain a number.")
             .Matches("[^a-zA-Z0-9]").WithErrorCode("password.special_required").WithMessage("Password must contain a special character.");
 
-    /// <summary>Password esistente (login, re-autenticazione): nessuna regola di complessità, solo limiti.</summary>
+    //Password esistente (login, re-autenticazione): nessuna regola di complessità, solo limiti
     public static IRuleBuilderOptions<T, string> ExistingPassword<T>(this IRuleBuilder<T, string> rule) =>
         rule
             .NotEmpty().WithErrorCode("password.required").WithMessage("Password is required.")

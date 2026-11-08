@@ -1,6 +1,6 @@
 namespace SubSnapMS.Identity.API.Endpoints;
 
-/// <summary>Raggruppamento degli endpoint nel documento OpenAPI.</summary>
+//Raggruppamento degli endpoint nel documento OpenAPI
 internal static class EndpointTags
 {
     public const string Auth = "Auth";

@@ -8,7 +8,7 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.API.Endpoints.Users;
 
-/// <summary>Stessi campi del monolite (id, email, isActive, createdAt, updatedAt, lastLogin) + status.</summary>
+//Stessi campi del monolite (id, email, isActive, createdAt, updatedAt, lastLogin) + status
 public sealed record UserProfileResponse(
     Guid Id,
     string Email,

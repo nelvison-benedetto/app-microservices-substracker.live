@@ -23,7 +23,7 @@ internal sealed class ChangePasswordHandler(
 
         CurrentPasswordGuard.Ensure(passwordHasher, user, command.CurrentPassword);
 
-        // Revoca tutte le sessioni (chi conosceva la vecchia password perde l'accesso)...
+        //Revoca tutte le sessioni (chi conosceva la vecchia password perde l'accesso)...
         user.ChangePassword(PasswordHash.Create(passwordHasher.Hash(command.NewPassword)), now);
 
         // ...e ne apre una nuova per il dispositivo che ha fatto il cambio

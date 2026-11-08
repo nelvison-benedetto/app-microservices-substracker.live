@@ -6,10 +6,8 @@ using SubSnapMS.Identity.Core.Users.Exceptions;
 
 namespace SubSnapMS.Identity.Application.Features.Users.Register;
 
-/// <summary>
-/// Crea l'utente. UserRegisteredDomainEvent → (al salvataggio) UserRegistered nell'Outbox → RabbitMQ.
-/// La registrazione non apre una sessione: il frontend fa poi il login (come nel monolite).
-/// </summary>
+//Crea l'utente. UserRegisteredDomainEvent → (al salvataggio) UserRegistered nell'Outbox → RabbitMQ.
+//La registrazione non apre una sessione: il frontend fa poi il login (come nel monolite).
 internal sealed class RegisterUserHandler(
     IUserRepository users,
     IPasswordHasher passwordHasher,

@@ -9,10 +9,7 @@ using SubSnapMS.Identity.Core.Users.Events;
 
 namespace SubSnapMS.Identity.Application.DomainEventHandlers;
 
-/// <summary>
-/// Avvio della saga: crea il processo UserDeletion (servizi attesi) e avvisa tutti i servizi.
-/// Se nessun servizio deve confermare, la saga si chiude subito (rimozione dell'utente).
-/// </summary>
+//Avvio della saga: crea il processo UserDeletion (servizi attesi) e avvisa tutti i servizi. Se nessun servizio deve confermare, la saga si chiude subito (rimozione dell'utente).
 internal sealed class UserDeletionRequestedDomainEventHandler(
     IUserDeletionRepository deletions,
     IUserRepository users,

@@ -4,12 +4,9 @@ using SubSnapMS.Identity.Infrastructure.Security.Keys;
 
 namespace SubSnapMS.Identity.API.Endpoints.WellKnown;
 
-/// <summary>
-/// Discovery e chiavi pubbliche, nel formato standard OpenID Connect / JWK.
-/// Li leggono gateway e servizi (JwtBearer con MetadataAddress) sulla rete interna:
-/// il gateway NON li espone (nessuna route /.well-known).
-/// Fuori dal gruppo /api/v1: i percorsi /.well-known sono fissati dagli standard.
-/// </summary>
+//Discovery e chiavi pubbliche, nel formato standard OpenID Connect / JWK.
+//Li leggono gateway e servizi (JwtBearer con MetadataAddress) sulla rete interna: il gateway NON li espone (nessuna route /.well-known).
+//Fuori dal gruppo /api/v1: i percorsi /.well-known sono fissati dagli standard.
 internal static class WellKnownEndpoints
 {
     private const string CacheControl = "public, max-age=300";
@@ -24,7 +21,7 @@ internal static class WellKnownEndpoints
         {
             var auth = configuration.GetSection(JwtAuthenticationOptions.SectionName).Get<JwtAuthenticationOptions>()!;
 
-            // jwks_uri costruito dall'host della richiesta: chi chiama sulla rete interna riceve un indirizzo interno
+            //jwks_uri costruito dall'host della richiesta: chi chiama sulla rete interna riceve un indirizzo interno
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
 
             context.Response.Headers.CacheControl = CacheControl;

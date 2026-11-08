@@ -3,5 +3,5 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Application.Features.Users.GetStatus;
 
-/// <summary>Usata dal servizio gRPC UserLookup (chiamate interne da Media).</summary>
+//Usata dal servizio gRPC UserLookup (chiamate interne da Media)
 public sealed record GetUserStatusQuery(UserId UserId) : IQuery<UserStatusResult>;

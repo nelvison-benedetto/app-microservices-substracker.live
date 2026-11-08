@@ -20,13 +20,12 @@ public static class DependencyInjection
             .Bind(configuration.GetSection(UserDeletionOptions.SectionName))
             .PostConfigure(o =>
             {
-                // Default applicato solo se la configurazione non specifica nulla
-                // (il binding di una lista già popolata aggiungerebbe invece di sostituire)
+                //Default applicato solo se la configurazione non specifica nulla (il binding di una lista già popolata aggiungerebbe invece di sostituire)
                 if (o.ExpectedServices.Count == 0)
                     o.ExpectedServices.AddRange(UserDeletionOptions.DefaultExpectedServices);
             });
 
-        // MediatR (handler + Tracing → Validation → Transaction), validator, domain event handler, TimeProvider
+        //MediatR (handler + Tracing → Validation → Transaction), validator, domain event handler, TimeProvider
         services.AddApplicationBuildingBlocks(typeof(DependencyInjection).Assembly, configuration["MediatR:LicenseKey"]);
 
         services.AddScoped<SessionTokenIssuer>();

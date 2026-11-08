@@ -16,20 +16,21 @@ using SubSnapMS.Identity.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Trasversali ───────────────────────────────────────────────────────────────
+//Trasversali
 builder.AddObservability(ServiceNames.Identity, observability =>
 {
-    observability.AdditionalSources.Add("Npgsql");   // query SQL nelle trace
+    observability.AdditionalSources.Add("Npgsql");   //query SQL nelle trace
     observability.AdditionalMeters.Add("Npgsql");
 });
-builder.AddWebDefaults();                             // envelope, errori, JWT, ICurrentUser
+builder.AddWebDefaults();   //envelope, errori, JWT, ICurrentUser
 
-// ── Layer del servizio ────────────────────────────────────────────────────────
+
+//Layer del servizio
 builder.Services.AddIdentityApplication(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
-builder.Services.AddIdentityJwtValidation();          // Identity valida con le proprie chiavi (niente HTTP verso se stesso)
+builder.Services.AddIdentityJwtValidation();          //Identity valida con le proprie chiavi (niente HTTP verso se stesso)
 
-// ── Messaging: Outbox (pubblica), Inbox + consumer (saga di cancellazione) ────
+//Messaging: Outbox (pubblica), Inbox + consumer (saga di cancellazione)
 builder.Services.AddMessaging(builder.Configuration, ServiceNames.Identity, messaging =>
 {
     messaging.AddOutbox<IdentityDbContext>();
@@ -37,18 +38,18 @@ builder.Services.AddMessaging(builder.Configuration, ServiceNames.Identity, mess
     messaging.AddConsumer<UserDataDeleted, UserDataDeletedHandler>();
 });
 
-// ── Readiness: senza database il servizio non riceve traffico ─────────────────
+//Readiness: senza database il servizio non riceve traffico
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<IdentityDbContext>("postgres", tags: [HealthCheckTags.Ready]);
 
-// ── Endpoint ──────────────────────────────────────────────────────────────────
+//Endpoint
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 builder.Services.AddGrpc();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Avviato con --migrate: applica le migrations e termina (job dedicato in produzione)
+//Avviato con --migrate: applica le migrations e termina (job dedicato in produzione)
 if (await app.ApplyMigrationsAsync<IdentityDbContext>(args))
     return;
 
@@ -68,5 +69,5 @@ app.MapGrpcService<UserLookupGrpcService>().AllowAnonymous();   // interno: port
 
 app.Run();
 
-/// <summary>Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;).</summary>
+//>Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;)
 public partial class Program;

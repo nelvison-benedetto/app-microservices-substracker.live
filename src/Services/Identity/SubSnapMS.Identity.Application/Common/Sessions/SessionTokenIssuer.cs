@@ -5,13 +5,13 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Application.Common.Sessions;
 
-/// <summary>Apre e ruota le sessioni: genera il refresh token, aggiorna l'aggregate, emette l'access token.</summary>
+//Apre e ruota le sessioni: genera il refresh token, aggiorna l'aggregate, emette l'access token
 public sealed class SessionTokenIssuer(
     IRefreshTokenFactory refreshTokenFactory,
     IAccessTokenIssuer accessTokenIssuer,
     IOptions<SessionOptions> options)
 {
-    /// <summary>Nuova sessione (login, cambio password).</summary>
+    //Nuova sessione (login, cambio password)
     public AuthTokensResult StartSession(User user, DateTimeOffset now)
     {
         var refreshToken = refreshTokenFactory.Generate();
@@ -22,7 +22,7 @@ public sealed class SessionTokenIssuer(
         return BuildTokens(user, refreshToken.Token, refreshExpiresAtUtc, now);
     }
 
-    /// <summary>Rotazione del refresh token presentato dal client.</summary>
+    //Rotazione del refresh token presentato dal client
     public RefreshSessionResult RotateSession(User user, string presentedTokenHash, DateTimeOffset now)
     {
         var refreshToken = refreshTokenFactory.Generate();

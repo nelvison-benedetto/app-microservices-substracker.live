@@ -4,9 +4,7 @@ using SubSnapMS.Identity.Core.Users;
 
 namespace SubSnapMS.Identity.Application.Abstractions.Queries;
 
-/// <summary>
-/// Lato lettura (CQRS): proiezioni dirette in DTO, senza tracking e senza caricare l'aggregate.
-/// </summary>
+//Lato lettura (CQRS): proiezioni dirette in DTO, senza tracking e senza caricare l'aggregate.
 public interface IUserQueries
 {
     Task<UserProfileResult?> GetProfileAsync(UserId userId, CancellationToken cancellationToken);
