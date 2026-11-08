@@ -2,7 +2,7 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Subscriptions.Core.Subscriptions.Exceptions;
 
-/// <summary>Il client ha modificato una versione superata (es. due schede aperte) → 409.</summary>
+//Il client ha modificato una versione superata (es. due schede aperte) → 409
 public sealed class SubscriptionVersionMismatchException()
     : ConflictException(
         "subscription.version_mismatch",

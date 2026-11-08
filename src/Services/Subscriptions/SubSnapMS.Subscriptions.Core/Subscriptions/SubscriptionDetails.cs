@@ -51,7 +51,7 @@ public sealed record SubscriptionDetails
         };
     }
 
-    /// <summary>Tutti i campi come "nuovi valori" (storico della creazione).</summary>
+    //Tutti i campi come "nuovi valori" (storico della creazione)
     internal IReadOnlyList<SubscriptionFieldChange> DescribeAll() =>
     [
         new(SubscriptionFieldChange.Fields.Name, null, Name),
@@ -63,7 +63,6 @@ public sealed record SubscriptionDetails
         new(SubscriptionFieldChange.Fields.EndDate, null, Format(Period.EndDate))
     ];
 
-    /// <summary>Solo i campi diversi rispetto a <paramref name="previous"/> (storico della modifica).</summary>
     internal IReadOnlyList<SubscriptionFieldChange> DiffFrom(SubscriptionDetails previous)
     {
         var changes = new List<SubscriptionFieldChange>();
@@ -75,7 +74,6 @@ public sealed record SubscriptionDetails
         AddIfChanged(changes, SubscriptionFieldChange.Fields.BillingCycle, previous.BillingCycle.ToCode(), BillingCycle.ToCode());
         AddIfChanged(changes, SubscriptionFieldChange.Fields.StartDate, Format(previous.Period.StartDate), Format(Period.StartDate));
         AddIfChanged(changes, SubscriptionFieldChange.Fields.EndDate, Format(previous.Period.EndDate), Format(Period.EndDate));
-
         return changes;
     }
 
@@ -85,10 +83,11 @@ public sealed record SubscriptionDetails
             changes.Add(new SubscriptionFieldChange(field, oldValue, newValue));
     }
 
-    // Formato invariante: lo storico non dipende dalla lingua del server
+    //Formato invariante: lo storico non dipende dalla lingua del server
     private static string Format(decimal amount) => amount.ToString("0.00", CultureInfo.InvariantCulture);
 
     private static string Format(DateOnly date) => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
     private static string? Format(DateOnly? date) => date.HasValue ? Format(date.Value) : null;
+
 }

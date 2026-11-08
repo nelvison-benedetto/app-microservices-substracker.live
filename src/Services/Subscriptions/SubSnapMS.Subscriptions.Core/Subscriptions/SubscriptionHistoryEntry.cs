@@ -2,15 +2,12 @@ using SubSnapMS.BuildingBlocks.Domain;
 
 namespace SubSnapMS.Subscriptions.Core.Subscriptions;
 
-/// <summary>
-/// Voce di storico, figlia di Subscription: si crea SOLO tramite l'aggregate e non si modifica mai.
-/// Changes: i campi coinvolti (alla creazione tutti, con OldValue null; nelle modifiche solo quelli cambiati).
-/// </summary>
+//Voce di storico, figlia di Subscription: si crea SOLO tramite l'aggregate e non si modifica mai. Changes: i campi coinvolti (alla creazione tutti, con OldValue null; nelle modifiche solo quelli cambiati)
 public sealed class SubscriptionHistoryEntry : Entity<SubscriptionHistoryEntryId>
 {
     private readonly List<SubscriptionFieldChange> _changes = [];
 
-    private SubscriptionHistoryEntry() { }   // per EF Core
+    private SubscriptionHistoryEntry() { }   //x EF Core
 
     public SubscriptionHistoryAction Action { get; private set; }
     public DateTimeOffset OccurredAtUtc { get; private set; }
