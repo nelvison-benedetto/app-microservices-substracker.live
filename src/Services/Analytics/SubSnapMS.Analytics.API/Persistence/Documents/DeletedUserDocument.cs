@@ -2,7 +2,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace SubSnapMS.Analytics.API.Persistence.Documents;
 
-/// <summary>Tombstone di un utente cancellato: nessun dato personale, solo l'id e la scadenza (TTL).</summary>
+//Tombstone di un utente cancellato: nessun dato personale, solo l'id e la scadenza (TTL)
 public sealed class DeletedUserDocument
 {
     [BsonId]

@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization.Serializers;
 
 namespace SubSnapMS.Analytics.API.Persistence;
 
-/// <summary>Guid standard, camelCase, campi sconosciuti ignorati. Da eseguire una volta all'avvio.</summary>
+//Guid standard, camelCase, campi sconosciuti ignorati. Da eseguire una volta all'avvio
 internal static class MongoSerialization
 {
     private static int _registered;

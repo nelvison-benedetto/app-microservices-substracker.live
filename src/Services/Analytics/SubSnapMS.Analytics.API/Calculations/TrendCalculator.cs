@@ -3,11 +3,9 @@ using SubSnapMS.Analytics.API.Features.GetSpendingTrend;
 
 namespace SubSnapMS.Analytics.API.Calculations;
 
-/// <summary>
-/// Andamento mese per mese, una serie per valuta. Per ogni mese:
-///  - MonthlyCost: costo mensile degli abbonamenti attivi in almeno un giorno del mese;
-///  - Charged: addebiti che cadono nel mese (per il mese corrente include quelli previsti fino a fine mese).
-/// </summary>
+//Andamento mese per mese, una serie per valuta. Per ogni mese:
+//- MonthlyCost: costo mensile degli abbonamenti attivi in almeno un giorno del mese;
+//- Charged: addebiti che cadono nel mese (per il mese corrente include quelli previsti fino a fine mese).
 public static class TrendCalculator
 {
     public static SpendingTrendResponse Build(IReadOnlyList<AnalyticsSubscription> subscriptions, DateOnly today, int months)

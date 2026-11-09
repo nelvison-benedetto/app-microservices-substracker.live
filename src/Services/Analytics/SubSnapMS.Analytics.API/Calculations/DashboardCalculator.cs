@@ -2,7 +2,7 @@ using SubSnapMS.Analytics.API.Features.GetDashboard;
 
 namespace SubSnapMS.Analytics.API.Calculations;
 
-/// <summary>Calcolo puro della dashboard: stessi input → stessa risposta. Nessun I/O.</summary>
+//Calcolo puro della dashboard: stessi input → stessa risposta. Nessun I/O
 public static class DashboardCalculator
 {
     public const int MostExpensiveCount = 5;
@@ -11,7 +11,7 @@ public static class DashboardCalculator
     {
         var active = subscriptions.Where(s => s.IsActiveOn(today)).ToList();
 
-        // ── Totali per valuta ─────────────────────────────────────────────────────
+        //Totali per valuta
         var totals = active
             .GroupBy(s => s.Currency)
             .Select(group =>
@@ -24,7 +24,7 @@ public static class DashboardCalculator
 
         var monthlyByCurrency = totals.ToDictionary(t => t.Currency, t => t.MonthlyTotal);
 
-        // ── Categorie (per valuta; "Netflix" e " netflix " nella stessa categoria) ──
+        //Categorie (per valuta; "Netflix" e " netflix " nella stessa categoria) 
         var categories = active
             .GroupBy(s => s.Currency)
             .SelectMany(byCurrency => byCurrency
@@ -45,7 +45,7 @@ public static class DashboardCalculator
             .ThenByDescending(c => c.MonthlyTotal)
             .ToList();
 
-        // ── Prossimi rinnovi: il primo addebito di ogni abbonamento nella finestra ─
+        //Prossimi rinnovi: il primo addebito di ogni abbonamento nella finestra
         var windowEnd = today.AddDays(upcomingDays);
         var upcoming = subscriptions
             .Select(s => (Subscription: s, Date: BillingSchedule.FirstChargeBetween(s.StartDate, s.BillingCycle, s.EndDate, today, windowEnd)))
@@ -61,7 +61,7 @@ public static class DashboardCalculator
             .ThenBy(r => r.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        // ── I più costosi (costo mensile) ─────────────────────────────────────────
+        //I più costosi (costo mensile)
         var mostExpensive = active
             .OrderByDescending(s => s.MonthlyAmount)
             .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)

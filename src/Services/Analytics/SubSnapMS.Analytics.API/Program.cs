@@ -10,14 +10,14 @@ using SubSnapMS.Contracts.Subscriptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Trasversali ───────────────────────────────────────────────────────────────
+// Trasversali
 builder.AddObservability(ServiceNames.Analytics);
 builder.AddWebDefaults();
 
-// ── MongoDB (read model) e calcoli ────────────────────────────────────────────
+// MongoDB (read model) e calcoli
 builder.Services.AddAnalyticsServices(builder.Configuration);
 
-// ── Messaging: solo consumer, idempotenti (version guard + tombstone) ─────────
+// Messaging: solo consumer, idempotenti (version guard + tombstone)
 builder.Services.AddMessaging(builder.Configuration, ServiceNames.Analytics, messaging =>
 {
     messaging.AddConsumer<SubscriptionCreated, SubscriptionCreatedHandler>();
@@ -42,5 +42,5 @@ app.MapEndpoints(app.MapGroup("/api/v1"));
 
 app.Run();
 
-/// <summary>Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;).</summary>
+//Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;)
 public partial class Program;

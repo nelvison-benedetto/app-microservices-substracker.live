@@ -6,7 +6,7 @@ using SubSnapMS.Analytics.API.Persistence.Documents;
 
 namespace SubSnapMS.Analytics.API.Persistence;
 
-/// <summary>Stato completo di un abbonamento, preso da SubscriptionCreated/Updated.</summary>
+//Stato completo di un abbonamento, preso da SubscriptionCreated/Updated
 public sealed record SubscriptionSnapshot(
     Guid SubscriptionId,
     Guid UserId,
@@ -24,10 +24,7 @@ public sealed class SubscriptionReadStore(AnalyticsDb db, IOptions<AnalyticsOpti
     private static FilterDefinitionBuilder<SubscriptionDocument> Filter => Builders<SubscriptionDocument>.Filter;
     private static UpdateDefinitionBuilder<SubscriptionDocument> Update => Builders<SubscriptionDocument>.Update;
 
-    /// <summary>
-    /// Applica lo stato solo se la Version è più nuova. Se il documento ha una Version uguale o maggiore
-    /// (o è un tombstone) il filtro non lo trova, l'upsert prova a inserirlo e l'_id lo rifiuta: evento ignorato.
-    /// </summary>
+    //Applica lo stato solo se la Version è più nuova. Se il documento ha una Version uguale o maggiore (o è un tombstone) il filtro non lo trova, l'upsert prova a inserirlo e l'_id lo rifiuta: evento ignorato.
     public async Task UpsertAsync(SubscriptionSnapshot snapshot, CancellationToken cancellationToken)
     {
         var filter = Filter.Eq(d => d.SubscriptionId, snapshot.SubscriptionId)
@@ -51,11 +48,11 @@ public sealed class SubscriptionReadStore(AnalyticsDb db, IOptions<AnalyticsOpti
         }
         catch (MongoWriteException exception) when (exception.IsDuplicateKey())
         {
-            // versione già applicata (o più nuova), oppure abbonamento cancellato
+            //versione già applicata (o più nuova), oppure abbonamento cancellato
         }
     }
 
-    /// <summary>Tombstone: Version massima, così un SubscriptionUpdated in ritardo non lo resuscita.</summary>
+    //Tombstone: Version massima, così un SubscriptionUpdated in ritardo non lo resuscita
     public Task MarkDeletedAsync(Guid subscriptionId, Guid userId, DateTimeOffset now, CancellationToken cancellationToken) =>
         db.Subscriptions.UpdateOneAsync(
             Filter.Eq(d => d.SubscriptionId, subscriptionId),
@@ -67,7 +64,7 @@ public sealed class SubscriptionReadStore(AnalyticsDb db, IOptions<AnalyticsOpti
             new UpdateOptions { IsUpsert = true },
             cancellationToken);
 
-    /// <summary>Prima il tombstone dell'utente (blocca gli eventi in ritardo), poi i suoi abbonamenti.</summary>
+    //Prima il tombstone dell'utente (blocca gli eventi in ritardo), poi i suoi abbonamenti
     public async Task DeleteAllForUserAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken)
     {
         await db.DeletedUsers.ReplaceOneAsync(
@@ -89,7 +86,7 @@ public sealed class SubscriptionReadStore(AnalyticsDb db, IOptions<AnalyticsOpti
             .Find(Builders<DeletedUserDocument>.Filter.Eq(d => d.UserId, userId))
             .AnyAsync(cancellationToken);
 
-    /// <summary>Tutti gli abbonamenti dell'utente, anche terminati (servono al trend). Esclusi i tombstone.</summary>
+    //Tutti gli abbonamenti dell'utente, anche terminati (servono al trend). Esclusi i tombstone
     public async Task<IReadOnlyList<AnalyticsSubscription>> GetForUserAsync(Guid userId, CancellationToken cancellationToken)
     {
         var documents = await db.Subscriptions

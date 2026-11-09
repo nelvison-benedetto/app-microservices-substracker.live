@@ -4,7 +4,7 @@ using SubSnapMS.Analytics.API.Calculations;
 
 namespace SubSnapMS.Analytics.API.Persistence.Documents;
 
-/// <summary>Copia di un abbonamento: lo stato completo dell'ultimo evento applicato.</summary>
+//Copia di un abbonamento: lo stato completo dell'ultimo evento applicato
 public sealed class SubscriptionDocument
 {
     [BsonId]
@@ -12,7 +12,7 @@ public sealed class SubscriptionDocument
 
     public Guid UserId { get; set; }
 
-    /// <summary>Version dell'evento applicato. Nei tombstone vale long.MaxValue.</summary>
+    //Version dell'evento applicato. Nei tombstone vale long.MaxValue
     public long Version { get; set; }
 
     public bool Deleted { get; set; }
@@ -26,7 +26,7 @@ public sealed class SubscriptionDocument
 
     public string Currency { get; set; } = string.Empty;
 
-    /// <summary>Codice di Contracts.BillingCycles.</summary>
+    //Codice di Contracts.BillingCycles
     public string BillingCycle { get; set; } = string.Empty;
 
     public DateTime StartDate { get; set; }

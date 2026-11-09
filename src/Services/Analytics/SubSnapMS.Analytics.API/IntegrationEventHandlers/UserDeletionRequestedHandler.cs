@@ -4,7 +4,7 @@ using SubSnapMS.Contracts.Identity;
 
 namespace SubSnapMS.Analytics.API.IntegrationEventHandlers;
 
-/// <summary>Saga di cancellazione: Analytics è un read model, cancella e NON risponde con UserDataDeleted.</summary>
+//Saga di cancellazione: Analytics è un read model, cancella e NON risponde con UserDataDeleted
 public sealed class UserDeletionRequestedHandler(
     SubscriptionReadStore store,
     TimeProvider timeProvider,

@@ -3,7 +3,7 @@ using SubSnapMS.Analytics.API.Persistence.Documents;
 
 namespace SubSnapMS.Analytics.API.Persistence;
 
-/// <summary>Crea gli indici all'avvio (idempotente), in background con retry se Mongo non è ancora pronto.</summary>
+//Crea gli indici all'avvio (idempotente), in background con retry se Mongo non è ancora pronto
 internal sealed class MongoIndexInitializer(AnalyticsDb db, ILogger<MongoIndexInitializer> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -28,7 +28,7 @@ internal sealed class MongoIndexInitializer(AnalyticsDb db, ILogger<MongoIndexIn
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {
-            // shutdown durante l'attesa
+            //shutdown durante l'attesa
         }
     }
 
@@ -36,7 +36,7 @@ internal sealed class MongoIndexInitializer(AnalyticsDb db, ILogger<MongoIndexIn
     {
         await db.Subscriptions.Indexes.CreateManyAsync(
         [
-            // La query della dashboard: tutti gli abbonamenti (non cancellati) di un utente
+            //La query della dashboard: tutti gli abbonamenti (non cancellati) di un utente
             new CreateIndexModel<SubscriptionDocument>(
                 Builders<SubscriptionDocument>.IndexKeys.Ascending(d => d.UserId).Ascending(d => d.Deleted),
                 new CreateIndexOptions { Name = "ix_user_id_deleted" }),

@@ -22,8 +22,8 @@ public static class DependencyInjection
             .Validate(o => o.DeletedTombstoneRetention > TimeSpan.Zero, "Analytics:DeletedTombstoneRetention must be positive.")
             .ValidateOnStart();
 
-        // ── MongoDB ───────────────────────────────────────────────────────────────
-        // Password inclusa nella connection string: in produzione da ConnectionStrings__AnalyticsDb
+        // MongoDB
+        //Password inclusa nella connection string: in produzione da ConnectionStrings__AnalyticsDb
         var connectionString = configuration.GetConnectionString(ConnectionStringName)
             ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' is missing.");
 
@@ -48,7 +48,7 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<MongoHealthCheck>("mongo", tags: [HealthCheckTags.Ready]);
 
-        // ── Calcoli ───────────────────────────────────────────────────────────────
+        // Calcoli
         services.AddSingleton<AnalyticsCalendar>();
 
         return services;

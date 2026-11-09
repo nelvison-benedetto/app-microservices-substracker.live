@@ -8,7 +8,7 @@ public sealed class SubscriptionCreatedHandler(SubscriptionReadStore store) : II
 {
     public async Task HandleAsync(SubscriptionCreated e, MessageContext context, CancellationToken cancellationToken)
     {
-        // Evento in ritardo di un utente già cancellato: non ricreare i suoi dati
+        //Evento in ritardo di un utente già cancellato: non ricreare i suoi dati
         if (await store.IsUserDeletedAsync(e.UserId, cancellationToken))
             return;
 

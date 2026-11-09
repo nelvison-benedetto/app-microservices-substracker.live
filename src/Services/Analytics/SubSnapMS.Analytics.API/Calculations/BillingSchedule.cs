@@ -2,10 +2,7 @@ using SubSnapMS.Contracts.Subscriptions;
 
 namespace SubSnapMS.Analytics.API.Calculations;
 
-/// <summary>
-/// Date di addebito di un abbonamento: StartDate, poi ogni periodo. Ogni data si calcola dalla StartDate
-/// (31 gen → 28 feb → 31 mar, senza deriva). Nessun addebito dopo EndDate.
-/// </summary>
+//Date di addebito di un abbonamento: StartDate, poi ogni periodo. Ogni data si calcola dalla StartDate (31 gen → 28 feb → 31 mar, senza deriva). Nessun addebito dopo EndDate.
 public static class BillingSchedule
 {
     /// <summary>Addebiti tra from e to (inclusi).</summary>
