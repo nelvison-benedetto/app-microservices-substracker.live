@@ -8,7 +8,7 @@ public sealed class SubscriptionCreatedHandler(GraphProjector projector) : IInte
 {
     public async Task HandleAsync(SubscriptionCreated e, MessageContext context, CancellationToken cancellationToken)
     {
-        // Evento in ritardo di un utente già cancellato: non ricreare i suoi nodi
+        //Evento in ritardo di un utente già cancellato: non ricreare i suoi nodi
         if (await projector.IsUserDeletedAsync(e.UserId, cancellationToken))
             return;
 

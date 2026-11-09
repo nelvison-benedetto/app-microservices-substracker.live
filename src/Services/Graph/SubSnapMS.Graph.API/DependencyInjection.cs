@@ -15,7 +15,7 @@ public static class DependencyInjection
     {
         services.TryAddSingleton(TimeProvider.System);
 
-        // ── Opzioni ───────────────────────────────────────────────────────────────
+        // Opzioni
         services.AddOptions<Neo4jOptions>()
             .Bind(configuration.GetSection(Neo4jOptions.SectionName))
             .Validate(o => Uri.TryCreate(o.Uri, UriKind.Absolute, out _), "Neo4j:Uri must be an absolute URI (bolt://… or neo4j://…).")
@@ -31,7 +31,7 @@ public static class DependencyInjection
             .Validate(o => o.CleanupInterval >= TimeSpan.FromMinutes(1), "Graph:CleanupInterval must be at least 1 minute.")
             .ValidateOnStart();
 
-        // ── Driver: singleton thread-safe con pool di connessioni; chiuso allo shutdown dal container DI ──
+        // Driver: singleton thread-safe con pool di connessioni; chiuso allo shutdown dal container DI
         services.AddSingleton<IDriver>(serviceProvider =>
         {
             var neo4j = serviceProvider.GetRequiredService<IOptions<Neo4jOptions>>().Value;
@@ -53,7 +53,7 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<Neo4jHealthCheck>("neo4j", tags: [HealthCheckTags.Ready]);
 
-        // ── Proiezione e letture ──────────────────────────────────────────────────
+        // Proiezione e letture
         services.AddSingleton<GraphProjector>();
         services.AddSingleton<GraphCalendar>();
         services.AddSingleton<RecommendationService>();

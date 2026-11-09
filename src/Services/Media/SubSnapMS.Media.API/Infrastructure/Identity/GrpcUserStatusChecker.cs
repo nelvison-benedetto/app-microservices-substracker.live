@@ -4,12 +4,9 @@ using SubSnapMS.Media.Core.Common;
 
 namespace SubSnapMS.Media.API.Infrastructure.Identity;
 
-/// <summary>
-/// Chiama Identity.UserLookup via gRPC (porta 8081, HTTP/2, rete interna).
-/// Retry, timeout e circuit breaker sono nel client (AddStandardResilienceHandler).
-/// Se Identity non è raggiungibile l'eccezione risale (500): per un'operazione di scrittura
-/// è più sicuro rifiutare che lasciar caricare file senza verifica (fail closed).
-/// </summary>
+//Chiama Identity.UserLookup via gRPC (porta 8081, HTTP/2, rete interna).
+//Retry, timeout e circuit breaker sono nel client (AddStandardResilienceHandler).
+//Se Identity non è raggiungibile l'eccezione risale (500): per un'operazione di scrittura è più sicuro rifiutare che lasciar caricare file senza verifica (fail closed).
 internal sealed class GrpcUserStatusChecker(UserLookup.UserLookupClient client) : IUserStatusChecker
 {
     public async Task EnsureCanUploadAsync(UserId userId, CancellationToken cancellationToken)

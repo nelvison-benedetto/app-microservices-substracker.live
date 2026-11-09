@@ -8,7 +8,7 @@ using SubSnapMS.Notification.API.Persistence;
 
 namespace SubSnapMS.Notification.API.IntegrationEventHandlers;
 
-/// <summary>Salva l'email e invia il benvenuto (una volta sola, solo per registrazioni recenti).</summary>
+//Salva l'email e invia il benvenuto (una volta sola, solo per registrazioni recenti)
 public sealed class UserRegisteredHandler(
     RecipientStore recipients,
     NotificationSender sender,
@@ -31,7 +31,7 @@ public sealed class UserRegisteredHandler(
             return;
         }
 
-        // Email corrente: potrebbe essere già cambiata (UserEmailChanged arrivato prima) o l'utente cancellato
+        //Email corrente: potrebbe essere già cambiata (UserEmailChanged arrivato prima) o l'utente cancellato
         var email = await recipients.GetEmailAsync(integrationEvent.UserId, cancellationToken);
         if (email is null)
             return;

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace SubSnapMS.Graph.API.Neo4j;
 
-/// <summary>Ready = Neo4j raggiungibile e schema applicato.</summary>
+//Ready = Neo4j raggiungibile e schema applicato
 internal sealed class Neo4jHealthCheck(GraphClient graph, GraphSchemaState state) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)

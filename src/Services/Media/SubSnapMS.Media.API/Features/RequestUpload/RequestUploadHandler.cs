@@ -8,11 +8,9 @@ using SubSnapMS.Media.Core.MediaFiles;
 
 namespace SubSnapMS.Media.API.Features.RequestUpload;
 
-/// <summary>
-/// 1. verifica via gRPC che l'utente sia attivo (non in cancellazione);
-/// 2. registra la richiesta (Pending) con chiave generata dal server;
-/// 3. firma un URL di PUT valido pochi minuti. La firma è locale: nessuna chiamata allo storage.
-/// </summary>
+//1. verifica via gRPC che l'utente sia attivo (non in cancellazione);
+//2. registra la richiesta (Pending) con chiave generata dal server;
+//3. firma un URL di PUT valido pochi minuti. La firma è locale: nessuna chiamata allo storage.
 internal sealed class RequestUploadHandler(
     MediaDbContext dbContext,
     IUserStatusChecker userStatus,

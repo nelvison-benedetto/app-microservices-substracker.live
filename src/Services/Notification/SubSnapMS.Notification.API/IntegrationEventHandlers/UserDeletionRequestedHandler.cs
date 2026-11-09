@@ -4,10 +4,8 @@ using SubSnapMS.Notification.API.Persistence;
 
 namespace SubSnapMS.Notification.API.IntegrationEventHandlers;
 
-/// <summary>
-/// Saga di cancellazione: Notification è un read model, quindi cancella e NON risponde con UserDataDeleted.
-/// Prima il tombstone (blocca gli eventi in ritardo), poi abbonamenti e registro invii. Tutto idempotente.
-/// </summary>
+//Saga di cancellazione: Notification è un read model, quindi cancella e NON risponde con UserDataDeleted.
+//Prima il tombstone (blocca gli eventi in ritardo), poi abbonamenti e registro invii. Tutto idempotente.
 public sealed class UserDeletionRequestedHandler(
     RecipientStore recipients,
     SubscriptionStore subscriptions,

@@ -1,6 +1,6 @@
 namespace SubSnapMS.Graph.API.Neo4j;
 
-/// <summary>Applica GraphSchema all'avvio, in background con retry finché Neo4j non risponde.</summary>
+//Applica GraphSchema all'avvio, in background con retry finché Neo4j non risponde
 internal sealed class SchemaInitializer(
     GraphClient graph,
     GraphSchemaState state,
@@ -14,7 +14,7 @@ internal sealed class SchemaInitializer(
             {
                 try
                 {
-                    // Ogni istruzione di schema nella propria transazione (Neo4j non le mescola con altre)
+                    //Ogni istruzione di schema nella propria transazione (Neo4j non le mescola con altre)
                     foreach (var statement in GraphSchema.Statements)
                         await graph.WriteAsync("schema", statement, new { }, stoppingToken);
 

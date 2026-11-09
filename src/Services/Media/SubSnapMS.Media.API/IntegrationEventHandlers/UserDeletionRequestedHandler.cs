@@ -9,11 +9,8 @@ using SubSnapMS.Media.Core.Common;
 
 namespace SubSnapMS.Media.API.IntegrationEventHandlers;
 
-/// <summary>
-/// Saga di cancellazione account: elimina tutti i file dell'utente (ogni Delete pubblica media.deleted.v1
-/// → il file su R2 viene cancellato dopo il commit) e conferma a Identity con UserDataDeleted.
-/// Dentro la transazione dell'Inbox: metadati rimossi + eventi + conferma, tutto o niente.
-/// </summary>
+//Saga di cancellazione account: elimina tutti i file dell'utente (ogni Delete pubblica media.deleted.v1 → il file su R2 viene cancellato dopo il commit) e conferma a Identity con UserDataDeleted.
+//Dentro la transazione dell'Inbox: metadati rimossi + eventi + conferma, tutto o niente.
 public sealed class UserDeletionRequestedHandler(
     MediaDbContext dbContext,
     IIntegrationEventOutbox outbox,

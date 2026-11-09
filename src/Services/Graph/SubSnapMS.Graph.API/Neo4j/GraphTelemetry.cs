@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace SubSnapMS.Graph.API.Neo4j;
 
-/// <summary>Sorgente delle trace delle query Neo4j (esportata da Observability tramite AdditionalSources).</summary>
+//Sorgente delle trace delle query Neo4j (esportata da Observability tramite AdditionalSources)
 public static class GraphTelemetry
 {
     public const string Name = "SubSnapMS.Graph";

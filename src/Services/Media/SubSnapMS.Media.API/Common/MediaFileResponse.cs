@@ -3,7 +3,7 @@ using SubSnapMS.Media.Core.MediaFiles;
 
 namespace SubSnapMS.Media.API.Common;
 
-/// <summary>Un file caricato. Url = indirizzo pubblico sul CDN (cdn.substracker.live).</summary>
+//Un file caricato. Url = indirizzo pubblico sul CDN (cdn.substracker.live)
 public sealed record MediaFileResponse(
     Guid Id,
     string Purpose,

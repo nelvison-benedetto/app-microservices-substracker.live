@@ -5,10 +5,8 @@ using SubSnapMS.Graph.API.Configuration;
 
 namespace SubSnapMS.Graph.API.Neo4j;
 
-/// <summary>
-/// Pulizia periodica: tombstone vecchi, servizi senza abbonamenti, utenti senza abbonamenti.
-/// Idempotente: con più repliche può girare su tutte.
-/// </summary>
+//Pulizia periodica: tombstone vecchi, servizi senza abbonamenti, utenti senza abbonamenti.
+//Idempotente: con più repliche può girare su tutte.
 internal sealed class GraphCleanupService(
     GraphClient graph,
     GraphSchemaState state,

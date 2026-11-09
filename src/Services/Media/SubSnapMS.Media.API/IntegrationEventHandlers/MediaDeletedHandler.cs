@@ -5,10 +5,8 @@ using SubSnapMS.Media.API.Infrastructure.Storage;
 
 namespace SubSnapMS.Media.API.IntegrationEventHandlers;
 
-/// <summary>
-/// Cancella il file dallo storage quando i metadati sono già stati eliminati (evento pubblicato dopo il commit).
-/// Idempotente: cancellare un oggetto che non esiste più non è un errore. Errori di rete → retry, poi DLQ.
-/// </summary>
+//Cancella il file dallo storage quando i metadati sono già stati eliminati (evento pubblicato dopo il commit).
+//Idempotente: cancellare un oggetto che non esiste più non è un errore. Errori di rete → retry, poi DLQ.
 public sealed class MediaDeletedHandler(IObjectStorage storage, ILogger<MediaDeletedHandler> logger)
     : IIntegrationEventHandler<MediaDeleted>
 {

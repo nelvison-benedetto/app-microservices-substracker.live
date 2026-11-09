@@ -4,5 +4,4 @@ using SubSnapMS.Media.Core.Common;
 
 namespace SubSnapMS.Media.API.Features.GetMyMedia;
 
-/// <param name="Purpose">Filtro opzionale (es. "avatar").</param>
-public sealed record GetMyMediaQuery(UserId UserId, string? Purpose) : IQuery<IReadOnlyList<MediaFileResponse>>;
+public sealed record GetMyMediaQuery(UserId UserId, string? Purpose) : IQuery<IReadOnlyList<MediaFileResponse>>;  //Purpose è il filtro opzionale e.g. 'avatar'

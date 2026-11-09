@@ -44,11 +44,11 @@ internal sealed class MediaFileConfiguration : IEntityTypeConfiguration<MediaFil
         builder.Property(f => f.UploadExpiresAtUtc).HasColumnName("upload_expires_at").IsRequired();
         builder.Property(f => f.UploadedAtUtc).HasColumnName("uploaded_at");
 
-        // "I miei file di tipo X" e "richieste Pending scadute" (pulizia)
+        //"I miei file di tipo X" e "richieste Pending scadute" (pulizia)
         builder.HasIndex(f => new { f.UserId, f.Purpose, f.Status }).HasDatabaseName("ix_media_files_user_purpose_status");
         builder.HasIndex(f => new { f.Status, f.UploadExpiresAtUtc }).HasDatabaseName("ix_media_files_status_upload_expires_at");
 
-        // Conferme concorrenti dello stesso file → la seconda fallisce (409)
+        //Conferme concorrenti dello stesso file → la seconda fallisce (409)
         builder.Property<uint>("Version").IsRowVersion();
     }
 }

@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace SubSnapMS.Notification.API.Persistence.Documents;
 
-/// <summary>Copia di un abbonamento, con il prossimo rinnovo pre-calcolato per il job dei promemoria.</summary>
+//Copia di un abbonamento, con il prossimo rinnovo pre-calcolato per il job dei promemoria
 public sealed class SubscriptionDocument
 {
     [BsonId]
@@ -11,7 +11,7 @@ public sealed class SubscriptionDocument
 
     public Guid UserId { get; set; }
 
-    /// <summary>Version dell'evento applicato. Nei tombstone vale long.MaxValue: nessun evento successivo lo sovrascrive.</summary>
+    //Version dell'evento applicato. Nei tombstone vale long.MaxValue: nessun evento successivo lo sovrascrive
     public long Version { get; set; }
 
     public bool Deleted { get; set; }
@@ -23,17 +23,17 @@ public sealed class SubscriptionDocument
 
     public string Currency { get; set; } = string.Empty;
 
-    /// <summary>Codice di Contracts.BillingCycles.</summary>
+    //Codice di Contracts.BillingCycles
     public string BillingCycle { get; set; } = string.Empty;
 
     public DateTime StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
 
-    /// <summary>Null se l'abbonamento è terminato (EndDate superata) o il ciclo è sconosciuto.</summary>
+    //Null se l'abbonamento è terminato (EndDate superata) o il ciclo è sconosciuto
     public DateTime? NextRenewalDate { get; set; }
 
-    /// <summary>True finché il promemoria per NextRenewalDate non è stato gestito.</summary>
+    //True finché il promemoria per NextRenewalDate non è stato gestito
     public bool ReminderPending { get; set; }
 
     public DateTime? ExpireAtUtc { get; set; }

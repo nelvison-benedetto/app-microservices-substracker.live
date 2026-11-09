@@ -13,10 +13,7 @@ public sealed record RenewalReminderModel(
     string BillingCycle,
     DateOnly RenewalDate);
 
-/// <summary>
-/// Template in italiano. Ogni valore inserito dall'utente (es. nome abbonamento) passa da Encode:
-/// un nome come "&lt;a href=...&gt;" non diventa un link nell'email.
-/// </summary>
+//Template in italiano. Ogni valore inserito dall'utente (es. nome abbonamento) passa da Encode: un nome come "&lt;a href=...&gt;" non diventa un link nell'email.
 public sealed class EmailTemplates(IOptions<EmailOptions> options)
 {
     private static readonly CultureInfo Italian = CultureInfo.GetCultureInfo("it-IT");
@@ -85,7 +82,7 @@ public sealed class EmailTemplates(IOptions<EmailOptions> options)
         return new EmailMessage(to, subject, html, text);
     }
 
-    // ── Formattazione ─────────────────────────────────────────────────────────────
+    // Formattazione
 
     private static string DescribeWhen(DateOnly renewalDate, DateOnly today) =>
         (renewalDate.DayNumber - today.DayNumber) switch
@@ -119,7 +116,7 @@ public sealed class EmailTemplates(IOptions<EmailOptions> options)
         </p>
         """;
 
-    /// <summary>Layout a tabelle con stili inline: l'unico HTML che i client email (Outlook, Gmail) rendono bene.</summary>
+    //Layout a tabelle con stili inline: l'unico HTML che i client email (Outlook, Gmail) rendono bene
     private static string Layout(string title, string content) => $"""
         <!DOCTYPE html>
         <html lang="it">

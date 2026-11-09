@@ -16,7 +16,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddMediaInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // ── Database ──────────────────────────────────────────────────────────────
+        // Database
         var connectionString = configuration.GetConnectionString("MediaDb")
             ?? throw new InvalidOperationException("Connection string 'MediaDb' is missing.");
 
@@ -27,7 +27,7 @@ public static class DependencyInjection
                 npgsql.MigrationsHistoryTable("__ef_migrations_history");
             }));
 
-        // ── Upload ────────────────────────────────────────────────────────────────
+        // Upload
         services.AddOptions<MediaUploadOptions>()
             .Bind(configuration.GetSection(MediaUploadOptions.SectionName))
             .Validate(o => o.UploadUrlLifetime > TimeSpan.Zero && o.UploadUrlLifetime <= TimeSpan.FromHours(1),
@@ -36,7 +36,7 @@ public static class DependencyInjection
 
         services.AddHostedService<PendingUploadCleanupService>();
 
-        // ── Storage (Cloudflare R2 / qualsiasi S3 compatibile, es. MinIO in sviluppo) ──
+        // Storage (Cloudflare R2 / qualsiasi S3 compatibile, es. MinIO in sviluppo) 
         services.AddOptions<ObjectStorageOptions>()
             .Bind(configuration.GetSection(ObjectStorageOptions.SectionName))
             .Validate(o => !string.IsNullOrWhiteSpace(o.BucketName), "Storage:BucketName is required.")
@@ -64,7 +64,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IObjectStorage, S3ObjectStorage>();
 
-        // ── gRPC verso Identity (sincrono): timeout brevi, retry, circuit breaker ──
+        // gRPC verso Identity (sincrono): timeout brevi, retry, circuit breaker
         var identityGrpcAddress = configuration["Services:Identity:GrpcAddress"]
             ?? throw new InvalidOperationException("Services:Identity:GrpcAddress is missing.");
 

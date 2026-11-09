@@ -19,11 +19,8 @@ public sealed class RecommendationService(
 
     private const int MaxCategorySamples = 50;
 
-    /// <summary>
-    /// Collaborative filtering: utenti che hanno almeno uno dei miei servizi attivi → i loro altri servizi
-    /// che io non ho. Score = somma delle sovrapposizioni (chi ha più servizi in comune con me pesa di più).
-    /// Solo servizi con almeno $minUsers utenti distinti (privacy).
-    /// </summary>
+    //Collaborative filtering: utenti che hanno almeno uno dei miei servizi attivi → i loro altri servizi che io non ho. Score = somma delle sovrapposizioni (chi ha più servizi in comune con me pesa di più).
+    //Solo servizi con almeno $minUsers utenti distinti (privacy).
     private static readonly string SimilarUsersQuery = $$"""
         MATCH (me:User {id: $userId})-[:HAS]->(ms:Subscription)-[:OF]->(mine:Service)
         WHERE {{Active("ms")}}
@@ -42,7 +39,7 @@ public sealed class RecommendationService(
         LIMIT $limit
         """;
 
-    /// <summary>Fallback (utente nuovo o senza sovrapposizioni): i servizi più diffusi che non ha.</summary>
+    //Fallback (utente nuovo o senza sovrapposizioni): i servizi più diffusi che non ha
     private static readonly string PopularQuery = $$"""
         MATCH (svc:Service)<-[:OF]-(s:Subscription)<-[:HAS]-(u:User)
         WHERE {{Active("s")}}
@@ -84,11 +81,9 @@ public sealed class RecommendationService(
         return new ServiceRecommendationsResponse(BasedOnPopular, popular.Select(ToRecommendation).ToList());
     }
 
-    /// <summary>
-    /// Sovrapposizioni tra i MIEI abbonamenti attivi:
-    ///  - stessa categoria 2+ volte (es. tre servizi di streaming → valuta un bundle);
-    ///  - stesso servizio 2+ volte (probabile doppione o abbonamento dimenticato).
-    /// </summary>
+    //Sovrapposizioni tra i MIEI abbonamenti attivi:
+    // - stessa categoria 2+ volte (es. tre servizi di streaming → valuta un bundle);
+    // - stesso servizio 2+ volte (probabile doppione o abbonamento dimenticato).
     public async Task<OverlapsResponse> GetOverlapsAsync(Guid userId, CancellationToken cancellationToken)
     {
         await state.WaitUntilReadyAsync(cancellationToken);
@@ -133,7 +128,7 @@ public sealed class RecommendationService(
         return new OverlapsResponse(categories, duplicates);
     }
 
-    // ── Mapping ───────────────────────────────────────────────────────────────────
+    // Mapping
 
     private static ServiceRecommendationResponse ToRecommendation(IRecord record) => new(
         record["key"].As<string>(),
@@ -142,7 +137,7 @@ public sealed class RecommendationService(
         record["users"].As<long>(),
         record["score"].As<long>());
 
-    /// <summary>Categoria più usata dagli utenti per quel servizio (senza distinzione di maiuscole).</summary>
+    //Categoria più usata dagli utenti per quel servizio (senza distinzione di maiuscole)
     private static string? MostCommon(IReadOnlyCollection<string> categories) =>
         categories
             .Where(c => !string.IsNullOrWhiteSpace(c))

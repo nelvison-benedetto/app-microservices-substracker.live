@@ -10,11 +10,9 @@ using SubSnapMS.Media.Core.MediaFiles.Exceptions;
 
 namespace SubSnapMS.Media.API.Features.ConfirmUpload;
 
-/// <summary>
-/// Conferma un upload verificando lo storage (non quello che dichiara il client).
-/// Idempotente: confermare due volte restituisce lo stesso file.
-/// Per l'avatar: il precedente viene eliminato (il file su R2 lo cancella il consumer di media.deleted.v1, dopo il commit).
-/// </summary>
+//Conferma un upload verificando lo storage (non quello che dichiara il client).
+//Idempotente: confermare due volte restituisce lo stesso file.
+//Per l'avatar: il precedente viene eliminato (il file su R2 lo cancella il consumer di media.deleted.v1, dopo il commit).
 internal sealed class ConfirmUploadHandler(
     MediaDbContext dbContext,
     IObjectStorage storage,
@@ -41,7 +39,7 @@ internal sealed class ConfirmUploadHandler(
         }
         catch (DomainException)
         {
-            // File rifiutato (troppo grande, tipo diverso, richiesta scaduta): non deve restare sullo storage
+            //File rifiutato (troppo grande, tipo diverso, richiesta scaduta): non deve restare sullo storage
             await storage.DeleteAsync(file.ObjectKey, cancellationToken);
             throw;
         }

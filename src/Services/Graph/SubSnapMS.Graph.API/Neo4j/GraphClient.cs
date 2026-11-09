@@ -5,11 +5,8 @@ using SubSnapMS.Graph.API.Configuration;
 
 namespace SubSnapMS.Graph.API.Neo4j;
 
-/// <summary>
-/// Esegue Cypher in transazioni GESTITE: il driver ripete da solo la transazione sugli errori transitori
-/// (es. cambio di leader in un cluster). Ogni chiamata è uno span "neo4j &lt;operazione&gt;".
-/// Il lavoro passato può essere eseguito più volte: deve essere idempotente.
-/// </summary>
+//Esegue Cypher in transazioni GESTITE: il driver ripete da solo la transazione sugli errori transitori (es. cambio di leader in un cluster). Ogni chiamata è uno span "neo4j &lt;operazione&gt;".
+//Il lavoro passato può essere eseguito più volte: deve essere idempotente.
 public sealed class GraphClient(IDriver driver, IOptions<Neo4jOptions> options)
 {
     private string Database => options.Value.Database;
@@ -38,7 +35,7 @@ public sealed class GraphClient(IDriver driver, IOptions<Neo4jOptions> options)
         });
     }
 
-    /// <summary>Più istruzioni nella STESSA transazione (tutto o niente).</summary>
+    //Più istruzioni nella STESSA transazione (tutto o niente)
     public async Task WriteAsync(string operation, Func<IAsyncQueryRunner, Task> work)
     {
         using var activity = StartActivity(operation);

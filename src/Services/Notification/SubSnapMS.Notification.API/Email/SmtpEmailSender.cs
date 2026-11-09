@@ -5,10 +5,8 @@ using SubSnapMS.Notification.API.Configuration;
 
 namespace SubSnapMS.Notification.API.Email;
 
-/// <summary>
-/// Invio via SMTP con MailKit: qualsiasi provider (Brevo, SES, Postmark, Resend…) o Mailpit in sviluppo.
-/// Una connessione per email: con i volumi di SubSnap è semplice e sufficiente.
-/// </summary>
+//Invio via SMTP con MailKit: qualsiasi provider (Brevo, SES, Postmark, Resend…) o Mailpit in sviluppo.
+//Una connessione per email: con i volumi di SubSnap è semplice e sufficiente.
 internal sealed class SmtpEmailSender(IOptions<EmailOptions> options) : IEmailSender
 {
     public async Task SendAsync(EmailMessage message, CancellationToken cancellationToken)

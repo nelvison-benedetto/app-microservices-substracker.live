@@ -1,20 +1,20 @@
 namespace SubSnapMS.Media.API.Infrastructure.Storage;
 
-/// <summary>Metadati reali di un oggetto, letti dallo storage (non dichiarati dal client).</summary>
+//Metadati reali di un oggetto, letti dallo storage (non dichiarati dal client)
 public sealed record StoredObjectMetadata(long SizeBytes, string? ContentType);
 
-/// <summary>Storage compatibile S3 (Cloudflare R2 in produzione, MinIO in sviluppo).</summary>
+//Storage compatibile S3 (Cloudflare R2 in produzione, MinIO in sviluppo)
 public interface IObjectStorage
 {
-    /// <summary>URL di PUT firmato. Firma locale (nessuna chiamata di rete). Il Content-Type fa parte della firma.</summary>
+    //URL di PUT firmato. Firma locale (nessuna chiamata di rete). Il Content-Type fa parte della firma
     string CreateUploadUrl(string objectKey, string contentType, DateTimeOffset expiresAtUtc);
 
-    /// <summary>HEAD dell'oggetto. Null se non esiste (upload non avvenuto).</summary>
+    //HEAD dell'oggetto. Null se non esiste (upload non avvenuto)
     Task<StoredObjectMetadata?> GetMetadataAsync(string objectKey, CancellationToken cancellationToken);
 
-    /// <summary>Idempotente: cancellare un oggetto inesistente non è un errore.</summary>
+    //Idempotente: cancellare un oggetto inesistente non è un errore
     Task DeleteAsync(string objectKey, CancellationToken cancellationToken);
 
-    /// <summary>URL pubblico (CDN) da cui il browser legge il file.</summary>
+    //URL pubblico (CDN) da cui il browser legge il file
     string GetPublicUrl(string objectKey);
 }

@@ -4,7 +4,7 @@ using SubSnapMS.Graph.API.Configuration;
 
 namespace SubSnapMS.Graph.API.Recommendations;
 
-/// <summary>"Oggi" nel fuso degli utenti, nel formato atteso da date() in Cypher.</summary>
+//"Oggi" nel fuso degli utenti, nel formato atteso da date() in Cypher
 public sealed class GraphCalendar(TimeProvider timeProvider, IOptions<GraphOptions> options)
 {
     private readonly TimeZoneInfo _timeZone = TimeZoneInfo.FindSystemTimeZoneById(options.Value.TimeZone);

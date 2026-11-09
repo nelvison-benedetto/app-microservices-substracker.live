@@ -8,10 +8,8 @@ using SubSnapMS.Media.Core.Common;
 
 namespace SubSnapMS.Media.API.Features.RequestUpload;
 
-/// <param name="Purpose">avatar</param>
-/// <param name="ContentType">image/jpeg | image/png | image/webp</param>
-/// <param name="SizeBytes">Dimensione dichiarata; quella reale viene verificata alla conferma.</param>
 public sealed record RequestUploadRequest(string Purpose, string ContentType, long SizeBytes);
+//Purpose è avatar, ContentType è image/jpeg | image/png | image/webp, SizeBytes è dimensione dichiarata quella reale viene verificata alla conferma
 
 internal sealed class RequestUploadEndpoint : IEndpoint
 {

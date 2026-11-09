@@ -11,14 +11,12 @@ public enum SendOutcome
     GaveUp
 }
 
-/// <summary>Un altro tentativo sta inviando la stessa notifica: il chiamante riprova più tardi.</summary>
+//Un altro tentativo sta inviando la stessa notifica: il chiamante riprova più tardi
 public sealed class NotificationInProgressException(string key)
     : Exception($"Notification '{key}' is being sent by another attempt.");
 
-/// <summary>
-/// Invio "una volta sola": prenota la chiave → invia → segna come inviata.
-/// Se l'invio fallisce la notifica resta Failed e il chiamante decide (consumer: retry e DLQ; job: giro successivo).
-/// </summary>
+//Invio "una volta sola": prenota la chiave → invia → segna come inviata.
+//Se l'invio fallisce la notifica resta Failed e il chiamante decide (consumer: retry e DLQ; job: giro successivo).
 public sealed class NotificationSender(
     NotificationLog log,
     IEmailSender emailSender,

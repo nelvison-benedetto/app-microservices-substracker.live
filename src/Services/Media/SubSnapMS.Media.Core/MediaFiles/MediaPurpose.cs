@@ -2,16 +2,14 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Media.Core.MediaFiles;
 
-/// <summary>A cosa serve un file. Determina tipi ammessi, dimensione massima e cartella sullo storage.</summary>
+//A cosa serve un file. Determina tipi ammessi, dimensione massima e cartella sullo storage
 public enum MediaPurpose
 {
     Avatar = 1
 }
 
-/// <summary>
-/// Conversione enum ↔ codice neutro. I codici coincidono con Contracts.MediaPurposes e con l'API.
-/// Il parsing ignora maiuscole/minuscole ("Avatar" = "avatar").
-/// </summary>
+//Conversione enum ↔ codice neutro. I codici coincidono con Contracts.MediaPurposes e con l'API.
+//Il parsing ignora maiuscole/minuscole ("Avatar" = "avatar").
 public static class MediaPurposeExtensions
 {
     private static readonly Dictionary<string, MediaPurpose> ByCode = new(StringComparer.OrdinalIgnoreCase)
@@ -27,7 +25,7 @@ public static class MediaPurposeExtensions
         _ => throw new ArgumentOutOfRangeException(nameof(purpose), purpose, "Unknown media purpose.")
     };
 
-    /// <summary>Prima parte della chiave sullo storage (es. "avatars/...").</summary>
+    //Prima parte della chiave sullo storage (es. "avatars/...")
     public static string ToStorageFolder(this MediaPurpose purpose) => purpose switch
     {
         MediaPurpose.Avatar => "avatars",

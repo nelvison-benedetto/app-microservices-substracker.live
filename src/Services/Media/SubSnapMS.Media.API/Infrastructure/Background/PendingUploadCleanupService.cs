@@ -7,10 +7,8 @@ using SubSnapMS.Media.Core.MediaFiles;
 
 namespace SubSnapMS.Media.API.Infrastructure.Background;
 
-/// <summary>
-/// Elimina le richieste di upload mai confermate (riga Pending + eventuale oggetto su R2).
-/// Nessun evento: per il resto della piattaforma questi file non sono mai esistiti.
-/// </summary>
+//Elimina le richieste di upload mai confermate (riga Pending + eventuale oggetto su R2).
+//Nessun evento: per il resto della piattaforma questi file non sono mai esistiti.
 internal sealed class PendingUploadCleanupService(
     IServiceScopeFactory scopeFactory,
     IOptions<MediaUploadOptions> options,
@@ -63,8 +61,8 @@ internal sealed class PendingUploadCleanupService(
 
         foreach (var file in abandoned)
         {
-            await storage.DeleteAsync(file.ObjectKey, cancellationToken);   // può non esistere: va bene
-            dbContext.MediaFiles.Remove(file);                              // nessun Delete() di dominio: nessun evento
+            await storage.DeleteAsync(file.ObjectKey, cancellationToken);   //può non esistere: va bene
+            dbContext.MediaFiles.Remove(file);                              //nessun Delete() di dominio: nessun evento
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

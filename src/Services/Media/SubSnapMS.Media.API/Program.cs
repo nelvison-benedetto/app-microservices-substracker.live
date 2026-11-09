@@ -14,7 +14,7 @@ using SubSnapMS.Media.API.IntegrationEventHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Trasversali ───────────────────────────────────────────────────────────────
+// Trasversali
 builder.AddObservability(ServiceNames.Media, observability =>
 {
     observability.AdditionalSources.Add("Npgsql");
@@ -22,13 +22,13 @@ builder.AddObservability(ServiceNames.Media, observability =>
 });
 builder.AddWebDefaults();
 
-// ── Application (in questo progetto): MediatR, validator, domain event handler ─
+// Application (in questo progetto): MediatR, validator, domain event handler
 builder.Services.AddApplicationBuildingBlocks(typeof(Program).Assembly, builder.Configuration["MediatR:LicenseKey"]);
 
-// ── Infrastructure: database, storage R2, client gRPC verso Identity, pulizia ──
+// Infrastructure: database, storage R2, client gRPC verso Identity, pulizia
 builder.Services.AddMediaInfrastructure(builder.Configuration);
 
-// ── Messaging ─────────────────────────────────────────────────────────────────
+// Messaging
 builder.Services.AddMessaging(builder.Configuration, ServiceNames.Media, messaging =>
 {
     messaging.AddOutbox<MediaDbContext>();
@@ -59,5 +59,5 @@ app.MapEndpoints(app.MapGroup("/api/v1"));
 
 app.Run();
 
-/// <summary>Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;).</summary>
+//Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;)
 public partial class Program;

@@ -1,17 +1,14 @@
 namespace SubSnapMS.Media.API.Infrastructure.Storage;
 
-/// <summary>
-/// Sezione "Storage". Produzione (Cloudflare R2): AccountId + chiavi da variabili d'ambiente
-/// (Storage__AccessKeyId, Storage__SecretAccessKey). Sviluppo (MinIO): ServiceUrl + ForcePathStyle.
-/// </summary>
+//Sezione "Storage". Produzione (Cloudflare R2): AccountId + chiavi da variabili d'ambiente (Storage__AccessKeyId, Storage__SecretAccessKey). Sviluppo (MinIO): ServiceUrl + ForcePathStyle.
 public sealed class ObjectStorageOptions
 {
     public const string SectionName = "Storage";
 
-    /// <summary>Account Cloudflare: l'endpoint diventa https://{AccountId}.r2.cloudflarestorage.com.</summary>
+    //Account Cloudflare: l'endpoint diventa https://{AccountId}.r2.cloudflarestorage.com
     public string? AccountId { get; set; }
 
-    /// <summary>Endpoint esplicito (es. http://localhost:9000 per MinIO). Ha la precedenza su AccountId.</summary>
+    //Endpoint esplicito (es. http://localhost:9000 per MinIO). Ha la precedenza su AccountId
     public string? ServiceUrl { get; set; }
 
     public string BucketName { get; set; } = string.Empty;
@@ -20,10 +17,10 @@ public sealed class ObjectStorageOptions
 
     public string SecretAccessKey { get; set; } = string.Empty;
 
-    /// <summary>Base degli URL pubblici, es. https://cdn.substracker.live.</summary>
+    //Base degli URL pubblici, es. https://cdn.substracker.live
     public string PublicBaseUrl { get; set; } = string.Empty;
 
-    /// <summary>MinIO: true (bucket nel path). R2: false.</summary>
+    //MinIO: true (bucket nel path). R2: false
     public bool ForcePathStyle { get; set; }
 
     internal string ResolveServiceUrl() =>

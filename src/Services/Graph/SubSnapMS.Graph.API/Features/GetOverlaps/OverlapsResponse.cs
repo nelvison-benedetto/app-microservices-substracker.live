@@ -1,10 +1,8 @@
 namespace SubSnapMS.Graph.API.Features.GetOverlaps;
 
-/// <param name="Categories">Categorie con 2+ abbonamenti attivi (es. tre servizi di streaming).</param>
-/// <param name="Duplicates">Stesso servizio attivo più volte (probabile doppione).</param>
 public sealed record OverlapsResponse(
-    IReadOnlyList<CategoryOverlapResponse> Categories,
-    IReadOnlyList<DuplicateServiceResponse> Duplicates);
+    IReadOnlyList<CategoryOverlapResponse> Categories,  //categorie con 2+ abbonamenti attivi (es. tre servizi di streaming)
+    IReadOnlyList<DuplicateServiceResponse> Duplicates);  //stesso servizio attivo più volte (probabile doppione)
 
 public sealed record CategoryOverlapResponse(
     string Category,

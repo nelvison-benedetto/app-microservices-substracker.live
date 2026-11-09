@@ -5,7 +5,7 @@ using SubSnapMS.Media.Core.MediaFiles.Exceptions;
 
 namespace SubSnapMS.Media.API.Features.DeleteMedia;
 
-/// <summary>Rimuove i metadati; il file su R2 lo cancella il consumer di media.deleted.v1 dopo il commit.</summary>
+//Rimuove i metadati; il file su R2 lo cancella il consumer di media.deleted.v1 dopo il commit
 internal sealed class DeleteMediaHandler(MediaDbContext dbContext, TimeProvider timeProvider)
     : ICommandHandler<DeleteMediaCommand>
 {

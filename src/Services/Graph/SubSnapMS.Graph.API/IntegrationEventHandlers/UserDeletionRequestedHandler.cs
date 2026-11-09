@@ -4,7 +4,7 @@ using SubSnapMS.Graph.API.Projection;
 
 namespace SubSnapMS.Graph.API.IntegrationEventHandlers;
 
-/// <summary>Saga di cancellazione: Graph è un read model, cancella e NON risponde con UserDataDeleted.</summary>
+//Saga di cancellazione: Graph è un read model, cancella e NON risponde con UserDataDeleted
 public sealed class UserDeletionRequestedHandler(GraphProjector projector) : IIntegrationEventHandler<UserDeletionRequested>
 {
     public Task HandleAsync(UserDeletionRequested e, MessageContext context, CancellationToken cancellationToken) =>

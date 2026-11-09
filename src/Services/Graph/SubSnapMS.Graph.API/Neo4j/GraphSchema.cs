@@ -1,9 +1,7 @@
 namespace SubSnapMS.Graph.API.Neo4j;
 
-/// <summary>
-/// Vincoli e indici (sintassi Neo4j 5, idempotente con IF NOT EXISTS).
-/// I vincoli di unicità creano anche l'indice e rendono MERGE sicuro con scritture concorrenti.
-/// </summary>
+//Vincoli e indici (sintassi Neo4j 5, idempotente con IF NOT EXISTS).
+//I vincoli di unicità creano anche l'indice e rendono MERGE sicuro con scritture concorrenti.
 public static class GraphSchema
 {
     public static readonly IReadOnlyList<string> Statements =

@@ -5,11 +5,7 @@ using MongoDB.Bson.Serialization.Serializers;
 
 namespace SubSnapMS.Notification.API.Persistence;
 
-/// <summary>
-/// Configurazione globale del driver, da eseguire una volta prima di usare le collezioni:
-/// Guid in formato standard (UUID binario sub-type 4), nomi dei campi in camelCase,
-/// enum come stringhe, campi sconosciuti ignorati (documenti scritti da versioni più nuove).
-/// </summary>
+//Configurazione globale del driver, da eseguire una volta prima di usare le collezioni: Guid in formato standard (UUID binario sub-type 4), nomi dei campi in camelCase, enum come stringhe, campi sconosciuti ignorati (documenti scritti da versioni più nuove).
 internal static class MongoSerialization
 {
     private static int _registered;

@@ -11,15 +11,15 @@ using SubSnapMS.Graph.API.Neo4j;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Trasversali ───────────────────────────────────────────────────────────────
+// Trasversali
 builder.AddObservability(ServiceNames.Graph, observability =>
     observability.AdditionalSources.Add(GraphTelemetry.Name));   // il driver Neo4j non ha strumentazione propria
 builder.AddWebDefaults();
 
-// ── Neo4j: driver, schema, proiezione, raccomandazioni ────────────────────────
+// Neo4j: driver, schema, proiezione, raccomandazioni
 builder.Services.AddGraphServices(builder.Configuration);
 
-// ── Messaging: solo consumer, idempotenti (version guard + tombstone) ─────────
+// Messaging: solo consumer, idempotenti (version guard + tombstone)
 builder.Services.AddMessaging(builder.Configuration, ServiceNames.Graph, messaging =>
 {
     messaging.AddConsumer<SubscriptionCreated, SubscriptionCreatedHandler>();
@@ -44,5 +44,5 @@ app.MapEndpoints(app.MapGroup("/api/v1"));
 
 app.Run();
 
-/// <summary>Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;).</summary>
+//Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;)
 public partial class Program;

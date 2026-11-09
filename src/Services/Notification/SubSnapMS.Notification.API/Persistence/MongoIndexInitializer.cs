@@ -5,12 +5,8 @@ using SubSnapMS.Notification.API.Persistence.Documents;
 
 namespace SubSnapMS.Notification.API.Persistence;
 
-/// <summary>
-/// Crea gli indici all'avvio (idempotente). In background con retry: se Mongo non è ancora pronto
-/// il servizio parte lo stesso e /health/ready resta Unhealthy finché Mongo non risponde.
-/// Nota: cambiando LogRetention o DeletedTombstoneRetention va eliminato a mano il vecchio indice TTL
-/// (Mongo rifiuta un indice con lo stesso nome e opzioni diverse).
-/// </summary>
+//Crea gli indici all'avvio (idempotente). In background con retry: se Mongo non è ancora pronto il servizio parte lo stesso e /health/ready resta Unhealthy finché Mongo non risponde.
+//Nota: cambiando LogRetention o DeletedTombstoneRetention va eliminato a mano il vecchio indice TTL (Mongo rifiuta un indice con lo stesso nome e opzioni diverse).
 internal sealed class MongoIndexInitializer(
     NotificationDb db,
     IOptions<NotificationOptions> options,

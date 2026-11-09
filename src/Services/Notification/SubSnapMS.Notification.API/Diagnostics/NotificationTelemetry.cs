@@ -3,7 +3,7 @@ using System.Diagnostics.Metrics;
 
 namespace SubSnapMS.Notification.API.Diagnostics;
 
-/// <summary>Trace e metriche del servizio (esportate da Observability tramite AdditionalSources/AdditionalMeters).</summary>
+//Trace e metriche del servizio (esportate da Observability tramite AdditionalSources/AdditionalMeters)
 public static class NotificationTelemetry
 {
     public const string Name = "SubSnapMS.Notification";

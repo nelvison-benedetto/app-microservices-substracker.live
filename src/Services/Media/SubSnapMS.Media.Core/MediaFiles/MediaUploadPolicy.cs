@@ -3,22 +3,16 @@ using SubSnapMS.Media.Core.MediaFiles.Exceptions;
 
 namespace SubSnapMS.Media.Core.MediaFiles;
 
-/// <summary>
-/// Regole di upload per ogni purpose: tipi ammessi, dimensione massima, formato della chiave.
-/// Pubblica perché il validator dell'API la usa per rispondere subito (400) prima di toccare il dominio;
-/// il dominio la riapplica comunque (in RequestUpload e, sui valori reali, in ConfirmUpload).
-/// </summary>
+//Regole di upload per ogni purpose: tipi ammessi, dimensione massima, formato della chiave.
+//Pubblica perché il validator dell'API la usa per rispondere subito (400) prima di toccare il dominio; il dominio la riapplica comunque (in RequestUpload e, sui valori reali, in ConfirmUpload).
 public static class MediaUploadPolicy
 {
     private const long OneMegabyte = 1024 * 1024;
 
-    /// <summary>
-    /// Oltre la scadenza del presigned URL, la conferma è accettata ancora per questo tempo:
-    /// un upload iniziato poco prima della scadenza può finire dopo.
-    /// </summary>
+    //Oltre la scadenza del presigned URL, la conferma è accettata ancora per questo tempo: un upload iniziato poco prima della scadenza può finire dopo.
     public static readonly TimeSpan ConfirmGracePeriod = TimeSpan.FromMinutes(15);
 
-    // Niente SVG (può contenere script, servito da un dominio pubblico) e niente GIF.
+    //Niente SVG (può contenere script, servito da un dominio pubblico) e niente GIF.
     private static readonly IReadOnlyList<string> ImageContentTypes = ["image/jpeg", "image/png", "image/webp"];
 
     private static readonly Dictionary<string, string> FileExtensions = new(StringComparer.Ordinal)
@@ -34,14 +28,14 @@ public static class MediaUploadPolicy
         _ => throw new ArgumentOutOfRangeException(nameof(purpose), purpose, "Unknown media purpose.")
     };
 
-    /// <summary>Content type ammessi, in forma normalizzata (minuscolo, senza parametri).</summary>
+    //Content type ammessi, in forma normalizzata (minuscolo, senza parametri)
     public static IReadOnlyList<string> AllowedContentTypes(MediaPurpose purpose) => purpose switch
     {
         MediaPurpose.Avatar => ImageContentTypes,
         _ => throw new ArgumentOutOfRangeException(nameof(purpose), purpose, "Unknown media purpose.")
     };
 
-    /// <summary>"Image/PNG; charset=binary" → "image/png". Null o vuoto → stringa vuota.</summary>
+    //"Image/PNG; charset=binary" → "image/png". Null o vuoto → stringa vuota
     public static string NormalizeContentType(string? contentType) =>
         string.IsNullOrWhiteSpace(contentType)
             ? string.Empty
@@ -62,10 +56,7 @@ public static class MediaUploadPolicy
             throw new MediaFileTooLargeException(MaxSizeBytes(purpose));
     }
 
-    /// <summary>
-    /// Chiave generata dal server: nessun nome file dell'utente (niente caratteri strani,
-    /// niente dati personali in un URL pubblico). Es. avatars/{userId}/{mediaId}.webp
-    /// </summary>
+    //Chiave generata dal server: nessun nome file dell'utente (niente caratteri strani, niente dati personali in un URL pubblico). Es. avatars/{userId}/{mediaId}.webp
     internal static string BuildObjectKey(MediaPurpose purpose, UserId userId, MediaFileId mediaFileId, string normalizedContentType) =>
         $"{purpose.ToStorageFolder()}/{userId.Value}/{mediaFileId.Value}.{FileExtensions[normalizedContentType]}";
 }

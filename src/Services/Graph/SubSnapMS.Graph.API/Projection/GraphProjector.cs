@@ -4,7 +4,7 @@ using SubSnapMS.Graph.API.Neo4j;
 
 namespace SubSnapMS.Graph.API.Projection;
 
-/// <summary>Stato completo di un abbonamento, preso da SubscriptionCreated/Updated.</summary>
+//Stato completo di un abbonamento, preso da SubscriptionCreated/Updated
 public sealed record SubscriptionSnapshot(
     Guid SubscriptionId,
     Guid UserId,
@@ -17,18 +17,15 @@ public sealed record SubscriptionSnapshot(
     DateOnly StartDate,
     DateOnly? EndDate);
 
-/// <summary>Scritture sul grafo, tutte idempotenti (ogni transazione può essere ripetuta dal driver).</summary>
+//Scritture sul grafo, tutte idempotenti (ogni transazione può essere ripetuta dal driver)
 public sealed class GraphProjector(GraphClient graph, GraphSchemaState state, ILogger<GraphProjector> logger)
 {
     /// <summary>Versione dei tombstone: nessun evento reale la supera.</summary>
     public const long TombstoneVersion = long.MaxValue;
 
-    /// <summary>
-    /// 1. MERGE del nodo Subscription; prosegue solo se non è un tombstone e la versione è più nuova
-    ///    (altrimenti zero righe → le clausole successive non fanno nulla → applied = 0);
-    /// 2. proprietà aggiornate, relazione User-HAS;
-    /// 3. relazione OF spostata sul Service corretto (il nome può essere cambiato).
-    /// </summary>
+    //1. MERGE del nodo Subscription; prosegue solo se non è un tombstone e la versione è più nuova (altrimenti zero righe → le clausole successive non fanno nulla → applied = 0);
+    //2. proprietà aggiornate, relazione User-HAS;
+    //3. relazione OF spostata sul Service corretto (il nome può essere cambiato).
     private const string UpsertSubscription = """
         MERGE (s:Subscription {id: $id})
         WITH s
@@ -56,7 +53,7 @@ public sealed class GraphProjector(GraphClient graph, GraphSchemaState state, IL
         RETURN count(s) AS applied
         """;
 
-    /// <summary>Tombstone: niente dati, nessuna relazione, versione massima.</summary>
+    //Tombstone: niente dati, nessuna relazione, versione massima
     private const string MarkSubscriptionDeleted = """
         MERGE (s:Subscription {id: $id})
         SET s.deleted = true,
@@ -110,7 +107,7 @@ public sealed class GraphProjector(GraphClient graph, GraphSchemaState state, IL
         }, cancellationToken);
     }
 
-    /// <summary>In una transazione: tombstone dell'utente, poi tutti i suoi abbonamenti (anche tombstone) e il nodo User.</summary>
+    //In una transazione: tombstone dell'utente, poi tutti i suoi abbonamenti (anche tombstone) e il nodo User
     public async Task DeleteAllForUserAsync(Guid userId, CancellationToken cancellationToken)
     {
         await state.WaitUntilReadyAsync(cancellationToken);

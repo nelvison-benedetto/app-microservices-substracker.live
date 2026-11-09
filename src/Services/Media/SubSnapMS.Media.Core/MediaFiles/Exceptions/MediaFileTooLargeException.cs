@@ -2,7 +2,7 @@ using SubSnapMS.BuildingBlocks.Domain.Exceptions;
 
 namespace SubSnapMS.Media.Core.MediaFiles.Exceptions;
 
-/// <summary>File oltre il massimo consentito per il purpose → 400.</summary>
+//File oltre il massimo consentito per il purpose → 400
 public class MediaFileTooLargeException : DomainException
 {
     public MediaFileTooLargeException(long maxSizeBytes)
@@ -15,6 +15,6 @@ public class MediaFileTooLargeException : DomainException
 
     public long MaxSizeBytes { get; }
 
-    /// <summary>File vuoto (0 byte) o dimensione negativa.</summary>
+    //File vuoto (0 byte) o dimensione negativa
     public sealed class EmptyFile() : MediaFileTooLargeException("media.size_invalid", "File size must be greater than zero.");
 }

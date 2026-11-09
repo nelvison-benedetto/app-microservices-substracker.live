@@ -1,6 +1,6 @@
 namespace SubSnapMS.Graph.API.Neo4j;
 
-/// <summary>"Schema pronto": nessuna scrittura prima dei vincoli (MERGE senza vincolo può creare duplicati).</summary>
+//"Schema pronto": nessuna scrittura prima dei vincoli (MERGE senza vincolo può creare duplicati)
 public sealed class GraphSchemaState
 {
     private readonly TaskCompletionSource _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);

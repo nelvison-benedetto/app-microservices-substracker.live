@@ -6,7 +6,7 @@ using SubSnapMS.Media.Core.MediaFiles;
 
 namespace SubSnapMS.Media.API.Infrastructure.Persistence;
 
-/// <summary>Database di Media (media_db): solo metadati, i file stanno su R2.</summary>
+//Database di Media (media_db): solo metadati, i file stanno su R2
 public sealed class MediaDbContext(
     DbContextOptions<MediaDbContext> options,
     IDomainEventDispatcher domainEventDispatcher) : ServiceDbContext(options, domainEventDispatcher)

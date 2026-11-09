@@ -7,7 +7,7 @@ using SubSnapMS.Media.Core.MediaFiles;
 
 namespace SubSnapMS.Media.API.Features.GetMyMedia;
 
-/// <summary>Solo file confermati, dal più recente. Le richieste Pending non sono visibili.</summary>
+//Solo file confermati, dal più recente. Le richieste Pending non sono visibili
 internal sealed class GetMyMediaHandler(MediaDbContext dbContext, IObjectStorage storage)
     : IQueryHandler<GetMyMediaQuery, IReadOnlyList<MediaFileResponse>>
 {

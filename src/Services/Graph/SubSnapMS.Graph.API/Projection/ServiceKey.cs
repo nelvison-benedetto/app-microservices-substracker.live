@@ -3,11 +3,9 @@ using System.Text;
 
 namespace SubSnapMS.Graph.API.Projection;
 
-/// <summary>
-/// Chiave del nodo Service: stesso servizio scritto in modi diversi → stesso nodo.
-/// "Netflix " / "NETFLIX" → "netflix" · "Caffè Pass" → "caffe pass" · "Disney+" → "disney".
-/// Limite noto: "Disney+" e "Disney Plus" restano diversi (servirebbe un catalogo di alias).
-/// </summary>
+//Chiave del nodo Service: stesso servizio scritto in modi diversi → stesso nodo.
+//"Netflix " / "NETFLIX" → "netflix" · "Caffè Pass" → "caffe pass" · "Disney+" → "disney".
+//Limite noto: "Disney+" e "Disney Plus" restano diversi (servirebbe un catalogo di alias).
 public static class ServiceKey
 {
     public static string From(string name)

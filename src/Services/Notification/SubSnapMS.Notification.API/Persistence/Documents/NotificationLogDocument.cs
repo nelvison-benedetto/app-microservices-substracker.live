@@ -9,10 +9,8 @@ public enum NotificationStatus
     Failed
 }
 
-/// <summary>
-/// Una notifica (inviata o in invio). L'_id è la chiave di deduplica (es. "welcome:{userId}").
-/// Nessun indirizzo email salvato: solo l'id utente.
-/// </summary>
+//Una notifica (inviata o in invio). L'_id è la chiave di deduplica (es. "welcome:{userId}").
+//Nessun indirizzo email salvato: solo l'id utente.
 public sealed class NotificationLogDocument
 {
     [BsonId]
@@ -28,7 +26,7 @@ public sealed class NotificationLogDocument
 
     public DateTime CreatedAtUtc { get; set; }
 
-    /// <summary>Inizio del tentativo in corso: serve a riprendere un invio rimasto bloccato.</summary>
+    //Inizio del tentativo in corso: serve a riprendere un invio rimasto bloccato
     public DateTime ClaimedAtUtc { get; set; }
 
     public DateTime? SentAtUtc { get; set; }

@@ -3,7 +3,7 @@ using SubSnapMS.Media.Core.Common;
 
 namespace SubSnapMS.Media.Core.MediaFiles.Events;
 
-/// <summary>Valori reali (dallo storage). Tradotto in media.uploaded.v1 dall'API.</summary>
+//Valori reali (dallo storage). Tradotto in media.uploaded.v1 dall'API
 public sealed record MediaFileUploadedDomainEvent(
     MediaFileId MediaFileId,
     UserId UserId,
