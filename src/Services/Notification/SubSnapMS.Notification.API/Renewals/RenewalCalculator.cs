@@ -2,10 +2,7 @@ using SubSnapMS.Contracts.Subscriptions;
 
 namespace SubSnapMS.Notification.API.Renewals;
 
-/// <summary>
-/// Prossimo rinnovo (≥ oggi) di un abbonamento. Ogni data si calcola dalla StartDate e mai dal rinnovo precedente,
-/// quindi non c'è deriva: 31 gen → 28 feb → 31 mar (e non 28 mar).
-/// </summary>
+//Prossimo rinnovo (≥ oggi) di un abbonamento. Ogni data si calcola dalla StartDate e mai dal rinnovo precedente, quindi non c'è deriva: 31 gen → 28 feb → 31 mar (e non 28 mar).
 public static class RenewalCalculator
 {
     /// <returns>Null se l'abbonamento termina prima del prossimo rinnovo o il ciclo è sconosciuto.</returns>

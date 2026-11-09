@@ -9,18 +9,18 @@ using SubSnapMS.Notification.API.IntegrationEventHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Trasversali ───────────────────────────────────────────────────────────────
+// Trasversali
 builder.AddObservability(ServiceNames.Notification, observability =>
 {
     observability.AdditionalSources.Add(NotificationTelemetry.Name);
     observability.AdditionalMeters.Add(NotificationTelemetry.Name);
 });
 
-// ── MongoDB, email, promemoria di rinnovo ─────────────────────────────────────
+// MongoDB, email, promemoria di rinnovo
 builder.Services.AddNotificationServices(builder.Configuration);
 
-// ── Messaging: solo consumer (nessun Outbox: Notification non pubblica eventi) ─
-// Nessuna Inbox: gli handler sono idempotenti (upsert con guardia + registro invii su Mongo)
+//Messaging: solo consumer (nessun Outbox: Notification non pubblica eventi)
+//Nessuna Inbox: gli handler sono idempotenti (upsert con guardia + registro invii su Mongo)
 builder.Services.AddMessaging(builder.Configuration, ServiceNames.Notification, messaging =>
 {
     messaging.AddConsumer<UserRegistered, UserRegisteredHandler>();
@@ -33,10 +33,10 @@ builder.Services.AddMessaging(builder.Configuration, ServiceNames.Notification, 
 
 var app = builder.Build();
 
-// Solo X-Correlation-Id e /health/live, /health/ready: nessun endpoint pubblico
+//Solo X-Correlation-Id e /health/live, /health/ready: nessun endpoint pubblico
 app.UseObservability();
 
 app.Run();
 
-/// <summary>Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;).</summary>
+//Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;)
 public partial class Program;

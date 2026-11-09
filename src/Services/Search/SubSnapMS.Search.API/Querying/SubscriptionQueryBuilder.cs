@@ -4,12 +4,10 @@ using SubSnapMS.Search.API.Elasticsearch;
 
 namespace SubSnapMS.Search.API.Querying;
 
-/// <summary>
-/// Costruisce il body di _search. Struttura:
-///  query       → utente + non cancellati (filter, sempre) + testo (punteggio)
-///  post_filter → filtri scelti dall'utente (non influenzano i conteggi delle faccette)
-///  aggs        → conteggi per categoria, ciclo, valuta
-/// </summary>
+//Costruisce il body di _search. Struttura:
+// query       → utente + non cancellati (filter, sempre) + testo (punteggio)
+// post_filter → filtri scelti dall'utente (non influenzano i conteggi delle faccette)
+// aggs        → conteggi per categoria, ciclo, valuta
 public static class SubscriptionQueryBuilder
 {
     public const int FacetSize = 50;
@@ -38,7 +36,7 @@ public static class SubscriptionQueryBuilder
         return body;
     }
 
-    /// <summary>Autocomplete: prefissi sul nome, un risultato per nome (collapse), solo i campi necessari.</summary>
+    //Autocomplete: prefissi sul nome, un risultato per nome (collapse), solo i campi necessari
     public static JsonObject BuildSuggest(Guid userId, string prefix, int limit) => new()
     {
         ["query"] = EsQuery.Bool(
@@ -56,9 +54,9 @@ public static class SubscriptionQueryBuilder
         ["_source"] = new JsonArray("subscriptionId", "name")
     };
 
-    // ── Parti della query ─────────────────────────────────────────────────────────
+    // Parti della query 
 
-    /// <summary>Sicurezza: l'utente arriva dal JWT. Questo filtro c'è SEMPRE.</summary>
+    //Sicurezza: l'utente arriva dal JWT. Questo filtro c'è SEMPRE
     private static JsonArray OwnerFilters(Guid userId) => new(
         EsQuery.Term("userId", userId.ToString()),
         EsQuery.Term("deleted", false));
@@ -68,11 +66,9 @@ public static class SubscriptionQueryBuilder
             ? EsQuery.Bool(filter: OwnerFilters(userId))
             : EsQuery.Bool(filter: OwnerFilters(userId), must: new JsonArray(TextQuery(text)));
 
-    /// <summary>
-    /// Due modi di trovare un risultato (basta uno):
-    ///  - fuzzy su nome (peso 3) e categoria: tollera errori ("netflx" → Netflix); prefix_length 1 = prima lettera esatta;
-    ///  - prefisso sul nome via edge n-gram: "net" trova Netflix mentre l'utente scrive (peso 2).
-    /// </summary>
+    //Due modi di trovare un risultato (basta uno):
+    // - fuzzy su nome (peso 3) e categoria: tollera errori ("netflx" → Netflix); prefix_length 1 = prima lettera esatta;
+    // - prefisso sul nome via edge n-gram: "net" trova Netflix mentre l'utente scrive (peso 2).
     private static JsonObject TextQuery(string text) => EsQuery.Bool(
         should: new JsonArray(
             new JsonObject

@@ -10,11 +10,8 @@ public sealed class RecipientStore(NotificationDb db, IOptions<NotificationOptio
     private static FilterDefinitionBuilder<RecipientDocument> Filter => Builders<RecipientDocument>.Filter;
     private static UpdateDefinitionBuilder<RecipientDocument> Update => Builders<RecipientDocument>.Update;
 
-    /// <summary>
-    /// Da UserRegistered e UserEmailChanged. Vince l'email con la data più recente, qualunque sia l'ordine di arrivo.
-    /// Se il documento esiste con una data più recente (o è un tombstone) il filtro non lo trova,
-    /// l'upsert prova a inserirlo e la chiave _id lo rifiuta: l'evento vecchio viene ignorato.
-    /// </summary>
+    //Da UserRegistered e UserEmailChanged. Vince l'email con la data più recente, qualunque sia l'ordine di arrivo.
+    //Se il documento esiste con una data più recente (o è un tombstone) il filtro non lo trova, l'upsert prova a inserirlo e la chiave _id lo rifiuta: l'evento vecchio viene ignorato.
     public async Task UpsertEmailAsync(Guid userId, string email, DateTimeOffset changedOnUtc, CancellationToken cancellationToken)
     {
         var changedOn = changedOnUtc.UtcDateTime;
@@ -37,7 +34,7 @@ public sealed class RecipientStore(NotificationDb db, IOptions<NotificationOptio
         }
     }
 
-    /// <summary>Email corrente dell'utente; null se sconosciuto o cancellato.</summary>
+    //Email corrente dell'utente; null se sconosciuto o cancellato
     public Task<string?> GetEmailAsync(Guid userId, CancellationToken cancellationToken) =>
         db.Recipients
             .Find(Filter.Eq(d => d.UserId, userId) & Filter.Eq(d => d.Deleted, false))
@@ -58,7 +55,7 @@ public sealed class RecipientStore(NotificationDb db, IOptions<NotificationOptio
             .Find(Filter.Eq(d => d.UserId, userId) & Filter.Eq(d => d.Deleted, true))
             .AnyAsync(cancellationToken);
 
-    /// <summary>Sostituisce i dati con un tombstone senza email, eliminato dal TTL dopo DeletedTombstoneRetention.</summary>
+    //Sostituisce i dati con un tombstone senza email, eliminato dal TTL dopo DeletedTombstoneRetention
     public Task MarkDeletedAsync(Guid userId, DateTimeOffset now, CancellationToken cancellationToken) =>
         db.Recipients.ReplaceOneAsync(
             Filter.Eq(d => d.UserId, userId),

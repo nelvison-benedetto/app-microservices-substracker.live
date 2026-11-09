@@ -18,7 +18,7 @@ public static class DependencyInjection
     {
         services.TryAddSingleton(TimeProvider.System);
 
-        // ── Opzioni ───────────────────────────────────────────────────────────────
+        // Opzioni
         services.AddOptions<NotificationOptions>()
             .Bind(configuration.GetSection(NotificationOptions.SectionName))
             .Validate(o => o.Reminders.DaysBefore is >= 0 and <= 30, "Notification:Reminders:DaysBefore must be between 0 and 30.")
@@ -38,8 +38,8 @@ public static class DependencyInjection
             .Validate(o => Uri.TryCreate(o.AppBaseUrl, UriKind.Absolute, out _), "Email:AppBaseUrl must be an absolute URL.")
             .ValidateOnStart();
 
-        // ── MongoDB ───────────────────────────────────────────────────────────────
-        // Password inclusa nella connection string: in produzione da ConnectionStrings__NotificationDb
+        // MongoDB
+        //Password inclusa nella connection string: in produzione da ConnectionStrings__NotificationDb
         var connectionString = configuration.GetConnectionString(ConnectionStringName)
             ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' is missing.");
 
@@ -66,12 +66,12 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<MongoHealthCheck>("mongo", tags: [HealthCheckTags.Ready]);
 
-        // ── Email ─────────────────────────────────────────────────────────────────
+        // Email
         services.AddSingleton<IEmailSender, SmtpEmailSender>();
         services.AddSingleton<EmailTemplates>();
         services.AddSingleton<NotificationSender>();
 
-        // ── Promemoria di rinnovo ─────────────────────────────────────────────────
+        // Promemoria di rinnovo
         services.AddSingleton<LocalCalendar>();
         services.AddHostedService<RenewalReminderService>();
 

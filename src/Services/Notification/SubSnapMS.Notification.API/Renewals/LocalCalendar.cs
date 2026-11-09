@@ -3,7 +3,7 @@ using SubSnapMS.Notification.API.Configuration;
 
 namespace SubSnapMS.Notification.API.Renewals;
 
-/// <summary>"Ora" e "oggi" nel fuso degli utenti (Europe/Rome), non in UTC: alle 00:30 italiane è già domani.</summary>
+//"Ora" e "oggi" nel fuso degli utenti (Europe/Rome), non in UTC: alle 00:30 italiane è già domani
 public sealed class LocalCalendar(TimeProvider timeProvider, IOptions<NotificationOptions> options)
 {
     private readonly TimeZoneInfo _timeZone = TimeZoneInfo.FindSystemTimeZoneById(options.Value.Reminders.TimeZone);

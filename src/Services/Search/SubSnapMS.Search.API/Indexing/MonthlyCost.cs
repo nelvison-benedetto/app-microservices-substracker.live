@@ -2,9 +2,7 @@ using SubSnapMS.Contracts.Subscriptions;
 
 namespace SubSnapMS.Search.API.Indexing;
 
-/// <summary>
-/// Equivalente mensile (per filtro e ordinamento "amount"). DEVE restare identico a Money.ToMonthly
-/// (Subscriptions.Core) e a MonthlyCost di Analytics: ×52/12 · ×1 · /3 · /6 · /12, arrotondato a 2 decimali.
+//Equivalente mensile (per filtro e ordinamento "amount"). DEVE restare identico a Money.ToMonthly (Subscriptions.Core) e a MonthlyCost di Analytics: ×52/12 · ×1 · /3 · /6 · /12, arrotondato a 2 decimali.
 /// </summary>
 public static class MonthlyCost
 {

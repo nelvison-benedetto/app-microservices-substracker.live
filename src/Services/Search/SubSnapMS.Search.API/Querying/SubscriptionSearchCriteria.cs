@@ -18,7 +18,7 @@ public enum SubscriptionSort
     StartDate
 }
 
-/// <summary>Parametri di ricerca validati. Create lancia DomainException (400) con un codice per ogni errore.</summary>
+//Parametri di ricerca validati. Create lancia DomainException (400) con un codice per ogni errore
 public sealed record SubscriptionSearchCriteria(
     string? Text,
     string? Category,
@@ -35,7 +35,7 @@ public sealed record SubscriptionSearchCriteria(
     public const int MaxPageSize = 50;
     public const int DefaultPageSize = 20;
 
-    /// <summary>Limite di Elasticsearch (index.max_result_window) per from + size.</summary>
+    //Limite di Elasticsearch (index.max_result_window) per from + size
     private const int MaxResultWindow = 10_000;
 
     public int From => (Page - 1) * PageSize;

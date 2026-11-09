@@ -6,7 +6,7 @@ using SubSnapMS.Search.API.Indexing;
 
 namespace SubSnapMS.Search.API.Querying;
 
-/// <summary>Esegue le ricerche e traduce la risposta di Elasticsearch nei DTO dell'API.</summary>
+//Esegue le ricerche e traduce la risposta di Elasticsearch nei DTO dell'API.</summary>
 public sealed class SubscriptionSearchService(ElasticHttpClient elastic, SearchIndexState state, SearchCalendar calendar)
 {
     private static readonly TimeSpan ReadyTimeout = TimeSpan.FromSeconds(5);

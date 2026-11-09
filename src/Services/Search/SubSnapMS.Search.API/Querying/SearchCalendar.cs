@@ -3,7 +3,7 @@ using SubSnapMS.Search.API.Configuration;
 
 namespace SubSnapMS.Search.API.Querying;
 
-/// <summary>"Oggi" nel fuso degli utenti, per il filtro attivo/terminato.</summary>
+//"Oggi" nel fuso degli utenti, per il filtro attivo/terminato
 public sealed class SearchCalendar(TimeProvider timeProvider, IOptions<SearchOptions> options)
 {
     private readonly TimeZoneInfo _timeZone = TimeZoneInfo.FindSystemTimeZoneById(options.Value.TimeZone);

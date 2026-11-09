@@ -4,10 +4,8 @@ using SubSnapMS.Search.API.Configuration;
 
 namespace SubSnapMS.Search.API.Elasticsearch;
 
-/// <summary>
-/// Rimuove i tombstone più vecchi della retention (Elasticsearch non ha un TTL come Mongo).
-/// Con più repliche gira su tutte: delete_by_query è idempotente.
-/// </summary>
+//Rimuove i tombstone più vecchi della retention (Elasticsearch non ha un TTL come Mongo).
+//Con più repliche gira su tutte: delete_by_query è idempotente.
 internal sealed class TombstoneCleanupService(
     IServiceScopeFactory scopeFactory,
     SearchIndexState state,

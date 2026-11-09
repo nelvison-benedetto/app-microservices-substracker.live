@@ -7,13 +7,11 @@ using System.Text.Json.Serialization;
 
 namespace SubSnapMS.Search.API.Elasticsearch;
 
-/// <summary>
-/// Client tipizzato per le poche API REST di Elasticsearch usate dal servizio.
-/// I path sono relativi (BaseAddress termina con "/"). Retry e timeout sono nel pipeline dell'HttpClient.
-/// </summary>
+//Client tipizzato per le poche API REST di Elasticsearch usate dal servizio.
+//I path sono relativi (BaseAddress termina con "/"). Retry e timeout sono nel pipeline dell'HttpClient.
 public sealed class ElasticHttpClient(HttpClient http)
 {
-    /// <summary>camelCase, null omessi: è il formato dei documenti negli indici.</summary>
+    //camelCase, null omessi: è il formato dei documenti negli indici
     public static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -21,7 +19,7 @@ public sealed class ElasticHttpClient(HttpClient http)
 
     private const int MaxErrorBodyLength = 1000;
 
-    /// <summary>HEAD: true se esiste (200), false se 404.</summary>
+    //HEAD: true se esiste (200), false se 404
     public async Task<bool> ExistsAsync(string path, CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, path);
@@ -34,7 +32,7 @@ public sealed class ElasticHttpClient(HttpClient http)
         return true;
     }
 
-    /// <summary>Crea un indice. False se esiste già (es. creato in parallelo da un'altra replica).</summary>
+    //Crea un indice. False se esiste già (es. creato in parallelo da un'altra replica)
     public async Task<bool> CreateIndexAsync(string index, string definitionJson, CancellationToken cancellationToken)
     {
         using var content = new StringContent(definitionJson, Encoding.UTF8, "application/json");
@@ -53,10 +51,8 @@ public sealed class ElasticHttpClient(HttpClient http)
         return true;
     }
 
-    /// <summary>
-    /// Indicizza con versione esterna: Elasticsearch accetta solo se version è MAGGIORE di quella salvata.
-    /// Restituisce false se rifiutato per versione (409): evento vecchio o duplicato.
-    /// </summary>
+    //Indicizza con versione esterna: Elasticsearch accetta solo se version è MAGGIORE di quella salvata.
+    //Restituisce false se rifiutato per versione (409): evento vecchio o duplicato.
     public async Task<bool> IndexWithExternalVersionAsync<TDocument>(
         string index, string id, TDocument document, long version, CancellationToken cancellationToken)
     {
@@ -70,14 +66,14 @@ public sealed class ElasticHttpClient(HttpClient http)
         return true;
     }
 
-    /// <summary>Indicizza (crea o sostituisce) senza controllo di versione.</summary>
+    //Indicizza (crea o sostituisce) senza controllo di versione
     public async Task IndexAsync<TDocument>(string index, string id, TDocument document, CancellationToken cancellationToken)
     {
         using var response = await http.PutAsJsonAsync($"{index}/_doc/{Uri.EscapeDataString(id)}", document, JsonOptions, cancellationToken);
         await EnsureSuccessAsync(response, cancellationToken);
     }
 
-    /// <summary>Cancella i documenti che soddisfano la query. conflicts=proceed: idempotente con scritture concorrenti.</summary>
+    //Cancella i documenti che soddisfano la query. conflicts=proceed: idempotente con scritture concorrenti
     public async Task<long> DeleteByQueryAsync(string index, JsonObject query, CancellationToken cancellationToken)
     {
         var body = new JsonObject { ["query"] = query };
@@ -98,7 +94,7 @@ public sealed class ElasticHttpClient(HttpClient http)
         return await ReadJsonAsync(response, cancellationToken);
     }
 
-    /// <summary>"green", "yellow" o "red".</summary>
+    //"green", "yellow" o "red"
     public async Task<string?> GetClusterStatusAsync(CancellationToken cancellationToken)
     {
         using var response = await http.GetAsync("_cluster/health", cancellationToken);

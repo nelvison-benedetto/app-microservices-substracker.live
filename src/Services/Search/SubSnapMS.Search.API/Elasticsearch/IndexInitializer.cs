@@ -3,10 +3,7 @@ using SubSnapMS.Search.API.Configuration;
 
 namespace SubSnapMS.Search.API.Elasticsearch;
 
-/// <summary>
-/// Crea gli indici (con alias) se l'alias non esiste. Idempotente e sicuro con più repliche.
-/// In background con retry: finché Elasticsearch non risponde, /health/ready è Unhealthy.
-/// </summary>
+//Crea gli indici (con alias) se l'alias non esiste. Idempotente e sicuro con più repliche. In background con retry: finché Elasticsearch non risponde, /health/ready è Unhealthy.
 internal sealed class IndexInitializer(
     IServiceScopeFactory scopeFactory,
     SearchIndexState state,

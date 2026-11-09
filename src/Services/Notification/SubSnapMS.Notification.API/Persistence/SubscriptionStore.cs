@@ -6,7 +6,7 @@ using SubSnapMS.Notification.API.Renewals;
 
 namespace SubSnapMS.Notification.API.Persistence;
 
-/// <summary>Stato completo di un abbonamento, preso da SubscriptionCreated/Updated.</summary>
+//Stato completo di un abbonamento, preso da SubscriptionCreated/Updated
 public sealed record SubscriptionSnapshot(
     Guid SubscriptionId,
     Guid UserId,
@@ -23,11 +23,8 @@ public sealed class SubscriptionStore(NotificationDb db, LocalCalendar calendar,
     private static FilterDefinitionBuilder<SubscriptionDocument> Filter => Builders<SubscriptionDocument>.Filter;
     private static UpdateDefinitionBuilder<SubscriptionDocument> Update => Builders<SubscriptionDocument>.Update;
 
-    /// <summary>
-    /// Applica lo stato solo se la Version è più nuova (eventi fuori ordine o duplicati vengono ignorati).
-    /// ReminderPending torna true: se il promemoria per quella data era già stato inviato,
-    /// il registro invii lo riconosce e non lo reinvia.
-    /// </summary>
+    //Applica lo stato solo se la Version è più nuova (eventi fuori ordine o duplicati vengono ignorati).
+    //ReminderPending torna true: se il promemoria per quella data era già stato inviato, il registro invii lo riconosce e non lo reinvia.
     public async Task UpsertAsync(SubscriptionSnapshot snapshot, CancellationToken cancellationToken)
     {
         var next = RenewalCalculator.NextRenewal(snapshot.StartDate, snapshot.BillingCycle, snapshot.EndDate, calendar.Today());
@@ -58,7 +55,7 @@ public sealed class SubscriptionStore(NotificationDb db, LocalCalendar calendar,
         }
     }
 
-    /// <summary>Tombstone: Version massima, così un SubscriptionUpdated in ritardo non lo resuscita.</summary>
+    //Tombstone: Version massima, così un SubscriptionUpdated in ritardo non lo resuscita
     public Task MarkDeletedAsync(Guid subscriptionId, Guid userId, DateTimeOffset now, CancellationToken cancellationToken) =>
         db.Subscriptions.UpdateOneAsync(
             Filter.Eq(d => d.SubscriptionId, subscriptionId),
@@ -75,10 +72,8 @@ public sealed class SubscriptionStore(NotificationDb db, LocalCalendar calendar,
     public Task DeleteAllForUserAsync(Guid userId, CancellationToken cancellationToken) =>
         db.Subscriptions.DeleteManyAsync(Filter.Eq(d => d.UserId, userId), cancellationToken);
 
-    /// <summary>
-    /// Porta avanti le date di rinnovo già passate (il rinnovo di ieri → il prossimo).
-    /// L'aggiornamento è condizionato alla Version letta: se nel frattempo è arrivato un evento, vince l'evento.
-    /// </summary>
+    //Porta avanti le date di rinnovo già passate (il rinnovo di ieri → il prossimo).
+    //L'aggiornamento è condizionato alla Version letta: se nel frattempo è arrivato un evento, vince l'evento.
     public async Task<int> AdvanceStaleRenewalsAsync(DateOnly today, int batchSize, CancellationToken cancellationToken)
     {
         var stale = await db.Subscriptions
@@ -105,7 +100,7 @@ public sealed class SubscriptionStore(NotificationDb db, LocalCalendar calendar,
         return stale.Count;
     }
 
-    /// <summary>Abbonamenti con un rinnovo tra from e to (inclusi) e promemoria non ancora gestito.</summary>
+    //Abbonamenti con un rinnovo tra from e to (inclusi) e promemoria non ancora gestito
     public Task<List<SubscriptionDocument>> FindDueRemindersAsync(DateOnly from, DateOnly to, int batchSize, CancellationToken cancellationToken) =>
         db.Subscriptions
             .Find(Filter.Eq(d => d.ReminderPending, true)
@@ -116,7 +111,7 @@ public sealed class SubscriptionStore(NotificationDb db, LocalCalendar calendar,
             .Limit(batchSize)
             .ToListAsync(cancellationToken);
 
-    /// <summary>Solo se la data di rinnovo non è cambiata nel frattempo.</summary>
+    //Solo se la data di rinnovo non è cambiata nel frattempo
     public Task MarkReminderHandledAsync(Guid subscriptionId, DateOnly renewalDate, CancellationToken cancellationToken) =>
         db.Subscriptions.UpdateOneAsync(
             Filter.Eq(d => d.SubscriptionId, subscriptionId) & Filter.Eq(d => d.NextRenewalDate, renewalDate.ToBsonDate()),

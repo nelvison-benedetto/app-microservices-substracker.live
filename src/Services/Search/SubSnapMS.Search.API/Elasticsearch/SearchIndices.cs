@@ -1,9 +1,6 @@
 namespace SubSnapMS.Search.API.Elasticsearch;
 
-/// <summary>
-/// Indici e loro definizione. Il codice usa sempre gli ALIAS; l'indice fisico ha la versione nel nome.
-/// Per cambiare il mapping: nuova versione (v2), creazione, spostamento dell'alias, --republish-events.
-/// </summary>
+//Indici e loro definizione. Il codice usa sempre gli ALIAS; l'indice fisico ha la versione nel nome. Per cambiare il mapping: nuova versione (v2), creazione, spostamento dell'alias, --republish-events.
 public static class SearchIndices
 {
     public const string Subscriptions = "subscriptions";
@@ -12,12 +9,10 @@ public static class SearchIndices
     public const string DeletedUsers = "deleted-users";
     public const string DeletedUsersV1 = "deleted-users-v1";
 
-    /// <summary>
-    /// Analizzatori:
-    ///  - folded: minuscole + accenti rimossi ("Caffè" = "caffe");
-    ///  - autocomplete: come folded + edge n-gram in indicizzazione ("netflix" → n, ne, net, …);
-    ///  - lowercase_folded (normalizer): per keyword usate in filtri e ordinamenti, senza distinzione di maiuscole.
-    /// </summary>
+    //Analizzatori:
+    // - folded: minuscole + accenti rimossi ("Caffè" = "caffe");
+    // - autocomplete: come folded + edge n-gram in indicizzazione ("netflix" → n, ne, net, …);
+    // - lowercase_folded (normalizer): per keyword usate in filtri e ordinamenti, senza distinzione di maiuscole.
     public static string SubscriptionsDefinition(int replicas) => $$"""
         {
           "settings": {

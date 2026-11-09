@@ -2,7 +2,7 @@ using SubSnapMS.Search.API.Elasticsearch;
 
 namespace SubSnapMS.Search.API.Indexing;
 
-/// <summary>Stato completo di un abbonamento, preso da SubscriptionCreated/Updated.</summary>
+//Stato completo di un abbonamento, preso da SubscriptionCreated/Updated
 public sealed record SubscriptionSnapshot(
     Guid SubscriptionId,
     Guid UserId,
@@ -15,17 +15,15 @@ public sealed record SubscriptionSnapshot(
     DateOnly StartDate,
     DateOnly? EndDate);
 
-/// <summary>Scritture sugli indici, tutte idempotenti.</summary>
+//Scritture sugli indici, tutte idempotenti
 public sealed class SubscriptionIndexer(
     ElasticHttpClient elastic,
     SearchIndexState state,
     TimeProvider timeProvider,
     ILogger<SubscriptionIndexer> logger)
 {
-    /// <summary>
-    /// Versione dei tombstone: più alta di qualsiasi Version reale, quindi nessun evento successivo li sovrascrive.
-    /// Elasticsearch accetta versioni esterne fino a circa 9,2 × 10^18.
-    /// </summary>
+    //Versione dei tombstone: più alta di qualsiasi Version reale, quindi nessun evento successivo li sovrascrive.
+    //Elasticsearch accetta versioni esterne fino a circa 9,2 × 10^18.
     public const long TombstoneVersion = 9_000_000_000_000_000_000;
 
     public async Task UpsertAsync(SubscriptionSnapshot snapshot, CancellationToken cancellationToken)
@@ -66,7 +64,7 @@ public sealed class SubscriptionIndexer(
             cancellationToken);
     }
 
-    /// <summary>Prima il tombstone dell'utente (blocca gli eventi in ritardo), poi tutti i suoi documenti.</summary>
+    //Prima il tombstone dell'utente (blocca gli eventi in ritardo), poi tutti i suoi documenti
     public async Task DeleteAllForUserAsync(Guid userId, CancellationToken cancellationToken)
     {
         await state.WaitUntilReadyAsync(cancellationToken);

@@ -6,12 +6,10 @@ using SubSnapMS.Notification.API.Persistence;
 
 namespace SubSnapMS.Notification.API.Renewals;
 
-/// <summary>
-/// Ogni CheckInterval, nella fascia oraria consentita:
-///  1. porta avanti le date di rinnovo superate;
-///  2. invia i promemoria per i rinnovi tra oggi e oggi + DaysBefore.
-/// Con più repliche gira su tutte: il registro invii impedisce i doppioni, nessun lock necessario.
-/// </summary>
+//Ogni CheckInterval, nella fascia oraria consentita:
+// 1. porta avanti le date di rinnovo superate;
+// 2. invia i promemoria per i rinnovi tra oggi e oggi + DaysBefore.
+//Con più repliche gira su tutte: il registro invii impedisce i doppioni, nessun lock necessario.
 internal sealed class RenewalReminderService(
     SubscriptionStore subscriptions,
     RecipientStore recipients,
@@ -81,7 +79,7 @@ internal sealed class RenewalReminderService(
         {
             var renewalDate = subscription.NextRenewalDate!.Value.ToDateOnly();
 
-            // Email non (ancora) nota: riprova al prossimo giro
+            //Email non (ancora) nota: riprova al prossimo giro
             if (!emails.TryGetValue(subscription.UserId, out var email))
                 continue;
 
@@ -108,7 +106,7 @@ internal sealed class RenewalReminderService(
             }
             catch (Exception exception) when (!cancellationToken.IsCancellationRequested)
             {
-                // Resta ReminderPending: riprovato al prossimo giro (fino a MaxAttempts)
+                //Resta ReminderPending: riprovato al prossimo giro (fino a MaxAttempts)
                 logger.LogWarning(exception, "Renewal reminder for subscription {SubscriptionId} failed", subscription.SubscriptionId);
             }
         }

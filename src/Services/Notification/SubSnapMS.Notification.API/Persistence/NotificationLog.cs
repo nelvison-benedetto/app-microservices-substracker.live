@@ -7,23 +7,20 @@ namespace SubSnapMS.Notification.API.Persistence;
 
 public enum ClaimResult
 {
-    /// <summary>Puoi inviare.</summary>
+    //Puoi inviare
     Claimed,
 
-    /// <summary>Già inviata: non inviare.</summary>
+    //Già inviata: non inviare
     AlreadySent,
 
-    /// <summary>Un altro tentativo sta inviando proprio ora: riprova più tardi.</summary>
+    //Un altro tentativo sta inviando proprio ora: riprova più tardi
     InProgress,
 
-    /// <summary>Tentativi esauriti (o notifica rimossa dalla cancellazione account): non inviare.</summary>
+    //Tentativi esauriti (o notifica rimossa dalla cancellazione account): non inviare
     GaveUp
 }
 
-/// <summary>
-/// Registro invii. Prima di inviare si "prenota" la chiave: l'_id univoco garantisce che
-/// due consumer o due repliche del job non inviino la stessa notifica.
-/// </summary>
+//Registro invii. Prima di inviare si "prenota" la chiave: l'_id univoco garantisce che due consumer o due repliche del job non inviino la stessa notifica.
 public sealed class NotificationLog(NotificationDb db, IOptions<NotificationOptions> options)
 {
     private const int MaxErrorLength = 500;

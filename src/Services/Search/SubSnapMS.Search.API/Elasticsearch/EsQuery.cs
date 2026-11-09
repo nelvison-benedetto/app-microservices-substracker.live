@@ -2,10 +2,7 @@ using System.Text.Json.Nodes;
 
 namespace SubSnapMS.Search.API.Elasticsearch;
 
-/// <summary>
-/// Piccoli costruttori per il Query DSL. Ogni chiamata crea nodi nuovi:
-/// un JsonNode può avere un solo genitore, quindi non va riusato in due punti della query.
-/// </summary>
+//Piccoli costruttori per il Query DSL. Ogni chiamata crea nodi nuovi: un JsonNode può avere un solo genitore, quindi non va riusato in due punti della query.
 public static class EsQuery
 {
     public static JsonObject Term(string field, JsonNode? value) =>

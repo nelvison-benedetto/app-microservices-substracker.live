@@ -17,7 +17,7 @@ public static class DependencyInjection
     {
         services.TryAddSingleton(TimeProvider.System);
 
-        // ── Opzioni ───────────────────────────────────────────────────────────────
+        // Opzioni
         services.AddOptions<ElasticsearchOptions>()
             .Bind(configuration.GetSection(ElasticsearchOptions.SectionName))
             .Validate(o => Uri.TryCreate(o.Uri, UriKind.Absolute, out _), "Elasticsearch:Uri must be an absolute URL.")
@@ -31,7 +31,7 @@ public static class DependencyInjection
             .Validate(o => o.CleanupInterval >= TimeSpan.FromMinutes(1), "Search:CleanupInterval must be at least 1 minute.")
             .ValidateOnStart();
 
-        // ── Client HTTP verso Elasticsearch: retry, timeout, circuit breaker ──────
+        // Client HTTP verso Elasticsearch: retry, timeout, circuit breaker
         services.AddHttpClient<ElasticHttpClient>((serviceProvider, client) =>
         {
             var elastic = serviceProvider.GetRequiredService<IOptions<ElasticsearchOptions>>().Value;
@@ -49,13 +49,13 @@ public static class DependencyInjection
         })
             .AddStandardResilienceHandler(resilience =>
             {
-                // Tutte le operazioni sono idempotenti (PUT con versione esterna, delete_by_query, search): il retry è sicuro
+                //Tutte le operazioni sono idempotenti (PUT con versione esterna, delete_by_query, search): il retry è sicuro
                 resilience.AttemptTimeout.Timeout = TimeSpan.FromSeconds(10);
                 resilience.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(30);
                 resilience.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(30);
             });
 
-        // ── Indici ────────────────────────────────────────────────────────────────
+        // Indici
         services.AddSingleton<SearchIndexState>();
         services.AddHostedService<IndexInitializer>();
         services.AddHostedService<TombstoneCleanupService>();
@@ -63,7 +63,7 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<ElasticsearchHealthCheck>("elasticsearch", tags: [HealthCheckTags.Ready]);
 
-        // ── Indicizzazione e ricerca ──────────────────────────────────────────────
+        // Indicizzazione e ricerca
         services.AddScoped<SubscriptionIndexer>();
         services.AddScoped<SubscriptionSearchService>();
         services.AddSingleton<SearchCalendar>();

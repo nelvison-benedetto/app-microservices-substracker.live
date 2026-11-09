@@ -2,7 +2,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace SubSnapMS.Search.API.Elasticsearch;
 
-/// <summary>Ready = cluster raggiungibile, non "red", e indici inizializzati.</summary>
+//Ready = cluster raggiungibile, non "red", e indici inizializzati
 internal sealed class ElasticsearchHealthCheck(ElasticHttpClient elastic, SearchIndexState state) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)

@@ -10,14 +10,14 @@ using SubSnapMS.Search.API.IntegrationEventHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Trasversali ───────────────────────────────────────────────────────────────
+// Trasversali
 builder.AddObservability(ServiceNames.Search);
 builder.AddWebDefaults();
 
-// ── Elasticsearch: client, indici, indicizzazione, ricerca ────────────────────
+// Elasticsearch: client, indici, indicizzazione, ricerca
 builder.Services.AddSearchServices(builder.Configuration);
 
-// ── Messaging: solo consumer, idempotenti (versioning esterno di Elasticsearch) ─
+// Messaging: solo consumer, idempotenti (versioning esterno di Elasticsearch)
 builder.Services.AddMessaging(builder.Configuration, ServiceNames.Search, messaging =>
 {
     messaging.AddConsumer<SubscriptionCreated, SubscriptionCreatedHandler>();
@@ -42,5 +42,5 @@ app.MapEndpoints(app.MapGroup("/api/v1"));
 
 app.Run();
 
-/// <summary>Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;).</summary>
+//Visibile ai test di integrazione (WebApplicationFactory&lt;Program&gt;)
 public partial class Program;
