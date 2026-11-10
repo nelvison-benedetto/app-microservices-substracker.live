@@ -1,25 +1,356 @@
+name: subsnapms
+
+#  Blocchi riusabili
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-dotnet-service: &dotnet-service
+  restart: unless-stopped
+  logging: *default-logging
+  networks: [backend]
+
+x-dotnet-env: &dotnet-env
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_HTTP_PORTS: "8080"
+  # JWT (sezione Auth)
+  Auth__Issuer: ${JWT_ISSUER:?}
+  Auth__Audience: ${JWT_AUDIENCE:?}
+  Auth__MetadataAddress: http://identity-api:8080/.well-known/openid-configuration
+  # RabbitMQ (sezione Messaging:RabbitMq)
+  Messaging__RabbitMq__Host: rabbitmq
+  Messaging__RabbitMq__Port: "5672"
+  Messaging__RabbitMq__Username: ${RABBITMQ_USER:?}
+  Messaging__RabbitMq__Password: ${RABBITMQ_PASSWORD:?}
+  Messaging__RabbitMq__VirtualHost: /
+  # Observability
+  Observability__TraceSamplingRatio: ${TRACE_SAMPLING_RATIO:-0.1}
+  # OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317   # scommenta quando hai un collector
+
+#  Reti
+networks:
+  edge:                       # Traefik ↔ gateway (unica rete esposta)
+    name: subsnapms-edge
+  backend:                    # servizi + infrastruttura, SENZA accesso a Internet
+    name: subsnapms-backend
+    internal: true
+  egress:                     # solo per chi deve uscire su Internet (R2, SMTP)
+    name: subsnapms-egress
+
+volumes:
+  postgres-data:
+  mongo-data:
+  rabbitmq-data:
+  elasticsearch-data:
+  neo4j-data:
+  traefik-letsencrypt:
+
 services:
+  #  EDGE
+  traefik:
+    image: traefik:v3.4
+    restart: unless-stopped
+    logging: *default-logging
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=subsnapms-edge
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL:?}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      - --api.dashboard=false
+      - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-letsencrypt:/letsencrypt
+    networks: [edge]
+
   api-gateway:
-    image: subsnap-api-gateway
+    <<: *dotnet-service
     build:
       context: .
-      dockerfile: src/ApiGateway/SubSnapMS.ApiGateway/Dockerfile
+      args:
+        PROJECT: src/Gateway/SubSnapMS.ApiGateway/SubSnapMS.ApiGateway.csproj
+        ASSEMBLY: SubSnapMS.ApiGateway
+    image: subsnapms/api-gateway
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      Sentry__Dsn: ${SENTRY_DSN}
-    networks: [edge, backend]          # unico container su entrambe le reti
-    # niente "ports:" → non raggiungibile dall'host, solo via Traefik o rete interna
+      <<: *dotnet-env
+      # ⚠ i cluster YARP in appsettings devono puntare a http://<nome-servizio>:8080 (es. http://identity-api:8080)
+    networks: [edge, backend]
+    depends_on:
+      - identity-api
+      - subscriptions-api
+      - media-api
+      - analytics-api
+      - search-api
+      - graph-api
+      - notification-api
     labels:
       - traefik.enable=true
-      - traefik.docker.network=edge
-      - traefik.http.routers.api.rule=Host(`api.substracker.live`)
+      - traefik.http.routers.api.rule=Host(`${API_DOMAIN:?}`)
       - traefik.http.routers.api.entrypoints=websecure
-      - traefik.http.routers.api.tls.certresolver=letsencrypt
+      - traefik.http.routers.api.tls.certresolver=le
+      - traefik.http.routers.api.middlewares=strip-trace@docker
+      # Un header impostato a valore vuoto viene RIMOSSO: niente trace iniettate dall'esterno
+      - traefik.http.middlewares.strip-trace.headers.customrequestheaders.traceparent=
+      - traefik.http.middlewares.strip-trace.headers.customrequestheaders.tracestate=
       - traefik.http.services.api.loadbalancer.server.port=8080
 
-networks:
-  edge:
-  backend:
-    internal: true
+  #  SERVIZI
+  identity-api:
+    <<: *dotnet-service
+    build:
+      context: .
+      args:
+        PROJECT: src/Services/Identity/SubSnapMS.Identity.API/SubSnapMS.Identity.API.csproj
+        ASSEMBLY: SubSnapMS.Identity.API
+    image: subsnapms/identity-api
+    environment:
+      <<: *dotnet-env
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=identity;Username=identity;Password=${IDENTITY_DB_PASSWORD:?}"   # ⚠ nome chiave
+      Identity__Keys__Path: /app/keys                                                                                                 # ⚠ nome chiave
+      # 8080 = HTTP/REST, 8081 = gRPC (HTTP/2). Se Program.cs di Identity NON configura già le porte, scommenta:
+      # Kestrel__Endpoints__Http__Url: http://+:8080
+      # Kestrel__Endpoints__Grpc__Url: http://+:8081
+      # Kestrel__Endpoints__Grpc__Protocols: Http2
+    volumes:
+      - ./.keys:/app/keys:ro
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
 
+  subscriptions-api:
+    <<: *dotnet-service
+    build:
+      context: .
+      args:
+        PROJECT: src/Services/Subscriptions/SubSnapMS.Subscriptions.API/SubSnapMS.Subscriptions.API.csproj
+        ASSEMBLY: SubSnapMS.Subscriptions.API
+    image: subsnapms/subscriptions-api
+    environment:
+      <<: *dotnet-env
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=subscriptions;Username=subscriptions;Password=${SUBSCRIPTIONS_DB_PASSWORD:?}"   # ⚠ nome chiave
+      ConnectionStrings__Redis: "redis:6379,password=${REDIS_PASSWORD:?}"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis:    { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
 
+  media-api:
+    <<: *dotnet-service
+    build:
+      context: .
+      args:
+        PROJECT: src/Services/Media/SubSnapMS.Media.API/SubSnapMS.Media.API.csproj
+        ASSEMBLY: SubSnapMS.Media.API
+    image: subsnapms/media-api
+    environment:
+      <<: *dotnet-env
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=media;Username=media;Password=${MEDIA_DB_PASSWORD:?}"   # ⚠ nome chiave
+      Grpc__Identity__Address: http://identity-api:8081                                                                    # ⚠ nome chiave
+      Storage__R2__AccountId: ${R2_ACCOUNT_ID:?}                                                                            # ⚠ sezione R2
+      Storage__R2__AccessKeyId: ${R2_ACCESS_KEY_ID:?}
+      Storage__R2__SecretAccessKey: ${R2_SECRET_ACCESS_KEY:?}
+      Storage__R2__BucketName: ${R2_BUCKET:?}
+    networks: [backend, egress]          # deve raggiungere Cloudflare R2
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+      identity-api:
+        condition: service_started
+
+  analytics-api:
+    <<: *dotnet-service
+    build:
+      context: .
+      args:
+        PROJECT: src/Services/Analytics/SubSnapMS.Analytics.API/SubSnapMS.Analytics.API.csproj
+        ASSEMBLY: SubSnapMS.Analytics.API
+    image: subsnapms/analytics-api
+    environment:
+      <<: *dotnet-env
+      ConnectionStrings__Mongo: "mongodb://${MONGO_ROOT_USER:?}:${MONGO_ROOT_PASSWORD:?}@mongo:27017/?authSource=admin"   # ⚠ nome chiave
+      Mongo__Database: analytics                                                                                      # ⚠ nome chiave
+    depends_on:
+      mongo:    { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  search-api:
+    <<: *dotnet-service
+    build:
+      context: .
+      args:
+        PROJECT: src/Services/Search/SubSnapMS.Search.API/SubSnapMS.Search.API.csproj
+        ASSEMBLY: SubSnapMS.Search.API
+    image: subsnapms/search-api
+    environment:
+      <<: *dotnet-env
+      Elasticsearch__Url: http://elasticsearch:9200   # ⚠ nome chiave
+    depends_on:
+      elasticsearch: { condition: service_healthy }
+      rabbitmq:      { condition: service_healthy }
+
+  graph-api:
+    <<: *dotnet-service
+    build:
+      context: .
+      args:
+        PROJECT: src/Services/Graph/SubSnapMS.Graph.API/SubSnapMS.Graph.API.csproj
+        ASSEMBLY: SubSnapMS.Graph.API
+    image: subsnapms/graph-api
+    environment:
+      <<: *dotnet-env
+      Neo4j__Uri: bolt://neo4j:7687          # ⚠ sezione Neo4j
+      Neo4j__Username: neo4j
+      Neo4j__Password: ${NEO4J_PASSWORD:?}
+    depends_on:
+      neo4j:    { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  notification-api:
+    <<: *dotnet-service
+    build:
+      context: .
+      args:
+        PROJECT: src/Services/Notification/SubSnapMS.Notification.API/SubSnapMS.Notification.API.csproj
+        ASSEMBLY: SubSnapMS.Notification.API
+    image: subsnapms/notification-api
+    environment:
+      <<: *dotnet-env
+      ConnectionStrings__Mongo: "mongodb://${MONGO_ROOT_USER:?}:${MONGO_ROOT_PASSWORD:?}@mongo:27017/?authSource=admin"   # ⚠ nome chiave
+      Mongo__Database: notification                                                                                   # ⚠ nome chiave
+      Email__Smtp__Host: ${SMTP_HOST:?}                                                                               # ⚠ sezione SMTP
+      Email__Smtp__Port: ${SMTP_PORT:?}
+      Email__Smtp__Username: ${SMTP_USERNAME:-}
+      Email__Smtp__Password: ${SMTP_PASSWORD:-}
+      Email__Smtp__From: ${SMTP_FROM:?}
+    networks: [backend, egress]          # deve raggiungere il server SMTP
+    depends_on:
+      mongo:    { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  #  INFRASTRUTTURA (nessuna porta pubblicata)
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      IDENTITY_DB_PASSWORD: ${IDENTITY_DB_PASSWORD:?}
+      SUBSCRIPTIONS_DB_PASSWORD: ${SUBSCRIPTIONS_DB_PASSWORD:?}
+      MEDIA_DB_PASSWORD: ${MEDIA_DB_PASSWORD:?}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./deploy/postgres/init-databases.sh:/docker-entrypoint-initdb.d/10-init-databases.sh:ro
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?}
+    volumes:
+      - mongo-data:/data/db
+    networks: [backend]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    logging: *default-logging
+    # solo cache: niente persistenza, eviction LRU quando la memoria è piena
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?}",
+              "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru",
+              "--save", "", "--appendonly", "no"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?}
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    hostname: rabbitmq            # nome del nodo stabile: i dati nel volume restano validi tra i riavvii
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks: [backend]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 20s
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"     # raggiungibile solo dalla rete interna "backend"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' >/dev/null"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
+  neo4j:
+    image: neo4j:5.26-community
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?}
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 256m
+      HC_PASSWORD: ${NEO4J_PASSWORD:?}    # NON con prefisso NEO4J_: verrebbe letta come impostazione di Neo4j
+    volumes:
+      - neo4j-data:/data
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p \"$$HC_PASSWORD\" 'RETURN 1' >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 40s
+
+  mailpit:
+    image: axllent/mailpit:latest
+    profiles: ["dev"]                    # solo con --profile dev
+    restart: unless-stopped
+    logging: *default-logging
+    networks: [backend]

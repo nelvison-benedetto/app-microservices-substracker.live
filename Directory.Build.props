@@ -1,0 +1,18 @@
+<Project>
+  <!-- applicato automaticamente a TUTTI i .csproj sotto questa cartella -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <Authors>Nelvison Benedetto</Authors>
+    <Product>SubSnapMS</Product>
+
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+
+    <!-- nel publish solo le risorse localizzate che servono (FluentValidation ne include decine) -->
+    <SatelliteResourceLanguages>en;it</SatelliteResourceLanguages>
+  </PropertyGroup>
+</Project>

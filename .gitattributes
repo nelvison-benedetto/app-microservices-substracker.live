@@ -1,0 +1,8 @@
+* text=auto
+
+#gli script eseguiti nei container Linux devono avere LF, anche se fai checkout su Windows
+*.sh text eol=lf
+
+*.png binary
+*.jpg binary
+*.pfx binary

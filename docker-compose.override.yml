@@ -1,0 +1,26 @@
+# SOLO x sviluppo locale
+networks:
+  backend:
+    internal: false    #su una rete "internal" Docker non pubblica le porte
+
+services:
+  postgres:
+    ports: ["127.0.0.1:5432:5432"]
+  mongo:
+    ports: ["127.0.0.1:27017:27017"]
+  redis:
+    ports: ["127.0.0.1:6379:6379"]
+  rabbitmq:
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"    #management UI
+  elasticsearch:
+    ports: ["127.0.0.1:9200:9200"]
+  neo4j:
+    ports:
+      - "127.0.0.1:7474:7474"      #browser
+      - "127.0.0.1:7687:7687"      #bolt
+  mailpit:
+    ports:
+      - "127.0.0.1:1025:1025"      #SMTP
+      - "127.0.0.1:8025:8025"      #UI web
