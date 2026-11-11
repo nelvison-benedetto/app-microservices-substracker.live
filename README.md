@@ -48,10 +48,10 @@ struttura a docker containers
        +------+------+      +------+------+     +-------+--------+
               |                    |                    |
               v                    v                    v
-        +-------------+      +-------------+    +----------------+
-        |Elasticsearch|      | Neo4j       |    | MongoDB        |
-        |             |      |             |    | (notification) |
-        +-------------+      +-------------+    +----------------+
+       +-------------+      +-------------+     +----------------+
+       |Elasticsearch|      | Neo4j       |     | MongoDB        |
+       |             |      |             |     | (notification) |
+       +-------------+      +-------------+     +----------------+
 ```
 
 ## Traefik -> YARP -> services
@@ -103,7 +103,7 @@ messaggio arrivato
  -> COMMIT         
 -> ACK a rabbitmq 
 
-Casi di retry/backoff/Dead Letter Queue(DLQ)/Tombstone: 
+- Casi di retry/backoff/Dead Letter Queue(DLQ)/Tombstone: 
 shutdown durante l'elaborazione -> nessun ACK -> rabbitmq lo riconsegna.
 payload illeggibile (json invalido) -> subito in DLQ (here li trovi nella dashboard di rabbitmq, e li puoi rimmettere in coda manualmente magari aggiustati.
 handler fallisce
