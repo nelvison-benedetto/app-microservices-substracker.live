@@ -124,7 +124,7 @@ ElasticSearch - Search
 Neo4j      - Graph 
 
 - Redis (non utilizza mai un volume docker, solo ram): lo utilizzo solo per il service dove serve di più, quindi Subscriptions (x salvare in cache risposta di 'dammi la lista dei miei abbonamenti'), con key subscriptions:user:{userId}:list.
-Utilizzo di **HybridCache** usando pattern **Cache-Aside**, cioè  req->L1->L2->db postgresql dove L1 è la cache ram del container subscriptions-api (velocissima, ogni clone di questo service ha la sua ram, key scade dopo 1min) e L2 è il container redis condiviso (tra tutti i clones del service, attualemnte solo x service Subscriptions) che contiene tutte le keys (key scade dopo 10min), quindi si legge sempre prima in ordine L1->L2->db postgresql(se si legge da qua allora subito dopo  HybridCache scrive su L2 e su L1). 
+Utilizzo di **HybridCache** usando pattern **Cache-Aside**, cioè  req->L1->L2->db postgresql dove L1 è la cache ram del container subscriptions-api (velocissima, ogni clone di questo service ha la sua ram, key scade dopo 1min) e L2 è il container redis condiviso (tra tutti i clones del service, attualemnte solo x service Subscriptions) che contiene tutte le keys (key scade dopo 10min), quindi si legge sempre prima in ordine L1->L2->db postgresql(se si legge da qua allora subito dopo  HybridCache scrive su L2 e su L1). <br> 
 //attualmente su L2 ho solo le liste solo per gli utenti che le hanno chieste negli ultimi 10min.
 
 
@@ -154,7 +154,7 @@ Analytics, Search, Graph, Notification: usano 1 prj (.API).
   CreateSubscriptionhandler.cs
 Endpoint/CreateSubscriptionEndpoint.cs  //implementa my IEndpoint
 
-- All techniques & patterns of monolith (clean architecture, vertical slice architecture this, CQRS, mediator+pipeline behaviors, DDD, repository+**unit of work**, **optimistic cuncurrency**() )
+- 🔥All techniques & patterns of prev Monolith (clean architecture, vertical slice architecture this, CQRS, mediator+pipeline behaviors, DDD, repository+**unit of work**, **optimistic cuncurrency**) <br>
 //optimistic cuncurrency: un'altra req ha modificato lo stesso aggregate tra la lettura e il salvataggio (e.g. due refresh simultanei dello stesso token). quindi se sai che i conflitti sono rari, allora usa Optimistic technique cioè non blocchi niente mentre ci lavori ma al salvataggio check che nessuno l'abbia cambiata (semplicemente sul db fai un UPDATE con un WHERE filtrando per id & ex-value che avevi letto tu). oppure se sai che I CONFLITTI SONO FREQUENTI allora blocca la riga db mentre ci lavori (usando (SELECT … FOR UPDATE), ovviamente questo può comportare rallentamenti e deadlocks) (see file ConcurrencyConflictException.cs )
 
 
