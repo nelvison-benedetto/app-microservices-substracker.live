@@ -83,6 +83,8 @@ Utilizzo anche sempre lib Sentry per monitoring dei bugs sul server (50*).
 
 ## Comunicazione Sync e Comunicazione Async
 
+- EDA (Event Driven Architecture):  utilizzo RabbitMQ, non kafka perchè mi basta che i messaggi vengano elaborati, non mi serve una possibile fonte storica riutilizzabile. 
+
 - REST/HTTP (json): utilizzata dal frontend per fare una req, la risposta gli verrà consegnata nello stesso modo.
 - gRPC : (rispetto a rest/http usa file .proto invece di json quindi meno bytes e http/2 piu moderno e supporta multiple chiamate su stessa connessione tcp, ma oggi sul web per standart si utilizza sempre rest/http) usato per comunicazione **Sync** tra services l'un l'altro, quando la un service richiede qualcosa ADESSO da un altro service.
 - RabbitMQ : per comunicazione **Asyn** tra microservices, utilizza gli eventi (e.g. service Subscriprions pubblica un event di nuova Subscription creata, e services Analytics,Search e Graph lo leggono aggiornano i loro dati).
