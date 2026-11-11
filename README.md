@@ -9,6 +9,7 @@ Evoluzione della monolith platform SubsTracker https://github.com/nelvison-bened
 
 struttura a docker containers
 
+```
                                               INTERNET
                                                  |
                                                :443
@@ -51,7 +52,7 @@ struttura a docker containers
         |Elasticsearch|      | Neo4j       |    | MongoDB        |
         |             |      |             |    | (notification) |
         +-------------+      +-------------+    +----------------+
-
+```
 
 ## Traefik -> YARP -> services
 
